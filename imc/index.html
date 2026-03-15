@@ -723,7 +723,7 @@ function calcLoan() {
   var apr = 12;
   if (amt <= 0) {
     ['calcAmt','calcMonthly','calcInterest','calcTotal'].forEach(function(id) {
-      document.getElementById(id).textContent = '—';
+      document.getElementById(id).textContent = '--';
     });
     return;
   }
@@ -793,7 +793,7 @@ function toggleAgree() {
   var box = document.getElementById('agreeBox');
   box.style.background = agreed ? 'var(--neon)' : 'transparent';
   box.style.borderColor = agreed ? 'var(--neon)' : 'var(--border)';
-  box.innerHTML = agreed ? '<span style="color:#050507;font-size:10px;font-weight:700;">✓</span>' : '';
+  box.innerHTML = agreed ? '<span style="color:#050507;font-size:10px;font-weight:700;">v</span>' : '';
   document.getElementById('submitBtn').disabled = !agreed;
 }
 
@@ -806,7 +806,7 @@ function claimYield(btn) {
   btn.textContent = 'Claiming...';
   btn.disabled = true;
   setTimeout(function() {
-    btn.textContent = 'Claimed ✓';
+    btn.textContent = 'Claimed v';
     btn.style.background = 'var(--green)';
   }, 1500);
 }
