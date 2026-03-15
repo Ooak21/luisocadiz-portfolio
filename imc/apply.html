@@ -1187,7 +1187,7 @@ function applyGateConnect() {
         btn.style.color = '#00d4ff';
         var gate = document.getElementById('applyGate');
         gate.style.transition = 'opacity 0.8s';
-        CONNECTED_WALLET = a[0];
+        CONNECTED_WALLET = accounts[0];
         gate.style.opacity = '0';
         setTimeout(function() {
           gate.style.display = 'none';
@@ -1195,7 +1195,7 @@ function applyGateConnect() {
           document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
           document.getElementById('wLabel').textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
           walletConnected = true;
-        CONNECTED_WALLET = a[0];
+        CONNECTED_WALLET = accounts[0];
         }, 800);
       } else {
         document.getElementById('applyDenied').style.display = 'block';
