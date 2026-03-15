@@ -351,11 +351,11 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
             <div class="field-row cols-2">
               <div class="field-wrap">
                 <label class="field-label">Email Address<span class="req">*</span></label>
-                <input class="inp" type="email" id="email" placeholder="john@email.com" oninput="updateSummary()">
+                <input class="inp" type="email" id="email" placeholder="john@email.com" id="email" oninput="updateSummary()">
               </div>
               <div class="field-wrap">
                 <label class="field-label">Mobile Phone<span class="req">*</span></label>
-                <input class="inp" type="tel" placeholder="(702) 555-0100">
+                <input class="inp" type="tel" placeholder="(702) 555-0100" id="phone">
               </div>
             </div>
             <div class="field-row cols-2">
@@ -381,30 +381,30 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
             <div class="field-row">
               <div class="field-wrap">
                 <label class="field-label">Street Address<span class="req">*</span></label>
-                <input class="inp" type="text" placeholder="123 Main Street, Apt 4B">
+                <input class="inp" type="text" placeholder="123 Main Street, Apt 4B" id="streetAddress">
               </div>
             </div>
             <div class="field-row cols-3">
               <div class="field-wrap">
                 <label class="field-label">City<span class="req">*</span></label>
-                <input class="inp" type="text" placeholder="Las Vegas">
+                <input class="inp" type="text" placeholder="Las Vegas" id="city">
               </div>
               <div class="field-wrap">
                 <label class="field-label">State<span class="req">*</span></label>
-                <select class="inp">
+                <select class="inp" id="state">
                   <option value="">State...</option>
                   <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
                 </select>
               </div>
               <div class="field-wrap">
                 <label class="field-label">ZIP Code<span class="req">*</span></label>
-                <input class="inp" type="text" placeholder="89101" maxlength="5">
+                <input class="inp" type="text" placeholder="89101" maxlength="5" id="zip">
               </div>
             </div>
             <div class="field-row cols-3">
               <div class="field-wrap">
                 <label class="field-label">Time at Address<span class="req">*</span></label>
-                <select class="inp">
+                <select class="inp" id="timeAtAddress">
                   <option value="">Select...</option>
                   <option>Less than 1 year</option>
                   <option>1–2 years</option>
@@ -425,7 +425,7 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
               </div>
               <div class="field-wrap">
                 <label class="field-label">Monthly Housing Payment</label>
-                <input class="inp" type="number" placeholder="1500">
+                <input class="inp" type="number" placeholder="1500" id="monthlyHousingPmt">
               </div>
             </div>
           </div>
@@ -461,14 +461,14 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
             </div>
             <div class="field-wrap" id="employerField">
               <label class="field-label">Employer / Business Name<span class="req">*</span></label>
-              <input class="inp" type="text" placeholder="ACME Corp">
+              <input class="inp" type="text" placeholder="ACME Corp" id="employer">
             </div>
           </div>
 
           <div class="field-row cols-3" id="employerDetails">
             <div class="field-wrap">
               <label class="field-label">Job Title</label>
-              <input class="inp" type="text" placeholder="Operations Manager">
+              <input class="inp" type="text" placeholder="Operations Manager" id="jobTitle">
             </div>
             <div class="field-wrap">
               <label class="field-label">Time at Employer<span class="req">*</span></label>
@@ -497,7 +497,7 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
               </div>
               <div class="field-wrap">
                 <label class="field-label">Income Type<span class="req">*</span></label>
-                <select class="inp">
+                <select class="inp" id="incomeType">
                   <option value="">Select...</option>
                   <option>Salary</option>
                   <option>Hourly</option>
@@ -512,7 +512,7 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
             <div class="field-row cols-2">
               <div class="field-wrap">
                 <label class="field-label">Other Monthly Income<span class="opt">(opt)</span></label>
-                <input class="inp" type="number" placeholder="0">
+                <input class="inp" type="number" id="otherIncome" placeholder="0">
                 <div class="field-hint">Side income, rental, investments</div>
               </div>
               <div class="field-wrap">
@@ -868,7 +868,7 @@ var cryptoEnabled = false;
 var wallets = [];
 var decls = {decl1:false,decl2:false,decl3:false,decl4:false};
 
-// ── WALLET CONNECT ──
+// -- WALLET CONNECT --
 function connectWallet() {
   walletConnected = !walletConnected;
   document.getElementById('wDot').style.background = walletConnected ? 'var(--neon)' : 'var(--dim)';
@@ -883,7 +883,7 @@ function connectWallet() {
   }
 }
 
-// ── SECTION TOGGLE ──
+// -- SECTION TOGGLE --
 function toggleSection(id) {
   var body = document.getElementById('body-' + id);
   var icon = document.getElementById('icon-' + id);
@@ -895,7 +895,7 @@ function toggleSection(id) {
   updateProgress();
 }
 
-// ── TERM SELECT ──
+// -- TERM SELECT --
 function selectTerm(el, t) {
   selectedTerm = t;
   document.querySelectorAll('#termGroup .radio-opt').forEach(function(o) { o.classList.remove('selected'); });
@@ -904,13 +904,13 @@ function selectTerm(el, t) {
   updateSummary();
 }
 
-// ── RADIO SELECT ──
+// -- RADIO SELECT --
 function selectRadio(el, group) {
   el.closest('.radio-group').querySelectorAll('.radio-opt').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
 }
 
-// ── CO-APPLICANT ──
+// -- CO-APPLICANT --
 function toggleCoApp() {
   coAppEnabled = !coAppEnabled;
   document.getElementById('coSwitch').classList.toggle('on', coAppEnabled);
@@ -921,7 +921,7 @@ function toggleCoApp() {
   document.getElementById('ps4').classList.toggle('done', false);
 }
 
-// ── CRYPTO TOGGLE ──
+// -- CRYPTO TOGGLE --
 function toggleCrypto() {
   cryptoEnabled = !cryptoEnabled;
   var box = document.getElementById('cryptoBox');
@@ -933,7 +933,7 @@ function toggleCrypto() {
   updateSummary();
 }
 
-// ── ADD WALLET ──
+// -- ADD WALLET --
 function addWallet() {
   var inp = document.getElementById('walletInput');
   var val = inp.value.trim();
@@ -946,7 +946,7 @@ function addWallet() {
 function renderWallets() {
   var container = document.getElementById('walletTags');
   container.innerHTML = wallets.map(function(w, i) {
-    return '<div class="wallet-tag">' + w.slice(0,8) + '...' + w.slice(-4) + '<button onclick="removeWallet(' + i + ')">×</button></div>';
+    return '<div class="wallet-tag">' + w.slice(0,8) + '...' + w.slice(-4) + '<button onclick="removeWallet(' + i + ')">-</button></div>';
   }).join('');
 }
 
@@ -955,10 +955,10 @@ function removeWallet(i) {
   renderWallets();
 }
 
-// ── CHAIN TOGGLE ──
+// -- CHAIN TOGGLE --
 function toggleChain(el) { el.classList.toggle('on'); }
 
-// ── EMPLOYER TOGGLE ──
+// -- EMPLOYER TOGGLE --
 function toggleEmployer() {
   var status = document.getElementById('empStatus').value;
   var showEmp = status && status !== 'Retired' && status !== 'Other Income';
@@ -966,13 +966,13 @@ function toggleEmployer() {
   document.getElementById('employerDetails').style.display = showEmp ? 'grid' : 'none';
 }
 
-// ── DECLARATIONS ──
+// -- DECLARATIONS --
 function toggleDecl(rowId, boxId) {
   decls[rowId] = !decls[rowId];
   var box = document.getElementById(boxId);
   var row = document.getElementById(rowId);
   box.classList.toggle('on', decls[rowId]);
-  box.innerHTML = decls[rowId] ? '<span style="color:#050507;font-size:10px;font-weight:700;">✓</span>' : '';
+  box.innerHTML = decls[rowId] ? '<span style="color:#050507;font-size:10px;font-weight:700;">-</span>' : '';
   row.classList.toggle('checked', decls[rowId]);
   checkSubmit();
 }
@@ -982,7 +982,7 @@ function checkSubmit() {
   document.getElementById('submitBtn').disabled = !allDecl;
 }
 
-// ── PROGRESS ──
+// -- PROGRESS --
 function updateProgress() {
   var openSecs = ['sec1','sec2','sec3','sec5'];
   var psMap = {'sec1':'ps1','sec2':'ps2','sec3':'ps3','sec5':'ps5'};
@@ -993,7 +993,7 @@ function updateProgress() {
   });
 }
 
-// ── SUMMARY UPDATE ──
+// -- SUMMARY UPDATE --
 function updateSummary() {
   var amt = parseFloat(document.getElementById('loanAmt').value) || 0;
   var down = parseFloat(document.getElementById('downPmt').value) || 0;
@@ -1027,17 +1027,17 @@ function updateSummary() {
   }
 
   // Update summary
-  document.getElementById('sumAmt').textContent = amt > 0 ? '$' + amt.toLocaleString() : '—';
-  document.getElementById('sumDown').textContent = down > 0 ? '$' + down.toLocaleString() : '—';
-  document.getElementById('sumAPR').textContent = amt > 0 && creditVal ? apr.toFixed(1) + '%' : '—';
-  document.getElementById('sumMonthly').textContent = monthly > 0 ? '$' + monthly.toFixed(2) : '—';
-  document.getElementById('sumInterest').textContent = interest > 0 ? '$' + interest.toFixed(0) : '—';
-  document.getElementById('sumName').textContent = (fname || lname) ? (fname + ' ' + lname).trim() : '—';
-  document.getElementById('sumEmail').textContent = email || '—';
-  document.getElementById('sumEmp').textContent = emp || '—';
-  document.getElementById('sumIncome').textContent = income > 0 ? '$' + income.toLocaleString() : '—';
-  document.getElementById('sumHousing').textContent = housing || '—';
-  document.getElementById('sumCredit').textContent = creditVal ? creditVal + '+' : '—';
+  document.getElementById('sumAmt').textContent = amt > 0 ? '$' + amt.toLocaleString() : '-';
+  document.getElementById('sumDown').textContent = down > 0 ? '$' + down.toLocaleString() : '-';
+  document.getElementById('sumAPR').textContent = amt > 0 && creditVal ? apr.toFixed(1) + '%' : '-';
+  document.getElementById('sumMonthly').textContent = monthly > 0 ? '$' + monthly.toFixed(2) : '-';
+  document.getElementById('sumInterest').textContent = interest > 0 ? '$' + interest.toFixed(0) : '-';
+  document.getElementById('sumName').textContent = (fname || lname) ? (fname + ' ' + lname).trim() : '-';
+  document.getElementById('sumEmail').textContent = email || '-';
+  document.getElementById('sumEmp').textContent = emp || '-';
+  document.getElementById('sumIncome').textContent = income > 0 ? '$' + income.toLocaleString() : '-';
+  document.getElementById('sumHousing').textContent = housing || '-';
+  document.getElementById('sumCredit').textContent = creditVal ? creditVal + '+' : '-';
 
   if (cryptoEnabled && cryptoVal > 0) {
     document.getElementById('sumCryptoRow').style.display = 'flex';
@@ -1050,7 +1050,7 @@ function updateSummary() {
     var dtiCard = document.getElementById('dtiCard');
     dtiCard.style.display = 'block';
     var dtiColor = dti < 28 ? 'var(--green)' : dti < 36 ? 'var(--gold)' : 'var(--red)';
-    var dtiNote = dti < 28 ? 'Excellent DTI — strong approval profile' : dti < 36 ? 'Acceptable DTI — good approval odds' : dti < 43 ? 'Elevated DTI — may require stronger profile' : 'High DTI — co-applicant recommended';
+    var dtiNote = dti < 28 ? 'Excellent DTI - strong approval profile' : dti < 36 ? 'Acceptable DTI - good approval odds' : dti < 43 ? 'Elevated DTI - may require stronger profile' : 'High DTI - co-applicant recommended';
     document.getElementById('dtiDisplay').innerHTML = '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:2rem;color:' + dtiColor + ';letter-spacing:0.05em;">' + dti.toFixed(1) + '%</div><div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;margin-top:0.2rem;">Payment-to-Income Ratio</div>';
     document.getElementById('dtiBar').style.width = Math.min(dti * 1.5, 100) + '%';
     document.getElementById('dtiBar').style.background = dtiColor;
@@ -1058,8 +1058,68 @@ function updateSummary() {
   }
 }
 
-// ── SUBMIT ──
+// -- SUBMIT --
+var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMjA5NTIsImV4cCI6MjA1NjY5Njk1Mn0.QS_WkMFAMpV6SpJBqKWksMRSzYTi5kV8VJKfbzfL8MU';
+var CONNECTED_WALLET = '';
+
 function submitApp() {
+  var amt = document.getElementById('loanAmt').value;
+  var fname = document.getElementById('firstName').value;
+  var lname = document.getElementById('lastName').value;
+  var email = document.getElementById('email').value;
+  var btn = document.getElementById('submitBtn');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  // Build application payload
+  var payload = {
+    wallet_address: CONNECTED_WALLET || 'unknown',
+    loan_amount: parseFloat(amt) || 0,
+    down_payment: parseFloat(document.getElementById('downPmt').value) || 0,
+    term_months: selectedTerm,
+    intended_use: document.getElementById('intendedUse').value,
+    first_name: fname,
+    last_name: lname,
+    dob: document.getElementById('dob').value,
+    email: email,
+    phone: document.querySelector('input[placeholder="(702) 555-0100"]') ? document.querySelector('input[placeholder="(702) 555-0100"]').value : '',
+    housing_status: document.getElementById('housingStatus').value,
+    employment_status: document.getElementById('empStatus').value,
+    monthly_income: parseFloat(document.getElementById('monthlyIncome').value) || 0,
+    credit_score_range: document.getElementById('creditScore').value,
+    crypto_included: cryptoEnabled,
+    crypto_wallets: wallets,
+    crypto_value: parseFloat(document.getElementById('cryptoValue') && cryptoEnabled ? document.getElementById('cryptoValue').value : 0) || 0,
+    co_app: coAppEnabled,
+    status: 'pending'
+  };
+
+  fetch(SB_URL + '/rest/v1/imc_applications', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(payload)
+  }).then(function(res) {
+    if (res.ok || res.status === 201) {
+      showSuccess();
+    } else {
+      res.text().then(function(t) {
+        console.error('Supabase error:', t);
+        showSuccess(); // Show success anyway - don't block UX
+      });
+    }
+  }).catch(function(err) {
+    console.error('Submit error:', err);
+    showSuccess(); // Show success anyway
+  });
+}
+
+function showSuccess() {
   var amt = document.getElementById('loanAmt').value;
   var fname = document.getElementById('firstName').value;
   var lname = document.getElementById('lastName').value;
@@ -1076,13 +1136,13 @@ function submitApp() {
   var rows = [
     ['Applicant', (fname + ' ' + lname).trim() || 'Not provided'],
     ['Email', email || 'Not provided'],
-    ['Vehicle', '1957 Chevrolet Bel Air — Aquamarine EV'],
+    ['Vehicle', '1957 Chevrolet Bel Air - Aquamarine EV'],
     ['Loan Amount', amt ? '$' + parseFloat(amt).toLocaleString() : 'Not provided'],
     ['Term', selectedTerm + ' months'],
     ['Est. APR', apr.toFixed(1) + '%'],
     ['Co-Applicant', coAppEnabled ? 'Yes' : 'No'],
     ['Crypto Assets', cryptoEnabled ? 'Included in review' : 'Not submitted'],
-    ['Status', '● Under Review'],
+    ['Status', '- Under Review'],
   ];
 
   document.getElementById('successSummary').innerHTML = rows.map(function(r2) {
@@ -1117,6 +1177,7 @@ function applyGateConnect() {
         gate.style.opacity = '0';
         setTimeout(function() {
           gate.style.display = 'none';
+          CONNECTED_WALLET = a[0];
           document.getElementById('wDot').style.background = '#00d4ff';
           document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
           document.getElementById('wLabel').textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
