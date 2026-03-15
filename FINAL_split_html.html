@@ -1,0 +1,527 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobileMenu()">About</a>
+  <a href="#experience" onclick="closeMobileMenu()">Experience</a>
+  <a href="#projects" onclick="closeMobileMenu()">Projects</a>
+  <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">LO<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <button id="walletBtn" onclick="connectWallet()" style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid #222222;color:#c0c0bb;padding:0.5rem 1rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;white-space:nowrap;transition:all 0.2s;"><span id="walletDot" style="width:6px;height:6px;border-radius:50%;background:#333330;flex-shrink:0;transition:all 0.3s;"></span><span id="walletLabel">Connect Wallet</span></button>
+    <div class="nav-hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Operations Leader &amp; Builder</p>
+    <h1 class="hero-name">
+      Luis<br>
+      <span class="line2">Ocadiz</span>
+    </h1>
+    <p class="hero-tagline">
+      <strong>15+ years</strong> in operations leadership. Since 2024 — coding, building products, editing video, launching a podcast, and proving that learning never stops.
+    </p>
+    <div class="hero-ctas">
+      <a href="#projects" class="btn-primary">View Projects</a>
+      <a href="#contact" class="btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-accent-block"></div>
+    <div class="hero-status">
+      <div class="status-dot">Open to opportunities</div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.08em;">Las Vegas, NV</div>
+    </div>
+    <div class="hero-scroll">Scroll</div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">Call Center Operations <span class="sep">✦</span></span>
+    <span class="ticker-item">Process Automation <span class="sep">✦</span></span>
+    <span class="ticker-item">IVR Design <span class="sep">✦</span></span>
+    <span class="ticker-item">Video Editing <span class="sep">✦</span></span>
+    <span class="ticker-item">Final Cut Pro <span class="sep">✦</span></span>
+    <span class="ticker-item">Podcast Production <span class="sep">✦</span></span>
+    <span class="ticker-item">Military Lending <span class="sep">✦</span></span>
+    <span class="ticker-item">Consumer Lending <span class="sep">✦</span></span>
+    <span class="ticker-item">Team Leadership <span class="sep">✦</span></span>
+    <span class="ticker-item">Web3 &amp; Blockchain <span class="sep">✦</span></span>
+    <span class="ticker-item">SaaS Development <span class="sep">✦</span></span>
+    <span class="ticker-item">Regulatory Compliance <span class="sep">✦</span></span>
+    <span class="ticker-item">Call Center Operations <span class="sep">✦</span></span>
+    <span class="ticker-item">Process Automation <span class="sep">✦</span></span>
+    <span class="ticker-item">IVR Design <span class="sep">✦</span></span>
+    <span class="ticker-item">Video Editing <span class="sep">✦</span></span>
+    <span class="ticker-item">Final Cut Pro <span class="sep">✦</span></span>
+    <span class="ticker-item">Podcast Production <span class="sep">✦</span></span>
+    <span class="ticker-item">Military Lending <span class="sep">✦</span></span>
+    <span class="ticker-item">Consumer Lending <span class="sep">✦</span></span>
+    <span class="ticker-item">Team Leadership <span class="sep">✦</span></span>
+    <span class="ticker-item">Web3 &amp; Blockchain <span class="sep">✦</span></span>
+    <span class="ticker-item">SaaS Development <span class="sep">✦</span></span>
+    <span class="ticker-item">Regulatory Compliance <span class="sep">✦</span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">About</div>
+  <div class="about-grid reveal">
+    <div class="about-bio">
+      <p>I'm a <strong>Contact Center Operations Leader</strong> with 15+ years of experience running high-volume teams in financial services — from consumer and military lending at MidCountry Bank to loss mitigation at JPMorgan Chase during the 2008 financial crisis.</p>
+      <p>My edge is the intersection of <strong>people, process, and technology</strong>. I've built automated underwriting tools that cut error rates by 67%, redesigned entire IVR systems, and led teams of 40+ while maintaining strict regulatory compliance across SCRA, CFPB, FDCPA, and REG B.</p>
+      <p>Since 2024, I've gone all in on independent creation. I taught myself to code — building and deploying <strong>Eternal Echoes</strong>, a full-stack SaaS app, from scratch. I learned video production using <strong>Final Cut Pro and Motion</strong>, launched a podcast (<em>2 Make A Long Story Short</em>), and handle all production, editing, and promo in-house. The through-line is the same: <strong>take an idea and make it real.</strong></p>
+    </div>
+    <div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">15+</div>
+          <div class="stat-label">Years in Operations Leadership</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">43</div>
+          <div class="stat-label">Agents Led at MidCountry Bank</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">67%</div>
+          <div class="stat-label">Error Rate Reduction via Automation</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">4</div>
+          <div class="stat-label">Chapters: Finance · Web3 · SaaS · Media</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" style="border-top:1px solid var(--border);">
+  <div class="section-label">Experience</div>
+  <h2 class="section-title">Work History</h2>
+  <div class="timeline">
+
+    <div class="timeline-item-featured reveal">
+      <div class="timeline-date-accent">2024 — Present</div>
+      <div>
+        <div class="timeline-role">Independent Creator &amp; Freelancer</div>
+        <div class="timeline-company">Self-Directed · Las Vegas, NV</div>
+        <div class="timeline-desc" style="margin-bottom:1.5rem;">After two decades in corporate operations, took a deliberate leap into independent creation — learning to build, edit, produce, and ship. This chapter is about proving that an operator can become a builder.</div>
+        <div class="freelance-cards">
+          <div class="freelance-card">
+            <div class="freelance-card-label">Software Development</div>
+            <div class="freelance-card-title">Learning to Code</div>
+            <div class="freelance-card-desc">Taught myself Next.js, React, Supabase, and Vercel from scratch. Took ideas from zero to deployed, production apps — no bootcamp, no team.</div>
+          </div>
+          <div class="freelance-card">
+            <div class="freelance-card-label">Product Development</div>
+            <div class="freelance-card-title">Eternal Echoes</div>
+            <div class="freelance-card-desc">Designed, built, and launched a full-stack SaaS memory timeline app. Multi-user auth, media uploads, branded email flows. Live in beta with real users.</div>
+          </div>
+          <div class="freelance-card">
+            <div class="freelance-card-label">Video Production</div>
+            <div class="freelance-card-title">Final Cut Pro &amp; Motion</div>
+            <div class="freelance-card-desc">Self-taught video editing and motion graphics. Produce promotional content, marketing videos, and full podcast episodes end to end.</div>
+          </div>
+          <div class="freelance-card">
+            <div class="freelance-card-label">Podcast</div>
+            <div class="freelance-card-title">2 Make A Long Story Short</div>
+            <div class="freelance-card-desc">Launched and produce an independent podcast/YouTube channel — all recording, editing, graphics, and promotional content handled in-house.</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:1.5rem;margin-bottom:1.25rem;">
+          <a href="https://www.youtube.com/@2makealongstoryshort269" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;">Watch the Podcast →</a>
+          <a href="https://www.youtube.com/watch?v=yd3me8iw3jo" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;">Sample Edit #1 →</a>
+          <a href="https://www.youtube.com/watch?v=vcmVb5nTpEc" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;">Sample Edit #2 →</a>
+        </div>
+        <div class="timeline-tags">
+          <span class="tag">Next.js</span><span class="tag">React</span><span class="tag">Supabase</span>
+          <span class="tag">Final Cut Pro</span><span class="tag">Motion</span>
+          <span class="tag">Podcast Production</span><span class="tag">Video Editing</span>
+          <span class="tag">Marketing Design</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal">
+      <div class="timeline-date">Mar 2021 — Jul 2024</div>
+      <div>
+        <div class="timeline-role">Managing Partner &amp; Founder</div>
+        <div class="timeline-company">OOAK Group LLP · Las Vegas, NV</div>
+        <div class="timeline-desc">Founded a Web3 marketing agency specializing in smart contract strategy and NFT tokenization on the Ethereum blockchain. Launched Las Vegas's first NFT-gated fine dining experience. Built and secured Discord communities for multiple Web3 projects using digital wallet authentication. Consulted small businesses on Web3 adoption, decentralized asset management, and blockchain-based business strategy.</div>
+        <div class="timeline-tags">
+          <span class="tag">Web3</span><span class="tag">Smart Contracts</span><span class="tag">NFT</span>
+          <span class="tag">Blockchain</span><span class="tag">Discord Security</span><span class="tag">Consulting</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal">
+      <div class="timeline-date">May 2013 — Oct 2020</div>
+      <div>
+        <div class="timeline-role">Lending Manager, Digital Support</div>
+        <div class="timeline-company">MidCountry Bank / Pioneer Services · Las Vegas, NV</div>
+        <div class="timeline-desc">Managed a dual-purpose Loan Origination and Customer Service call center with 43 agents, 4 supervisors, and multiple team leads. Engineered an automated Underwriter decision tool that reduced critical error rates from 12%+ to under 4% — a 67% improvement. Revamped the entire IVR to implement self-service and skill-based routing. Hand-selected by the Senior Executive Team to lead new customer incentives and loyalty programs.</div>
+        <div class="timeline-tags">
+          <span class="tag">Call Center Operations</span><span class="tag">IVR Design</span>
+          <span class="tag">Process Automation</span><span class="tag">Military Lending</span>
+          <span class="tag">SCRA · CFPB · REG B</span><span class="tag">Team Leadership</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item reveal">
+      <div class="timeline-date">Feb 2007 — Jun 2012</div>
+      <div>
+        <div class="timeline-role">Operations Supervisor II</div>
+        <div class="timeline-company">JPMorgan Chase · Chatsworth, CA</div>
+        <div class="timeline-desc">Directed a Loss Mitigation and Loan Modification call center team of 17 Underwriters, 15 Collectors, and Team Leads through the 2008–2010 financial crisis. Managed dialer campaigns and KPIs including abandon rates, after-call wait times, and QA scores. Led ongoing employee development through structured coaching and one-on-one performance reviews.</div>
+        <div class="timeline-tags">
+          <span class="tag">Collections</span><span class="tag">Loan Modifications</span>
+          <span class="tag">KPI Management</span><span class="tag">FDCPA · FCRA</span>
+          <span class="tag">Dialer Campaigns</span><span class="tag">QA</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" style="border-top:1px solid var(--border);">
+  <div class="section-label">Projects</div>
+  <h2 class="section-title">Selected Work</h2>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="project-num">01</div>
+      <div class="project-title">Eternal Echoes</div>
+      <div class="project-desc">Full-stack SaaS application — a personal memory timeline. Multi-user auth, media uploads, branded magic link emails, and real-time data sync. Built with Next.js, Supabase, and Vercel. Currently in beta.</div>
+      <a href="https://eternal-echoes-theta.vercel.app" target="_blank" class="project-link">View Live App →</a>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">02</div>
+      <div class="project-title">Automated Underwriter Decision Tool</div>
+      <div class="project-desc">Engineered an automated decision framework for MidCountry Bank's underwriting department. Deployed across multiple teams — immediately reduced critical error rates from 12%+ to under 4%, a 67% improvement department-wide.</div>
+      <a href="#contact" class="project-link">Inquire for Details →</a>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">03</div>
+      <div class="project-title">IVR Redesign &amp; Skill-Based Routing</div>
+      <div class="project-desc">Full overhaul of MidCountry Bank's IVR system. Implemented self-service options and skill-based call routing — significantly reducing average handle time and improving first-call resolution across a 43-agent operation.</div>
+      <a href="#contact" class="project-link">Inquire for Details →</a>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">04</div>
+      <div class="project-title">NFT Fine Dining Experience</div>
+      <div class="project-desc">Produced Las Vegas's first NFT-gated dining event — an original concept merging blockchain-based access control with hospitality. Featured in Yahoo Finance and the crypto press.</div>
+      <a href="https://finance.yahoo.com/news/ooak-group-announces-minting-gourmet-110000304.html" target="_blank" class="project-link">Read Coverage →</a>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">05</div>
+      <div class="project-title">2 Make A Long Story Short</div>
+      <div class="project-desc">Independent podcast and YouTube channel — launched, produced, and promoted entirely solo. All recording, video editing (Final Cut Pro), motion graphics, thumbnails, and promotional content handled in-house.</div>
+      <a href="https://www.youtube.com/@2makealongstoryshort269" target="_blank" class="project-link">Watch on YouTube →</a>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-num">06</div>
+      <div class="project-title">The Vault</div>
+      <div class="project-desc">A Web3 token-gated music player built directly into this portfolio. Houses the original soundtrack produced for the Kaiseki Yuzu NFT project — exclusive tracks accessible by connecting any wallet. No holdings required. New tracks dropping as the collection grows.</div>
+      <a href="#vaultTeaser" class="project-link" onclick="document.getElementById('vaultTeaser').scrollIntoView({behavior:'smooth'});return false;">Unlock The Vault →</a>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section style="border-top:1px solid var(--border);">
+  <div class="section-label">Skills</div>
+  <h2 class="section-title">Core Competencies</h2>
+  <div class="skills-grid reveal">
+    <div class="skill-group">
+      <div class="skill-group-title">Operations &amp; Leadership</div>
+      <ul class="skill-list">
+        <li>Call Center Operations</li>
+        <li>Team Leadership (40+ staff)</li>
+        <li>Performance Management</li>
+        <li>SLA / SOP Development</li>
+        <li>Executive Reporting</li>
+        <li>Customer Experience Design</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">Technology &amp; Creative</div>
+      <ul class="skill-list">
+        <li>Final Cut Pro &amp; Motion</li>
+        <li>Video Editing &amp; Production</li>
+        <li>Podcast Production</li>
+        <li>IVR Design &amp; Optimization</li>
+        <li>Process Automation</li>
+        <li>Next.js / Supabase / Vercel</li>
+        <li>Advanced Excel &amp; Google Sheets</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">Compliance &amp; Finance</div>
+      <ul class="skill-list">
+        <li>Consumer &amp; Military Lending</li>
+        <li>SCRA / CFPB / REG B</li>
+        <li>FDCPA / FCRA / Privacy Act</li>
+        <li>Risk Management</li>
+        <li>Loan Portfolio &amp; Servicing</li>
+        <li>Collections &amp; Loss Mitigation</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div class="contact-grid">
+    <div>
+      <h2 class="contact-heading">Let's<br><span>Connect</span></h2>
+      <p style="color:var(--muted);font-size:0.95rem;line-height:1.75;max-width:340px;">Open to operations leadership roles, consulting engagements, and conversations about building better systems.</p>
+    </div>
+    <div>
+      <div class="contact-links">
+        <a href="mailto:hello@luisocadiz.online" class="contact-link">
+          <div>
+            <div class="contact-link-label">Email</div>
+            <div class="contact-link-value">hello@luisocadiz.online</div>
+          </div>
+          <span class="contact-arrow">↗</span>
+        </a>
+        <a href="https://www.linkedin.com/in/luisocadiz/" target="_blank" class="contact-link">
+          <div>
+            <div class="contact-link-label">LinkedIn</div>
+            <div class="contact-link-value">linkedin.com/in/luisocadiz</div>
+          </div>
+          <span class="contact-arrow">↗</span>
+        </a>
+        <a href="https://github.com/Ooak21" target="_blank" class="contact-link">
+          <div>
+            <div class="contact-link-label">GitHub</div>
+            <div class="contact-link-value">github.com/Ooak21</div>
+          </div>
+          <span class="contact-arrow">↗</span>
+        </a>
+      </div>
+      <a href="https://drive.google.com/uc?export=download&id=1HRGSpToRbhStvQSsIMveQ8lsQzm9icGa" class="resume-card" download="Luis_Ocadiz_Resume.pdf">
+        <div class="resume-card-left">
+          <div class="resume-card-label">Download</div>
+          <div class="resume-card-title">Luis Ocadiz — Resume</div>
+          <div class="resume-card-sub">PDF · Luis_Ocadiz_Resume.pdf</div>
+        </div>
+        <div class="resume-card-icon">↓</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+
+<!-- VAULT — LOCKED STATE -->
+<div class="vault-teaser" id="vaultTeaser">
+  <div class="vault-lock-icon">⬡</div>
+  <h2 class="vault-teaser-title">The<br><span>Vault</span></h2>
+  <p class="vault-teaser-sub">Token Gated · Wallet Holders Only</p>
+  <p class="vault-teaser-hint">Connect your wallet above to unlock exclusive tracks.<br><br><span style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:#555550;line-height:1.8;display:block;">⚠ Security Notice — Never connect a hot wallet or one with holdings to an unfamiliar site. Always use a burner or empty wallet. No holdings required to access The Vault.</span></p>
+</div>
+
+<!-- NFT GENERATOR -->
+<div class="generator-section" id="nftGenerator" style="display:none;">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:1rem;">
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);line-height:0.95;color:var(--text);letter-spacing:0.02em;">The<br><span style="color:var(--accent);">Vault</span></h2>
+    <div id="vaultConnectedBadge" style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:0.35rem 0.85rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse 2s infinite;display:inline-block;"></span>
+      <span id="vaultWalletAddress">Wallet Unlocked</span>
+    </div>
+  </div>
+  <div class="generator-header">
+    <div>
+      <h2 class="generator-title">Kaiseki<br><span>Yuzu</span> Generator</h2>
+      <p class="generator-sub">1121120 possible combinations · Powered by the original trait library</p>
+    </div>
+  </div>
+  <div class="generator-layout">
+    <div>
+      <div class="generator-canvas-wrap" id="canvasWrap">
+        <canvas id="nftCanvas" width="800" height="800"></canvas>
+        <div class="generator-placeholder" id="genPlaceholder">
+          <div class="generator-placeholder-icon">⬡</div>
+          <div class="generator-placeholder-text">Hit generate to mint</div>
+        </div>
+        <div class="generator-loading" id="genLoading">
+          <div class="loading-bars">
+            <div class="loading-bar" style="--spd:0.4s;height:12px;"></div>
+            <div class="loading-bar" style="--spd:0.6s;height:24px;"></div>
+            <div class="loading-bar" style="--spd:0.5s;height:18px;"></div>
+            <div class="loading-bar" style="--spd:0.7s;height:28px;"></div>
+            <div class="loading-bar" style="--spd:0.45s;height:16px;"></div>
+          </div>
+          <div class="generator-loading-text">Generating...</div>
+        </div>
+      </div>
+    </div>
+    <div class="generator-right">
+      <div class="nft-id-card">
+        <div class="nft-id-label">Token ID</div>
+        <div class="nft-id-value" id="nftTokenId">—</div>
+        <div class="nft-id-sub" id="nftEdition">Kaiseki Yuzu Collection · Temporary Preview</div>
+      </div>
+      <div class="trait-cards">
+        <div class="trait-card" id="traitCard0">
+          <div class="trait-card-layer">Background</div>
+          <div class="trait-card-value" id="traitVal0">—</div>
+        </div>
+        <div class="trait-card" id="traitCard1">
+          <div class="trait-card-layer">Uniform</div>
+          <div class="trait-card-value" id="traitVal1">—</div>
+        </div>
+        <div class="trait-card" id="traitCard2">
+          <div class="trait-card-layer">Head</div>
+          <div class="trait-card-value" id="traitVal2">—</div>
+        </div>
+        <div class="trait-card" id="traitCard3">
+          <div class="trait-card-layer">Right Hand</div>
+          <div class="trait-card-value" id="traitVal3">—</div>
+        </div>
+        <div class="trait-card" id="traitCard4">
+          <div class="trait-card-layer">Left Hand</div>
+          <div class="trait-card-value" id="traitVal4">—</div>
+        </div>
+      </div>
+      <div class="nft-track-card">
+        <div class="nft-track-icon">♪</div>
+        <div class="nft-track-info">
+          <div class="nft-track-label">Assigned Track</div>
+          <div class="nft-track-name" id="nftTrackName">—</div>
+        </div>
+      </div>
+      <button class="btn-generate" id="generateBtn" onclick="generateNFT()">✦ Generate NFT</button>
+      <div class="combo-count">1121120 possible combinations</div>
+    </div>
+  </div>
+</div>
+
+<!-- VAULT — UNLOCKED STATE -->
+<div class="vault-player" id="vaultPlayer">
+  <div class="vault-section">
+    <div class="vault-header">
+      <h2 class="vault-title">The<br><span>Tracks</span></h2>
+    </div>
+    <div class="unified-player">
+      <!-- LEFT: Album art + controls -->
+      <div class="player-left">
+        <div class="player-art">
+          <img src="https://luisocadiz.online/wp-content/uploads/2026/03/ky-bento.jpeg" alt="Kaiseki Yuzu" id="playerArt">
+          <div class="player-art-overlay">
+            <div class="player-viz" id="playerViz">
+              <div class="player-viz-bar" style="--spd:0.4s;"></div>
+              <div class="player-viz-bar" style="--spd:0.6s;"></div>
+              <div class="player-viz-bar" style="--spd:0.5s;"></div>
+              <div class="player-viz-bar" style="--spd:0.7s;"></div>
+              <div class="player-viz-bar" style="--spd:0.45s;"></div>
+              <div class="player-viz-bar" style="--spd:0.55s;"></div>
+              <div class="player-viz-bar" style="--spd:0.65s;"></div>
+              <div class="player-viz-bar" style="--spd:0.5s;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="player-info">
+          <div class="player-track-num" id="playerTrackNum">01 / 08</div>
+          <div class="player-track-name" id="playerTrackName">Chef Kai Seki</div>
+          <div class="player-track-artist">Luis Ocadiz &middot; Exclusive</div>
+        </div>
+        <div class="player-progress-wrap" onclick="playerSeek(event)">
+          <div class="player-progress-bg">
+            <div class="player-progress-fill" id="playerProgressFill"></div>
+          </div>
+          <div class="player-time-row">
+            <span id="playerTimeElapsed">0:00</span>
+            <span id="playerTimeDuration">0:00</span>
+          </div>
+        </div>
+        <div class="player-controls">
+          <button class="player-btn" onclick="playerPrev()">&#10216;&#10216;</button>
+          <button class="player-btn player-btn-play" id="playerPlayBtn" onclick="playerToggle()">&#9654;</button>
+          <button class="player-btn" onclick="playerNext()">&#10217;&#10217;</button>
+          <div class="player-vol">
+            <span style="font-size:0.85rem;color:var(--dim);">&#9834;</span>
+            <input type="range" class="player-vol-slider" id="playerVolSlider" min="0" max="1" step="0.05" value="0.8" oninput="playerSetVol(this.value)">
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT: Playlist -->
+      <div class="player-right">
+        <div class="playlist" id="playlist">
+          <div class="playlist-item" id="pli-0" onclick="playerLoadTrack(0)">
+            <div class="pli-num">01</div>
+            <div class="pli-info"><div class="pli-name">Chef Kai Seki</div></div>
+            <div class="pli-bars" id="plibars-0"><span></span><span></span><span></span></div>
+          </div>
+          <div class="playlist-item" id="pli-1" onclick="playerLoadTrack(1)">
+            <div class="pli-num">02</div>
+            <div class="pli-info"><div class="pli-name">Yuzu Bosa Nova</div></div>
+            <div class="pli-bars" id="plibars-1"><span></span><span></span><span></span></div>
+          </div>
+          <div class="playlist-item" id="pli-2" onclick="playerLoadTrack(2)">
+            <div class="pli-num">03</div>
+            <div class="pli-info"><div class="pli-name">Kaiseki Yuzu!</div></div>
+            <div class="pli-bars" id="plibars-2"><span></span><span></span><span></span></div>
+          </div>
+          <div class="playlist-item" id="pli-3" onclick="playerLoadTrack(3)">
+            <div class="pli-num">04</div>
+            <div class="pli-info"><div class="pli-name">Mt. Fujis Delight</div></div>
+            <div class="pli-bars" id="plibars-3"><span></span><span></span><span></span></div>
+          </div>
+          <div class="playlist-item" id="pli-4" onclick="playerLoadTrack(4)">
+            <div class="pli-num">05</div>
+            <div class="pli-info"><div class="pli-name">Cherry Blossoms</div></div>
+            <div class="pli-bars" id="plibars-4"><span></span><span></span><span></span></div>
+          </div>
+          <div class="playlist-item" id="pli-5" onclick="playerLoadTrack(5)">
+            <div class="pli-num">06</div>
+            <div class="pli-info"><div class="pli-name">Big Trouble in Little Tokyo</div></div>
+            <div class="pli-bars" id="plibars-5"><span></span><span></span><span></span></div>
+          </div>
+          <div class="playlist-item" id="pli-6" onclick="playerLoadTrack(6)">
+            <div class="pli-num">07</div>
+            <div class="pli-info"><div class="pli-name">The Geishas Sorrow</div></div>
+            <div class="pli-bars" id="plibars-6"><span></span><span></span><span></span></div>
+          </div>
+          <div class="playlist-item" id="pli-7" onclick="playerLoadTrack(7)">
+            <div class="pli-num">08</div>
+            <div class="pli-info"><div class="pli-name">Taikos Revenge</div></div>
+            <div class="pli-bars" id="plibars-7"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2026 Luis Ocadiz</div>
+  <div class="footer-made">Las Vegas, NV <span>·</span> luisocadiz.online</div>
+</footer>
