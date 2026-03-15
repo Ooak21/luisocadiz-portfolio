@@ -419,7 +419,7 @@ function openApp(id) {
       ['Name', name],
       ['Email', app.email || '--'],
       ['Phone', app.phone || '--'],
-      ['Wallet', app.wallet_address || '--'],
+      ['Wallet', app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--'],
     ]},
     {t:'Address', rows:[
       ['Street', app.street_address || '--'],

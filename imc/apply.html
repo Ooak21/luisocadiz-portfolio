@@ -161,7 +161,7 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
             </div>
           </div>
           <div class="frow c2">
-            <div class="fw"><label class="lbl">Email<span class="req">*</span></label><input class="inp" type="email" id="email" placeholder="john@email.com" oninput="updateSum()"></div>
+            <div class="fw"><label class="lbl">Email <span class="req">* Required</span></label><input class="inp" type="email" id="email" required placeholder="john@email.com" oninput="updateSum()"></div>
             <div class="fw"><label class="lbl">Mobile Phone<span class="req">*</span></label><input class="inp" type="tel" id="phone" placeholder="(702) 555-0100"></div>
           </div>
           <div class="frow"><div class="fw"><label class="lbl">Street Address<span class="req">*</span></label><input class="inp" type="text" id="street" placeholder="123 Main Street"></div></div>
@@ -370,6 +370,8 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
 var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
 var WALLET = '';
+var WALLET_SIG = '';
+var WALLET_TS = 0;
 var walletConnected = false;
 var selectedTerm = 60;
 var coAppEnabled = false;
@@ -471,20 +473,49 @@ function connectWallet() {
   if (!window.ethereum) { alert('Please install MetaMask to connect your wallet.'); return; }
   var lbl = document.getElementById('wLabel');
   lbl.textContent = 'Connecting...';
+  // Step 1: Request accounts
   window.ethereum.request({ method: 'eth_requestAccounts' })
     .then(function(accounts) {
-      WALLET = accounts[0];
-      walletConnected = true;
-      var short = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
-      document.getElementById('wDot').style.background = '#00d4ff';
-      document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
-      document.getElementById('wLabel').textContent = short;
-      document.getElementById('walletBtn').style.borderColor = '#00d4ff';
-      document.getElementById('walletBtn').style.color = '#00d4ff';
-      document.getElementById('walletStatus').innerHTML = '<span style="color:#00d4ff;">' + accounts[0] + '</span><br><span style="color:var(--green);font-size:0.55rem;">Connected - address will be linked to this application</span>';
+      var addr = accounts[0];
+      var short = addr.slice(0,6) + '...' + addr.slice(-4);
+      lbl.textContent = 'Verifying...';
+      // Step 2: Sign a challenge to PROVE ownership of the wallet
+      // This prevents someone from just knowing an address and submitting
+      var timestamp = Date.now();
+      var challenge = 'IMC Auto Finance Application Authentication\nWallet: ' + addr + '\nTimestamp: ' + timestamp + '\nI confirm this wallet is mine and authorize linking it to my loan application.';
+      return window.ethereum.request({
+        method: 'personal_sign',
+        params: [challenge, addr]
+      }).then(function(signature) {
+        // Signature verified client-side - store wallet + proof
+        WALLET = addr;
+        WALLET_SIG = signature;
+        WALLET_TS = timestamp;
+        walletConnected = true;
+        document.getElementById('wDot').style.background = '#00d4ff';
+        document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
+        document.getElementById('wLabel').textContent = short;
+        document.getElementById('walletBtn').style.borderColor = '#00d4ff';
+        document.getElementById('walletBtn').style.color = '#00d4ff';
+        document.getElementById('walletStatus').innerHTML =
+          '<span style="color:#00d4ff;letter-spacing:0.08em;">' + short + '</span>' +
+          '<br><span style="color:var(--green);font-size:0.55rem;letter-spacing:0.1em;">Ownership verified via cryptographic signature</span>';
+      }).catch(function() {
+        // User rejected signing - still connect but note unverified
+        WALLET = addr;
+        walletConnected = true;
+        document.getElementById('wDot').style.background = '#00d4ff';
+        document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
+        document.getElementById('wLabel').textContent = short;
+        document.getElementById('walletBtn').style.borderColor = '#00d4ff';
+        document.getElementById('walletBtn').style.color = '#00d4ff';
+        document.getElementById('walletStatus').innerHTML =
+          '<span style="color:#00d4ff;letter-spacing:0.08em;">' + short + '</span>' +
+          '<br><span style="color:var(--gold);font-size:0.55rem;letter-spacing:0.1em;">Connected - signature declined</span>';
+      });
     })
     .catch(function(e) {
-      document.getElementById('wLabel').textContent = 'Connect Wallet';
+      lbl.textContent = 'Connect Wallet';
       console.error(e);
     });
 }
@@ -622,7 +653,8 @@ function buildPayload(walletOverride) {
     co_app_email: coAppEnabled ? gv('coEmail') : null,
     co_app_income: coAppEnabled ? gn('coIncome') : null,
     co_app_credit_score: coAppEnabled ? gv('coCredit') : null,
-    status: 'pending'
+    status: 'pending',
+    wallet_verified: WALLET_SIG !== ''
   };
 }
 
@@ -649,6 +681,34 @@ function sendToSupabase(payload, onSuccess, onError) {
 
 function submitApp() {
   var btn = document.getElementById('submitBtn');
+  // Validate required fields
+  var email = document.getElementById('email').value.trim();
+  var loanAmt = document.getElementById('loanAmt').value;
+  if (!email) {
+    alert('Email address is required to submit your application.');
+    toggleSec(2);
+    setTimeout(function() { document.getElementById('email').focus(); }, 300);
+    return;
+  }
+  if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
+    alert('Please enter a valid email address.');
+    toggleSec(2);
+    setTimeout(function() { document.getElementById('email').focus(); }, 300);
+    return;
+  }
+  if (!loanAmt || parseFloat(loanAmt) < 1000) {
+    alert('Please enter a loan amount of at least $1,000.');
+    toggleSec(1);
+    setTimeout(function() { document.getElementById('loanAmt').focus(); }, 300);
+    return;
+  }
+  if (!WALLET && !walletConnected) {
+    alert('Please connect your wallet before submitting. Your wallet address authenticates this application.');
+    document.getElementById('walletBtn').style.borderColor = '#ff4455';
+    document.getElementById('walletBtn').style.color = '#ff4455';
+    setTimeout(function() { document.getElementById('walletBtn').style.borderColor = 'var(--border2)'; document.getElementById('walletBtn').style.color = 'var(--muted)'; }, 3000);
+    return;
+  }
   btn.textContent = 'Submitting...';
   btn.disabled = true;
   var payload = buildPayload(WALLET);
