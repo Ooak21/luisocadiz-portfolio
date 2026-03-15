@@ -169,6 +169,30 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
 </head>
 <body>
 
+
+<div id="applyGate" style="position:fixed;inset:0;z-index:9999;background:#050507;display:flex;align-items:center;justify-content:center;padding:2rem;">
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.01) 0px,rgba(0,212,255,0.01) 1px,transparent 1px,transparent 4px);pointer-events:none;"></div>
+  <div style="text-align:center;position:relative;z-index:1;max-width:480px;">
+    <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-bottom:2.5rem;">
+      <div style="width:8px;height:8px;border-radius:50%;background:#00d4ff;box-shadow:0 0 10px #00d4ff;animation:pulse-neon 2s infinite;"></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.15em;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div>
+    </div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,4.5rem);line-height:0.9;letter-spacing:0.02em;margin-bottom:1.5rem;">
+      PRIVATE<br><span style="color:#00d4ff;text-shadow:0 0 20px rgba(0,212,255,0.4);">ACCESS</span><br>ONLY
+    </h2>
+    <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#444460;margin-bottom:1.5rem;">Private Beta · By Invitation Only</p>
+    <p style="font-family:'Inter',sans-serif;font-size:0.85rem;color:#444460;line-height:1.75;max-width:400px;margin:0 auto 2.5rem;">A peer-to-peer auto finance platform built on blockchain. Classic vehicles tokenized as digital assets. Loans funded by investors. Yield distributed on-chain in USDC. Built in Las Vegas.</p>
+    <button id="applyGateBtn" onclick="applyGateConnect()" style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;background:transparent;border:1px solid #1e1e2e;color:#8888aa;padding:1rem 2.5rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.75rem;transition:all 0.2s;margin-bottom:1.5rem;">
+      <span id="applyGateDot" style="width:7px;height:7px;border-radius:50%;background:#444460;transition:all 0.3s;flex-shrink:0;"></span>
+      <span id="applyGateLabel">Connect Wallet to Enter</span>
+    </button>
+    <div id="applyDenied" style="display:none;background:rgba(255,68,85,0.08);border:1px solid rgba(255,68,85,0.2);padding:0.85rem 1.5rem;margin-bottom:1.5rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:#ff4455;">Access Denied — Unauthorized Wallet</div>
+    </div>
+    <p style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;color:#2a2a3e;line-height:1.8;">⚠ Private beta — authorized wallets only</p>
+  </div>
+</div>
+
 <nav class="nav">
   <a class="nav-logo" href="index.html">
     <div class="nav-dot"></div>IMC
@@ -1068,6 +1092,47 @@ function submitApp() {
   }).join('');
   window.scrollTo(0,0);
 }
+
+var APPLY_AUTHORIZED = '0x6c6ad1de674c292c088b29aa1312b991590bbb9f';
+function applyGateConnect() {
+  var lbl = document.getElementById('applyGateLabel');
+  var dot = document.getElementById('applyGateDot');
+  var btn = document.getElementById('applyGateBtn');
+  if (typeof window.ethereum === 'undefined') {
+    lbl.textContent = 'No wallet found - Install MetaMask';
+    return;
+  }
+  lbl.textContent = 'Connecting...';
+  window.ethereum.request({ method: 'eth_requestAccounts' })
+    .then(function(accounts) {
+      var addr = accounts[0].toLowerCase();
+      if (addr === APPLY_AUTHORIZED) {
+        dot.style.background = '#00d4ff';
+        dot.style.boxShadow = '0 0 8px #00d4ff';
+        lbl.textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4) + ' - Unlocked';
+        btn.style.borderColor = '#00d4ff';
+        btn.style.color = '#00d4ff';
+        var gate = document.getElementById('applyGate');
+        gate.style.transition = 'opacity 0.8s';
+        gate.style.opacity = '0';
+        setTimeout(function() {
+          gate.style.display = 'none';
+          document.getElementById('wDot').style.background = '#00d4ff';
+          document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
+          document.getElementById('wLabel').textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
+          walletConnected = true;
+        }, 800);
+      } else {
+        document.getElementById('applyDenied').style.display = 'block';
+        dot.style.background = '#ff4455';
+        btn.style.borderColor = 'rgba(255,68,85,0.4)';
+        btn.style.color = '#ff4455';
+        lbl.textContent = 'Access Denied';
+      }
+    })
+    .catch(function() { lbl.textContent = 'Connect Wallet to Enter'; });
+}
+
 </script>
 </body>
 </html>

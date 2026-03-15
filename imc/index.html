@@ -105,6 +105,54 @@ select.inp{cursor:pointer;appearance:none;}
 <body>
 
 <!-- NAV -->
+
+<!-- IMC GATE OVERLAY -->
+<div id="imcGate" style="position:fixed;inset:0;z-index:9999;background:#050507;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;">
+
+  <!-- Scanlines -->
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.01) 0px,rgba(0,212,255,0.01) 1px,transparent 1px,transparent 4px);pointer-events:none;"></div>
+
+  <!-- Grid floor -->
+  <div style="position:absolute;bottom:0;left:0;right:0;height:40%;background:repeating-linear-gradient(90deg,rgba(0,212,255,0.03) 0,rgba(0,212,255,0.03) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(0,212,255,0.03) 0,rgba(0,212,255,0.03) 1px,transparent 1px,transparent 60px);pointer-events:none;"></div>
+
+  <!-- Glow -->
+  <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(circle,rgba(0,212,255,0.06) 0%,transparent 70%);pointer-events:none;"></div>
+
+  <div style="text-align:center;position:relative;z-index:1;max-width:560px;">
+
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-bottom:3rem;">
+      <div style="width:10px;height:10px;border-radius:50%;background:#00d4ff;box-shadow:0 0 12px #00d4ff,0 0 24px rgba(0,212,255,0.4);animation:pulse-neon 2s infinite;"></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.15em;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div>
+    </div>
+
+    <!-- Title -->
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,10vw,6rem);line-height:0.88;letter-spacing:0.02em;margin-bottom:1.5rem;">
+      PRIVATE<br><span style="color:#00d4ff;text-shadow:0 0 30px rgba(0,212,255,0.5);">ACCESS</span><br>ONLY
+    </h1>
+
+    <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#444460;margin-bottom:1.5rem;">Private Beta · By Invitation Only</p>
+    <p style="font-family:'Inter',sans-serif;font-size:0.85rem;color:#444460;line-height:1.75;max-width:400px;margin:0 auto 3rem;">A peer-to-peer auto finance platform built on blockchain. Classic vehicles tokenized as digital assets. Loans funded by investors. Yield distributed on-chain in USDC. Built in Las Vegas.</p>
+
+    <!-- Wallet connect -->
+    <button id="gateWalletBtn" onclick="gateConnect()" style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;background:transparent;border:1px solid #1e1e2e;color:#8888aa;padding:1rem 2.5rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.75rem;transition:all 0.2s;margin-bottom:1.5rem;">
+      <span id="gateDot" style="width:7px;height:7px;border-radius:50%;background:#444460;transition:all 0.3s;flex-shrink:0;"></span>
+      <span id="gateLabel">Connect Wallet to Enter</span>
+    </button>
+
+    <!-- Access denied msg -->
+    <div id="accessDenied" style="display:none;background:rgba(255,68,85,0.08);border:1px solid rgba(255,68,85,0.2);padding:0.85rem 1.5rem;margin-bottom:1.5rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:#ff4455;">Access Denied — Unauthorized Wallet</div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:#444460;letter-spacing:0.1em;margin-top:0.35rem;" id="deniedAddr"></div>
+    </div>
+
+    <!-- Security notice -->
+    <p style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;color:#2a2a3e;line-height:1.8;max-width:420px;margin:0 auto;">
+      ⚠ Security Notice — Never connect a hot wallet or one with holdings to an unfamiliar site. This platform is currently in private beta. Unauthorized access attempts are logged on-chain.
+    </p>
+  </div>
+</div>
+
 <nav class="nav">
   <a class="nav-logo" href="#" onclick="showPage('home')">
     <div class="nav-dot"></div>
@@ -571,18 +619,57 @@ function showPage(page) {
   window.scrollTo(0, 0);
 }
 
-function connectWallet() {
-  if (walletConnected) {
-    walletConnected = false;
-    document.getElementById('wDot').classList.remove('on');
-    document.getElementById('wLabel').textContent = 'Connect Wallet';
-    document.getElementById('walletBtn').classList.remove('connected');
-  } else {
-    walletConnected = true;
-    document.getElementById('wDot').classList.add('on');
-    document.getElementById('wLabel').textContent = '0x4A25...606A';
-    document.getElementById('walletBtn').classList.add('connected');
+var AUTHORIZED = '0x6c6ad1de674c292c088b29aa1312b991590bbb9f';
+
+function gateConnect() {
+  var lbl = document.getElementById('gateLabel');
+  var dot = document.getElementById('gateDot');
+  var btn = document.getElementById('gateWalletBtn');
+  if (typeof window.ethereum === 'undefined') {
+    lbl.textContent = 'No wallet found - Install MetaMask';
+    return;
   }
+  lbl.textContent = 'Connecting...';
+  window.ethereum.request({ method: 'eth_requestAccounts' })
+    .then(function(accounts) {
+      var addr = accounts[0].toLowerCase();
+      if (addr === AUTHORIZED) {
+        dot.style.background = '#00d4ff';
+        dot.style.boxShadow = '0 0 8px #00d4ff';
+        lbl.textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4) + ' - Unlocked';
+        btn.style.borderColor = '#00d4ff';
+        btn.style.color = '#00d4ff';
+        document.getElementById('accessDenied').style.display = 'none';
+        var gate = document.getElementById('imcGate');
+        gate.style.transition = 'opacity 0.8s';
+        gate.style.opacity = '0';
+        setTimeout(function() {
+          gate.style.display = 'none';
+          document.getElementById('wDot').classList.add('on');
+          document.getElementById('wLabel').textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
+          document.getElementById('walletBtn').style.borderColor = 'var(--neon)';
+          document.getElementById('walletBtn').style.color = 'var(--neon)';
+          walletConnected = true;
+        }, 800);
+      } else {
+        document.getElementById('accessDenied').style.display = 'block';
+        document.getElementById('deniedAddr').textContent = accounts[0] + ' is not authorized';
+        dot.style.background = '#ff4455';
+        dot.style.boxShadow = '0 0 8px rgba(255,68,85,0.4)';
+        btn.style.borderColor = 'rgba(255,68,85,0.4)';
+        btn.style.color = '#ff4455';
+        lbl.textContent = 'Access Denied - Try Another Wallet';
+      }
+    })
+    .catch(function() { lbl.textContent = 'Connect Wallet to Enter'; });
+}
+
+function connectWallet() {
+  walletConnected = !walletConnected;
+  document.getElementById('wDot').classList.toggle('on', walletConnected);
+  document.getElementById('wLabel').textContent = walletConnected ? '0x6C6a...Bbb9F' : 'Connect Wallet';
+  document.getElementById('walletBtn').style.borderColor = walletConnected ? 'var(--neon)' : 'var(--border2)';
+  document.getElementById('walletBtn').style.color = walletConnected ? 'var(--neon)' : 'var(--muted)';
 }
 
 function showDash() {
