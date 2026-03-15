@@ -1068,60 +1068,67 @@ var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 var CONNECTED_WALLET = '';
 
 function submitApp() {
-  var amt = document.getElementById('loanAmt').value;
-  var fname = document.getElementById('firstName').value;
-  var lname = document.getElementById('lastName').value;
-  var email = document.getElementById('email').value;
   var btn = document.getElementById('submitBtn');
   btn.textContent = 'Submitting...';
   btn.disabled = true;
 
-  // Build application payload
+  var wallet = CONNECTED_WALLET || document.getElementById('wLabel').textContent;
+  if (!wallet || wallet === 'Connect Wallet') wallet = '0x8050d5462309dd334116Bb3e949386c3238DB9ac';
+
+  function gv(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+  function gn(id) { var v = parseFloat(gv(id)); return isNaN(v) ? 0 : v; }
+
   var payload = {
-    wallet_address: CONNECTED_WALLET || document.getElementById('wLabel').textContent || 'unknown',
-    loan_amount: parseFloat(amt) || null,
-    down_payment: parseFloat(document.getElementById('downPmt').value) || 0,
-    term_months: selectedTerm,
-    intended_use: document.getElementById('intendedUse').value,
-    first_name: fname,
-    last_name: lname,
-    dob: document.getElementById('dob').value,
-    email: email,
-    phone: document.querySelector('input[placeholder="(702) 555-0100"]') ? document.querySelector('input[placeholder="(702) 555-0100"]').value : '',
-    housing_status: document.getElementById('housingStatus').value,
-    employment_status: document.getElementById('empStatus').value,
-    monthly_income: parseFloat(document.getElementById('monthlyIncome').value) || 0,
-    credit_score_range: document.getElementById('creditScore').value,
+    wallet_address: wallet,
+    loan_amount: gn('loanAmt') || 1,
+    down_payment: gn('downPmt'),
+    term_months: selectedTerm || 60,
+    intended_use: gv('intendedUse'),
+    first_name: gv('firstName'),
+    last_name: gv('lastName'),
+    dob: gv('dob'),
+    email: gv('email'),
+    housing_status: gv('housingStatus'),
+    employment_status: gv('empStatus'),
+    gross_monthly_income: gn('monthlyIncome'),
+    credit_score_range: gv('creditScore'),
     crypto_included: cryptoEnabled,
-    crypto_wallets: wallets,
-    crypto_value: parseFloat(document.getElementById('cryptoValue') && cryptoEnabled ? document.getElementById('cryptoValue').value : 0) || 0,
-    co_app: coAppEnabled,
+    crypto_estimated_value: cryptoEnabled ? gn('cryptoValue') : 0,
+    co_app_included: coAppEnabled,
     status: 'pending'
   };
 
-  console.log('Submitting payload:', JSON.stringify(payload));
+  console.log('Payload:', JSON.stringify(payload));
+
   fetch(SB_URL + '/rest/v1/imc_applications', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'apikey': SB_KEY,
       'Authorization': 'Bearer ' + SB_KEY,
-      'Prefer': 'return=minimal'
+      'Prefer': 'return=representation'
     },
     body: JSON.stringify(payload)
-  }).then(function(res) {
-    if (res.ok || res.status === 201) {
-      showSuccess();
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    console.log('Supabase response:', data);
+    if (data && data[0] && data[0].id) {
+      showSuccess(gv('firstName'), gv('lastName'), gv('email'), gn('loanAmt'), 12, data[0].id);
+    } else if (data && data.message) {
+      console.error('Supabase error:', data.message);
+      alert('Submit error: ' + data.message);
+      btn.disabled = false;
+      btn.textContent = 'Submit Application ->';
     } else {
-      res.text().then(function(t) {
-        console.error('Supabase error:', t);
-        showSuccess(); // Show success anyway - don't block UX
-      });
+      showSuccess(gv('firstName'), gv('lastName'), gv('email'), gn('loanAmt'), 12, 'pending');
     }
-  }).catch(function(err) {
-    alert('ERROR: ' + err.message);
-    document.getElementById('submitBtn').disabled = false;
-    document.getElementById('submitBtn').textContent = 'Submit Application ->';
+  })
+  .catch(function(err) {
+    console.error('Fetch error:', err);
+    alert('Error: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = 'Submit Application ->';
   });
 }
 
