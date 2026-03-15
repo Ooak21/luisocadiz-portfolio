@@ -363,6 +363,7 @@ function hideGenerator() {
 function showVault() {
   document.getElementById('vaultTeaser').style.display = 'none';
   showGenerator();
+  document.getElementById('kyRunner').style.display = '';
   document.getElementById('vaultPlayer').classList.add('unlocked');
   playerLoadTrack(0);
 }
@@ -370,6 +371,7 @@ function hideVault() {
   document.getElementById('vaultTeaser').style.display = '';
   document.getElementById('vaultPlayer').classList.remove('unlocked');
   hideGenerator();
+  document.getElementById('kyRunner').style.display = 'none';
   if (playerAudio) { playerAudio.pause(); playerAudio = null; }
   playerPlaying = false;
 }
