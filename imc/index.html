@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illusive Motor Concepts — Web3 Auto Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#050507; --surface:#0a0a0f; --surface2:#0f0f18; --surface3:#14141f;
+  --border:#1e1e2e; --border2:#2a2a3e;
+  --neon:#00d4ff; --neon-dim:rgba(0,212,255,0.12); --neon-glow:rgba(0,212,255,0.3);
+  --gold:#f0c040; --gold-dim:rgba(240,192,64,0.12);
+  --green:#00ff88; --red:#ff4455; --purple:#8855ff;
+  --text:#e8e8f0; --muted:#8888aa; --dim:#444460;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.012) 0px,rgba(0,212,255,0.012) 1px,transparent 1px,transparent 4px);pointer-events:none;z-index:9000;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(5,5,7,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.1em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:0.75rem;}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon),0 0 16px var(--neon-glow);animation:pulse-neon 2s infinite;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s;cursor:pointer;}
+.nav-links a:hover,.nav-links a.active{color:var(--neon);}
+.nav-wallet{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border2);color:var(--muted);padding:0.5rem 1.25rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;transition:all 0.2s;}
+.nav-wallet:hover{border-color:var(--neon);color:var(--neon);}
+.nav-wallet.connected{border-color:var(--neon);color:var(--neon);}
+.w-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);transition:all 0.3s;}
+.w-dot.on{background:var(--neon);box-shadow:0 0 6px var(--neon);}
+
+/* PAGE */
+.page{display:none;min-height:100vh;padding:5.5rem 3rem 4rem;}
+.page.active{display:block;}
+
+/* GLASS CARD */
+.glass-card{background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,rgba(255,255,255,0.01) 100%);border:1px solid var(--border);backdrop-filter:blur(10px);position:relative;overflow:hidden;transition:border-color 0.3s,transform 0.2s;}
+.glass-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.03) 0%,transparent 60%);pointer-events:none;}
+.glass-card:hover{border-color:rgba(0,212,255,0.3);}
+
+/* BUTTONS */
+.btn-neon{background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.btn-neon:hover{box-shadow:0 0 20px var(--neon-glow);text-shadow:0 0 8px var(--neon);}
+.btn-gold{background:var(--gold);border:none;color:#050507;padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.btn-gold:hover{background:#f8d060;box-shadow:0 0 20px rgba(240,192,64,0.4);transform:translateY(-1px);}
+
+/* SECTION LABEL */
+.sl{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--neon);display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;}
+.sl::before{content:'';width:2rem;height:1px;background:var(--neon);box-shadow:0 0 4px var(--neon);}
+
+/* STAT CARD */
+.stat-card{background:var(--surface2);border:1px solid var(--border);padding:1.5rem 2rem;position:relative;overflow:hidden;}
+.stat-card::after{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0.4;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--gold);line-height:1;text-shadow:0 0 20px rgba(240,192,64,0.3);}
+.stat-lbl{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-top:0.35rem;}
+
+/* BADGES */
+.badge{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.2rem 0.6rem;}
+.badge-funding{background:rgba(0,212,255,0.1);color:var(--neon);border:1px solid rgba(0,212,255,0.3);}
+.badge-active{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.3);}
+.badge-ev{background:rgba(136,85,255,0.1);color:var(--purple);border:1px solid rgba(136,85,255,0.3);}
+
+/* PROGRESS */
+.prog-wrap{width:100%;height:4px;background:var(--surface3);position:relative;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--neon),var(--purple));box-shadow:0 0 8px var(--neon-glow);transition:width 0.8s ease;}
+
+/* INPUT */
+.inp-lbl{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:0.4rem;}
+.inp{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.85rem 1rem;font-family:'DM Mono',monospace;font-size:0.8rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;width:100%;}
+.inp:focus{border-color:var(--neon);box-shadow:0 0 0 2px rgba(0,212,255,0.1);}
+.inp::placeholder{color:var(--dim);}
+select.inp{cursor:pointer;appearance:none;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);text-align:left;padding:0.75rem 1rem;border-bottom:1px solid var(--border);}
+.tbl td{padding:1rem;border-bottom:1px solid var(--border);font-size:0.85rem;color:var(--muted);}
+.tbl tr:hover td{background:var(--surface2);}
+.tbl tr:last-child td{border-bottom:none;}
+
+/* NEON DIVIDER */
+.ndiv{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0.25;margin:3rem 0;}
+
+/* ANIMATIONS */
+@keyframes pulse-neon{0%,100%{opacity:1;box-shadow:0 0 8px var(--neon),0 0 16px var(--neon-glow);}50%{opacity:0.6;box-shadow:0 0 4px var(--neon);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);}
+::-webkit-scrollbar-thumb:hover{background:var(--neon);}
+
+/* STEP INDICATOR */
+.step-active{border-color:var(--neon) !important;}
+.step-active .step-num{color:var(--neon) !important;}
+.step-bar{position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);box-shadow:0 0 6px var(--neon);}
+
+@media(max-width:768px){.nav{padding:1rem 1.5rem;}.nav-links{display:none;}.page{padding:5rem 1.5rem 3rem;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="#" onclick="showPage('home')">
+    <div class="nav-dot"></div>
+    IMC
+  </a>
+  <ul class="nav-links">
+    <li><a onclick="showPage('marketplace')" id="nav-marketplace">Marketplace</a></li>
+    <li><a onclick="showPage('dashboard')" id="nav-dashboard">Dashboard</a></li>
+    <li><a onclick="showPage('apply')" id="nav-apply">Apply</a></li>
+  </ul>
+  <button class="nav-wallet" id="walletBtn" onclick="connectWallet()">
+    <div class="w-dot" id="wDot"></div>
+    <span id="wLabel">Connect Wallet</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HOME / MARKETPLACE
+══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <!-- Hero -->
+    <div style="padding:2rem 0 4rem;position:relative;">
+      <div style="position:absolute;top:0;right:10%;width:400px;height:400px;background:radial-gradient(circle,rgba(0,212,255,0.05) 0%,transparent 70%);pointer-events:none;"></div>
+      <div class="sl">Illusive Motor Concepts · Web3 Auto Finance</div>
+      <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,8vw,6.5rem);line-height:0.88;letter-spacing:0.02em;margin-bottom:2rem;">
+        INVEST IN<br>
+        <span style="color:var(--neon);text-shadow:0 0 20px var(--neon-glow);">CLASSIC</span><br>
+        VEHICLES
+      </h1>
+      <p style="font-size:1rem;color:var(--muted);line-height:1.75;max-width:460px;margin-bottom:2.5rem;">
+        Peer-to-peer auto loans backed by tokenized classic vehicles.
+        Earn yield in USDC. Every loan is an NFT. Every payment is on-chain.
+      </p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <button class="btn-gold" onclick="showPage('marketplace')">Browse Loans →</button>
+        <button class="btn-neon" onclick="showPage('apply')">Apply for Financing</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:3rem;">
+      <div class="stat-card"><div class="stat-val">$45K</div><div class="stat-lbl">Total Listed</div></div>
+      <div class="stat-card"><div class="stat-val">12%</div><div class="stat-lbl">Current APR</div></div>
+      <div class="stat-card"><div class="stat-val">$1,001</div><div class="stat-lbl">Monthly Payment</div></div>
+      <div class="stat-card"><div class="stat-val">4</div><div class="stat-lbl">Active Investors</div></div>
+    </div>
+
+    <div class="ndiv"></div>
+
+    <!-- Active Loans -->
+    <div style="margin-bottom:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div class="sl">Live Opportunities</div>
+        <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);letter-spacing:0.02em;">Active Loan Pool</h2>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <button style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.4rem 1rem;background:var(--neon);color:#050507;border:1px solid var(--neon);cursor:pointer;">All</button>
+        <button style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.4rem 1rem;background:transparent;color:var(--dim);border:1px solid var(--border);cursor:pointer;">Funding</button>
+        <button style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.4rem 1rem;background:transparent;color:var(--dim);border:1px solid var(--border);cursor:pointer;">EV</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:2px;margin-bottom:4rem;">
+      <!-- Bel Air Card -->
+      <div class="glass-card" style="cursor:pointer;" onclick="showPage('marketplace')">
+        <!-- Car showcase area -->
+        <div style="width:100%;height:240px;background:linear-gradient(135deg,#080818,#101028);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-bottom:1px solid var(--border);">
+          <!-- Grid floor -->
+          <div style="position:absolute;bottom:0;left:0;right:0;height:50%;background:repeating-linear-gradient(90deg,rgba(0,212,255,0.04) 0,rgba(0,212,255,0.04) 1px,transparent 1px,transparent 40px),repeating-linear-gradient(0deg,rgba(0,212,255,0.04) 0,rgba(0,212,255,0.04) 1px,transparent 1px,transparent 40px);"></div>
+          <!-- Glow -->
+          <div style="position:absolute;width:200px;height:200px;background:radial-gradient(circle,rgba(0,212,255,0.08),transparent 70%);"></div>
+          <!-- Car text placeholder -->
+          <div style="text-align:center;position:relative;z-index:1;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:rgba(0,212,255,0.3);letter-spacing:0.15em;">1957 BEL AIR</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:rgba(0,212,255,0.15);letter-spacing:0.2em;text-transform:uppercase;margin-top:0.25rem;">Aquamarine · Tesla EV</div>
+          </div>
+          <!-- Badges -->
+          <div style="position:absolute;top:1rem;left:1rem;display:flex;gap:0.5rem;">
+            <span class="badge badge-funding">● Funding</span>
+            <span class="badge badge-ev">⚡ EV</span>
+          </div>
+          <div style="position:absolute;top:1rem;right:1rem;font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--gold);letter-spacing:0.1em;">$55,000 appraised</div>
+        </div>
+
+        <div style="padding:1.5rem;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:0.05em;color:var(--text);margin-bottom:0.25rem;">1957 Chevrolet Bel Air</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.1em;margin-bottom:1.25rem;">Aquamarine · Tesla EV Conversion · Polygon</div>
+
+          <!-- Metrics -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;padding:1rem;background:var(--surface2);border:1px solid var(--border);margin-bottom:1.5rem;">
+            <div><div class="stat-lbl">APR</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--gold);">12%</div></div>
+            <div><div class="stat-lbl">Term</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text);">60mo</div></div>
+            <div><div class="stat-lbl">Monthly</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--neon);">$1,001</div></div>
+          </div>
+
+          <!-- Progress -->
+          <div style="margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+              <span style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;">$18,500 / $45,000 USDC funded</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--neon);">41%</span>
+            </div>
+            <div class="prog-wrap"><div class="prog-fill" style="width:41%;"></div></div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.1em;margin-top:0.4rem;">$26,500 USDC remaining · 4 investors</div>
+          </div>
+
+          <div style="display:flex;gap:0.75rem;">
+            <button class="btn-neon" style="flex:1;" onclick="showPage('marketplace')">View Details →</button>
+            <button class="btn-gold" style="padding:0.85rem 1.25rem;" onclick="showPage('dashboard')">Invest</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coming Soon -->
+      <div style="background:var(--surface);border:1px dashed var(--border);padding:3rem 2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;min-height:420px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--dim);letter-spacing:0.05em;text-align:center;line-height:1;">MORE<br>COMING<br>SOON</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);text-align:center;">40+ classics in the collection</div>
+      </div>
+    </div>
+
+    <!-- How It Works -->
+    <div style="border-top:1px solid var(--border);padding-top:4rem;margin-bottom:4rem;">
+      <div class="sl">Process</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);margin-bottom:3rem;letter-spacing:0.02em;">How It Works</h2>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;">
+        <div style="background:var(--surface);border:1px solid var(--border);padding:2rem;position:relative;overflow:hidden;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--surface3);position:absolute;top:0.5rem;right:1rem;line-height:1;">01</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);margin-bottom:0.75rem;">01</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text);letter-spacing:0.05em;margin-bottom:0.75rem;">Vehicle Minted</div>
+          <div style="font-size:0.85rem;color:var(--muted);line-height:1.7;">Classic car appraised, EV converted, minted as NFT on Polygon with IPFS documentation.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);padding:2rem;position:relative;overflow:hidden;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--surface3);position:absolute;top:0.5rem;right:1rem;line-height:1;">02</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);margin-bottom:0.75rem;">02</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text);letter-spacing:0.05em;margin-bottom:0.75rem;">Loan Listed</div>
+          <div style="font-size:0.85rem;color:var(--muted);line-height:1.7;">Loan terms set on-chain — amount, APR up to 15%, and term. Investors browse and commit USDC.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);padding:2rem;position:relative;overflow:hidden;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--surface3);position:absolute;top:0.5rem;right:1rem;line-height:1;">03</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);margin-bottom:0.75rem;">03</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text);letter-spacing:0.05em;margin-bottom:0.75rem;">Pool Fills</div>
+          <div style="font-size:0.85rem;color:var(--muted);line-height:1.7;">Investors deposit USDC in any amount. Pool fills, funds auto-transfer to borrower on-chain.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);padding:2rem;position:relative;overflow:hidden;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--surface3);position:absolute;top:0.5rem;right:1rem;line-height:1;">04</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);margin-bottom:0.75rem;">04</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text);letter-spacing:0.05em;margin-bottom:0.75rem;">Earn Yield</div>
+          <div style="font-size:0.85rem;color:var(--muted);line-height:1.7;">Borrower makes monthly USDC payments. Smart contract distributes yield pro-rata instantly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     APPLY PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-apply">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div style="margin-bottom:3rem;">
+      <div class="sl">Borrower Portal</div>
+      <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:0.02em;line-height:0.95;margin-bottom:1rem;">Apply for<br><span style="color:var(--neon);text-shadow:0 0 20px var(--neon-glow);">Financing</span></h1>
+      <p style="color:var(--muted);font-size:0.9rem;max-width:480px;line-height:1.7;">Finance your classic EV directly on-chain. Your loan is tokenized, funded by peer investors, and serviced transparently through the smart contract.</p>
+    </div>
+
+    <!-- Steps -->
+    <div style="display:flex;gap:2px;margin-bottom:3rem;" id="stepIndicator">
+      <div style="flex:1;padding:0.75rem 1rem;background:var(--surface2);border:1px solid var(--neon);position:relative;" id="stepBox1">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);box-shadow:0 0 6px var(--neon);"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--neon);">Step 1</div>
+        <div style="font-size:0.85rem;color:var(--text);margin-top:0.25rem;">Vehicle & Loan</div>
+      </div>
+      <div style="flex:1;padding:0.75rem 1rem;background:var(--surface);border:1px solid var(--border);" id="stepBox2">
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);">Step 2</div>
+        <div style="font-size:0.85rem;color:var(--muted);margin-top:0.25rem;">Personal Info</div>
+      </div>
+      <div style="flex:1;padding:0.75rem 1rem;background:var(--surface);border:1px solid var(--border);" id="stepBox3">
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);">Step 3</div>
+        <div style="font-size:0.85rem;color:var(--muted);margin-top:0.25rem;">Review & Submit</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:3rem;align-items:start;">
+
+      <!-- Form Steps -->
+      <div>
+        <!-- Step 1 -->
+        <div id="formStep1">
+          <!-- Vehicle select -->
+          <div style="background:var(--surface2);border:1px solid var(--neon);padding:1.5rem;margin-bottom:1.5rem;position:relative;cursor:pointer;">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);box-shadow:0 0 6px var(--neon);"></div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.05em;color:var(--text);margin-bottom:0.25rem;">1957 Chevrolet Bel Air — Aquamarine (EV)</div>
+            <div style="display:flex;gap:2rem;">
+              <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;">Appraised: <span style="color:var(--gold);">$55,000</span></span>
+              <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;">Max Loan: <span style="color:var(--neon);">$49,500</span></span>
+            </div>
+          </div>
+
+          <!-- Loan amount -->
+          <div style="margin-bottom:1.5rem;">
+            <label class="inp-lbl">Loan Amount (USDC)</label>
+            <input class="inp" type="number" placeholder="Max $49,500" id="loanAmt" oninput="calcLoan()" max="49500">
+          </div>
+
+          <!-- Term -->
+          <div style="margin-bottom:1.5rem;">
+            <label class="inp-lbl">Loan Term</label>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;">
+              <button class="term-btn" data-term="24" onclick="selectTerm(24)" style="padding:0.85rem;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.05em;">24<br><span style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;">months</span></button>
+              <button class="term-btn" data-term="36" onclick="selectTerm(36)" style="padding:0.85rem;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.05em;">36<br><span style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;">months</span></button>
+              <button class="term-btn" data-term="48" onclick="selectTerm(48)" style="padding:0.85rem;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.05em;">48<br><span style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;">months</span></button>
+              <button class="term-btn active-term" data-term="60" onclick="selectTerm(60)" style="padding:0.85rem;background:var(--neon);border:1px solid var(--neon);color:#050507;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.05em;">60<br><span style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;">months</span></button>
+            </div>
+          </div>
+
+          <button class="btn-neon" onclick="goStep(2)" style="width:100%;margin-top:1rem;">Continue to Personal Info →</button>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="formStep2" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div><label class="inp-lbl">Full Legal Name</label><input class="inp" type="text" placeholder="John Doe" id="fname"></div>
+            <div><label class="inp-lbl">Email Address</label><input class="inp" type="email" placeholder="john@email.com" id="femail"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div><label class="inp-lbl">Phone Number</label><input class="inp" type="tel" placeholder="(702) 555-0100"></div>
+            <div><label class="inp-lbl">Wallet Address</label><input class="inp" type="text" placeholder="0x..."></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div><label class="inp-lbl">Employment Status</label><select class="inp"><option value="">Select...</option><option>Full-Time Employed</option><option>Self-Employed</option><option>Business Owner</option><option>Retired</option></select></div>
+            <div><label class="inp-lbl">Employer / Business</label><input class="inp" type="text" placeholder="Company name"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+            <div><label class="inp-lbl">Monthly Income (USD)</label><input class="inp" type="number" placeholder="5000"></div>
+            <div><label class="inp-lbl">Credit Score Range</label><select class="inp"><option value="">Select...</option><option>750+ Excellent</option><option>700-749 Good</option><option>650-699 Fair</option><option>600-649 Poor</option><option>Below 600</option></select></div>
+          </div>
+          <div style="display:flex;gap:1rem;">
+            <button class="btn-neon" onclick="goStep(1)" style="flex:1;opacity:0.6;">← Back</button>
+            <button class="btn-neon" onclick="goStep(3)" style="flex:2;">Review Application →</button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div id="formStep3" style="display:none;">
+          <div style="background:var(--surface);border:1px solid var(--border);padding:2rem;margin-bottom:1.5rem;">
+            <div class="sl" style="margin-bottom:1.25rem;">Loan Details</div>
+            <div id="reviewDetails"></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:0.75rem;padding:1.25rem;background:var(--surface);border:1px solid var(--border);cursor:pointer;margin-bottom:1.5rem;" onclick="toggleAgree()">
+            <div id="agreeBox" style="width:16px;height:16px;border:1px solid var(--border);background:transparent;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;"></div>
+            <div style="font-size:0.8rem;color:var(--muted);line-height:1.6;">I agree that this application will be reviewed by an IMC underwriter. All loan payments are made in USDC on Polygon.</div>
+          </div>
+          <div style="display:flex;gap:1rem;">
+            <button class="btn-neon" onclick="goStep(2)" style="flex:1;opacity:0.6;">← Back</button>
+            <button class="btn-gold" onclick="submitApp()" style="flex:2;" id="submitBtn" disabled>Submit Application →</button>
+          </div>
+        </div>
+
+        <!-- Success -->
+        <div id="formSuccess" style="display:none;text-align:center;padding:3rem;">
+          <div style="font-size:3rem;margin-bottom:1.5rem;">⬡</div>
+          <div class="sl" style="justify-content:center;">Application Submitted</div>
+          <h2 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.05em;margin-bottom:1.5rem;line-height:1;">APPLICATION<br><span style="color:var(--neon);text-shadow:0 0 20px var(--neon-glow);">RECEIVED</span></h2>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.75;">Your application has been recorded and is under review. You'll hear back within 24–48 hours.</p>
+        </div>
+      </div>
+
+      <!-- Calculator Sidebar -->
+      <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:1rem;">
+        <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.6;"></div>
+          <div class="sl">Loan Calculator</div>
+          <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1rem;" id="calcDisplay">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+              <span style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">Loan Amount</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text);" id="calcAmt">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+              <span style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">Est. APR</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--neon);">12%</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+              <span style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">Monthly Payment</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);" id="calcMonthly">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+              <span style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">Total Interest</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--muted);" id="calcInterest">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;">
+              <span style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">Total Cost</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--muted);" id="calcTotal">—</span>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;">
+          <div class="sl">Requirements</div>
+          <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1rem;">
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;"><div style="width:4px;height:4px;background:var(--neon);border-radius:50%;flex-shrink:0;margin-top:6px;box-shadow:0 0 4px var(--neon);"></div><span style="font-size:0.8rem;color:var(--muted);">Valid government ID</span></div>
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;"><div style="width:4px;height:4px;background:var(--neon);border-radius:50%;flex-shrink:0;margin-top:6px;box-shadow:0 0 4px var(--neon);"></div><span style="font-size:0.8rem;color:var(--muted);">Proof of income</span></div>
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;"><div style="width:4px;height:4px;background:var(--neon);border-radius:50%;flex-shrink:0;margin-top:6px;box-shadow:0 0 4px var(--neon);"></div><span style="font-size:0.8rem;color:var(--muted);">Crypto wallet address</span></div>
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;"><div style="width:4px;height:4px;background:var(--neon);border-radius:50%;flex-shrink:0;margin-top:6px;box-shadow:0 0 4px var(--neon);"></div><span style="font-size:0.8rem;color:var(--muted);">USDC for monthly payments</span></div>
+            <div style="display:flex;gap:0.75rem;align-items:flex-start;"><div style="width:4px;height:4px;background:var(--neon);border-radius:50%;flex-shrink:0;margin-top:6px;box-shadow:0 0 4px var(--neon);"></div><span style="font-size:0.8rem;color:var(--muted);">US residents only (for now)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     DASHBOARD PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-dashboard">
+  <div style="max-width:1200px;margin:0 auto;" id="dashContent">
+    <!-- Connect prompt -->
+    <div id="dashConnect" style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;max-width:480px;">
+        <div style="width:80px;height:80px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;font-size:2rem;color:var(--dim);">⬡</div>
+        <div class="sl" style="justify-content:center;">Investor Dashboard</div>
+        <h2 style="font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.05em;margin-bottom:1rem;line-height:1;">CONNECT YOUR<br><span style="color:var(--neon);text-shadow:0 0 20px var(--neon-glow);">WALLET</span></h2>
+        <p style="color:var(--muted);font-size:0.85rem;line-height:1.7;margin-bottom:2rem;">Connect your wallet to view loan positions, claim yield, and track portfolio performance.</p>
+        <button class="btn-neon" onclick="connectWallet();showDash();" style="width:100%;padding:1rem;">Connect Wallet →</button>
+      </div>
+    </div>
+
+    <!-- Dashboard content -->
+    <div id="dashMain" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3rem;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="sl">Investor Dashboard</div>
+          <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:0.02em;line-height:0.95;">Your<br><span style="color:var(--gold);text-shadow:0 0 20px rgba(240,192,64,0.3);">Portfolio</span></h1>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;background:var(--surface);border:1px solid var(--neon);padding:0.5rem 1rem;">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--neon);box-shadow:0 0 6px var(--neon);"></div>
+          <span style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;color:var(--neon);" id="dashWallet">0x4A25...606A</span>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-bottom:3rem;">
+        <div class="stat-card"><div class="stat-val">$10K</div><div class="stat-lbl">Total Invested</div><div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);letter-spacing:0.1em;margin-top:0.2rem;">USDC</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--gold);">$666</div><div class="stat-lbl">Yield Earned</div><div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);letter-spacing:0.1em;margin-top:0.2rem;">USDC total</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--neon);text-shadow:0 0 20px var(--neon-glow);">$222</div><div class="stat-lbl">Pending Yield</div><div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);letter-spacing:0.1em;margin-top:0.2rem;">Ready to claim</div></div>
+        <div class="stat-card"><div class="stat-val">1</div><div class="stat-lbl">Active Positions</div><div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);letter-spacing:0.1em;margin-top:0.2rem;">Loans</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--green);">$1,332</div><div class="stat-lbl">Projected Annual</div><div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);letter-spacing:0.1em;margin-top:0.2rem;">USDC / year</div></div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;gap:0;margin-bottom:2rem;border-bottom:1px solid var(--border);">
+        <button class="dash-tab active-tab" onclick="switchTab('positions')" style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.75rem 1.5rem;background:transparent;border:none;border-bottom:2px solid var(--neon);color:var(--neon);cursor:pointer;">Positions</button>
+        <button class="dash-tab" onclick="switchTab('history')" style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.75rem 1.5rem;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);cursor:pointer;">History</button>
+        <button class="dash-tab" onclick="switchTab('available')" style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.75rem 1.5rem;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);cursor:pointer;">Available</button>
+      </div>
+
+      <!-- Positions -->
+      <div id="tab-positions">
+        <div style="background:var(--surface);border:1px solid var(--border);overflow:hidden;">
+          <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+            <div>
+              <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.25rem;">
+                <span style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.05em;color:var(--text);">1957 Chevrolet Bel Air</span>
+                <span class="badge badge-active">● Active</span>
+              </div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;">Aquamarine · EV · Loan #1</div>
+            </div>
+            <div style="display:flex;gap:1rem;align-items:center;">
+              <div style="text-align:right;">
+                <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;">Pending Yield</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--neon);letter-spacing:0.05em;">$222 USDC</div>
+              </div>
+              <button class="btn-gold" onclick="claimYield(this)" style="padding:0.65rem 1.5rem;">Claim Yield</button>
+            </div>
+          </div>
+          <div style="padding:1.5rem 2rem;display:grid;grid-template-columns:repeat(6,1fr);gap:1.5rem;">
+            <div><div class="stat-lbl">My Investment</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text);letter-spacing:0.05em;margin-top:0.25rem;">$10,000</div></div>
+            <div><div class="stat-lbl">My Share</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--neon);letter-spacing:0.05em;margin-top:0.25rem;">22.2%</div></div>
+            <div><div class="stat-lbl">APR</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);letter-spacing:0.05em;margin-top:0.25rem;">12%</div></div>
+            <div><div class="stat-lbl">Monthly Yield</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);letter-spacing:0.05em;margin-top:0.25rem;">$222</div></div>
+            <div><div class="stat-lbl">Yield Claimed</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--green);letter-spacing:0.05em;margin-top:0.25rem;">$444</div></div>
+            <div><div class="stat-lbl">Payments</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--muted);letter-spacing:0.05em;margin-top:0.25rem;">2/60</div></div>
+          </div>
+          <div style="padding:0 2rem 1.5rem;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;">
+              <span style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;">Loan Repayment Progress</span>
+              <span style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:0.1em;">$44,200 remaining</span>
+            </div>
+            <div class="prog-wrap"><div class="prog-fill" style="width:1.8%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div id="tab-history" style="display:none;">
+        <div style="background:var(--surface);border:1px solid var(--border);">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Type</th><th>Vehicle</th><th>Amount</th><th>TX Hash</th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--dim);">Mar 14, 2026</td><td><span class="badge badge-active">Yield Claimed</span></td><td style="color:var(--text);">1957 Bel Air</td><td style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--green);letter-spacing:0.05em;">+$222 USDC</td><td style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);">0xabc...123</td></tr>
+              <tr><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--dim);">Feb 14, 2026</td><td><span class="badge badge-active">Yield Claimed</span></td><td style="color:var(--text);">1957 Bel Air</td><td style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--green);letter-spacing:0.05em;">+$222 USDC</td><td style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);">0xdef...456</td></tr>
+              <tr><td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--dim);">Jan 15, 2026</td><td><span class="badge badge-funding">Investment</span></td><td style="color:var(--text);">1957 Bel Air</td><td style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--red);letter-spacing:0.05em;">-$10,000 USDC</td><td style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);">0xghi...789</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Available -->
+      <div id="tab-available" style="display:none;">
+        <div class="glass-card" style="padding:2rem;max-width:420px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;">
+            <div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.05em;color:var(--text);margin-bottom:0.25rem;">1957 Chevrolet Bel Air</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;">Aquamarine · EV Conversion</div>
+            </div>
+            <span class="badge badge-funding">● Funding</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;padding:1rem;background:var(--surface2);border:1px solid var(--border);margin-bottom:1.5rem;">
+            <div><div class="stat-lbl">APR</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);margin-top:0.2rem;">12%</div></div>
+            <div><div class="stat-lbl">Term</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text);margin-top:0.2rem;">60mo</div></div>
+            <div><div class="stat-lbl">Monthly</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--neon);margin-top:0.2rem;">$1,001</div></div>
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;">
+              <span style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;">$18,500 funded</span>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--neon);">41%</span>
+            </div>
+            <div class="prog-wrap"><div class="prog-fill" style="width:41%;"></div></div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.4rem;">$26,500 USDC remaining</div>
+          </div>
+          <div style="display:flex;gap:0.5rem;">
+            <input class="inp" type="number" placeholder="USDC amount" style="flex:1;">
+            <button class="btn-gold" style="padding:0.85rem 1.25rem;white-space:nowrap;" onclick="investNow()">Invest Now</button>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.75rem;letter-spacing:0.08em;">Min investment: $100 USDC · No maximum</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--dim);letter-spacing:0.1em;">IMC · Illusive Motor Concepts</div>
+  <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;">Polygon Mumbai Testnet · USDC · Web3</div>
+  <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);">© 2026 Illusive Motor Concepts</div>
+</footer>
+
+<script>
+var currentPage = 'home';
+var walletConnected = false;
+var selectedTerm = 60;
+var agreed = false;
+var currentStep = 1;
+var currentTab = 'positions';
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(function(a) { a.classList.remove('active'); });
+  var navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+  currentPage = page;
+  window.scrollTo(0, 0);
+}
+
+function connectWallet() {
+  if (walletConnected) {
+    walletConnected = false;
+    document.getElementById('wDot').classList.remove('on');
+    document.getElementById('wLabel').textContent = 'Connect Wallet';
+    document.getElementById('walletBtn').classList.remove('connected');
+  } else {
+    walletConnected = true;
+    document.getElementById('wDot').classList.add('on');
+    document.getElementById('wLabel').textContent = '0x4A25...606A';
+    document.getElementById('walletBtn').classList.add('connected');
+  }
+}
+
+function showDash() {
+  document.getElementById('dashConnect').style.display = 'none';
+  document.getElementById('dashMain').style.display = 'block';
+}
+
+function switchTab(tab) {
+  ['positions','history','available'].forEach(function(t) {
+    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.dash-tab').forEach(function(btn) {
+    var isActive = btn.textContent.toLowerCase().trim() === tab;
+    btn.style.color = isActive ? 'var(--neon)' : 'var(--dim)';
+    btn.style.borderBottom = isActive ? '2px solid var(--neon)' : '2px solid transparent';
+  });
+  currentTab = tab;
+}
+
+function selectTerm(t) {
+  selectedTerm = t;
+  document.querySelectorAll('.term-btn').forEach(function(btn) {
+    var isActive = parseInt(btn.dataset.term) === t;
+    btn.style.background = isActive ? 'var(--neon)' : 'var(--surface)';
+    btn.style.borderColor = isActive ? 'var(--neon)' : 'var(--border)';
+    btn.style.color = isActive ? '#050507' : 'var(--muted)';
+  });
+  calcLoan();
+}
+
+function calcLoan() {
+  var amt = parseFloat(document.getElementById('loanAmt').value) || 0;
+  var term = selectedTerm;
+  var apr = 12;
+  if (amt <= 0) {
+    ['calcAmt','calcMonthly','calcInterest','calcTotal'].forEach(function(id) {
+      document.getElementById(id).textContent = '—';
+    });
+    return;
+  }
+  var r = apr / 100 / 12;
+  var monthly = (amt * r * Math.pow(1 + r, term)) / (Math.pow(1 + r, term) - 1);
+  var total = monthly * term;
+  var interest = total - amt;
+  document.getElementById('calcAmt').textContent = '$' + amt.toLocaleString();
+  document.getElementById('calcMonthly').textContent = '$' + monthly.toFixed(2);
+  document.getElementById('calcInterest').textContent = '$' + interest.toFixed(2);
+  document.getElementById('calcTotal').textContent = '$' + total.toFixed(2);
+}
+
+function goStep(step) {
+  currentStep = step;
+  ['formStep1','formStep2','formStep3','formSuccess'].forEach(function(id) {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('formStep' + step).style.display = 'block';
+
+  // Update step indicators
+  [1,2,3].forEach(function(i) {
+    var box = document.getElementById('stepBox' + i);
+    var isActive = i === step;
+    box.style.background = isActive ? 'var(--surface2)' : 'var(--surface)';
+    box.style.borderColor = isActive ? 'var(--neon)' : 'var(--border)';
+    box.querySelector('div:first-child').style.color = isActive ? 'var(--neon)' : 'var(--dim)';
+    box.querySelector('div:last-child').style.color = isActive ? 'var(--text)' : 'var(--muted)';
+    // Remove existing bar
+    var bar = box.querySelector('.step-bar');
+    if (bar) bar.remove();
+    if (isActive) {
+      var newBar = document.createElement('div');
+      newBar.className = 'step-bar';
+      box.appendChild(newBar);
+    }
+  });
+
+  if (step === 3) {
+    var amt = parseFloat(document.getElementById('loanAmt').value) || 0;
+    var term = selectedTerm;
+    var apr = 12;
+    var r = apr / 100 / 12;
+    var monthly = amt > 0 ? (amt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+    var total = monthly * term;
+    var interest = total - amt;
+    var rows = [
+      ['Vehicle', '1957 Chevrolet Bel Air (EV)'],
+      ['Loan Amount', '$' + amt.toLocaleString() + ' USDC'],
+      ['Term', term + ' months'],
+      ['Estimated APR', apr + '% (final rate set by underwriter)'],
+      ['Est. Monthly', '$' + monthly.toFixed(2) + ' USDC'],
+      ['Total Interest', '$' + interest.toFixed(2)],
+      ['Total Cost', '$' + total.toFixed(2)],
+    ];
+    var html = rows.map(function(r2) {
+      return '<div style="display:flex;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid var(--border);font-size:0.85rem;">' +
+        '<span style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);">' + r2[0] + '</span>' +
+        '<span style="color:var(--text);">' + r2[1] + '</span></div>';
+    }).join('');
+    document.getElementById('reviewDetails').innerHTML = html;
+  }
+}
+
+function toggleAgree() {
+  agreed = !agreed;
+  var box = document.getElementById('agreeBox');
+  box.style.background = agreed ? 'var(--neon)' : 'transparent';
+  box.style.borderColor = agreed ? 'var(--neon)' : 'var(--border)';
+  box.innerHTML = agreed ? '<span style="color:#050507;font-size:10px;font-weight:700;">✓</span>' : '';
+  document.getElementById('submitBtn').disabled = !agreed;
+}
+
+function submitApp() {
+  document.getElementById('formStep3').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+}
+
+function claimYield(btn) {
+  btn.textContent = 'Claiming...';
+  btn.disabled = true;
+  setTimeout(function() {
+    btn.textContent = 'Claimed ✓';
+    btn.style.background = 'var(--green)';
+  }, 1500);
+}
+
+function investNow() {
+  alert('In production: This would trigger a USDC approval + deposit transaction on Polygon.');
+}
+</script>
+</body>
+</html>
