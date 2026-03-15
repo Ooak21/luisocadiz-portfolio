@@ -6,600 +6,207 @@
 <title>IMC — Auto Finance Application</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#050507; --surface:#0a0a0f; --surface2:#0f0f18; --surface3:#14141f;
-  --border:#1e1e2e; --border2:#2a2a3e;
-  --neon:#00d4ff; --neon-glow:rgba(0,212,255,0.25);
-  --gold:#f0c040; --green:#00ff88; --red:#ff4455; --purple:#8855ff;
-  --text:#e8e8f0; --muted:#8888aa; --dim:#444460;
-}
+:root{--bg:#050507;--surface:#0a0a0f;--surface2:#0f0f18;--surface3:#14141f;--border:#1e1e2e;--border2:#2a2a3e;--neon:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff4455;--purple:#8855ff;--text:#e8e8f0;--muted:#8888aa;--dim:#444460;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.01) 0px,rgba(0,212,255,0.01) 1px,transparent 1px,transparent 4px);pointer-events:none;z-index:9000;}
-
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(5,5,7,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(5,5,7,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
 .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.1em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:0.75rem;}
-.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse-neon 2s infinite;}
-.nav-links{display:flex;gap:2rem;list-style:none;}
-.nav-links a{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;cursor:pointer;transition:color 0.2s;}
-.nav-links a:hover{color:var(--neon);}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon);}
 .nav-wallet{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border2);color:var(--muted);padding:0.5rem 1.25rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;transition:all 0.2s;}
 .nav-wallet:hover{border-color:var(--neon);color:var(--neon);}
-
-/* LAYOUT */
-.page-wrap{max-width:1300px;margin:0 auto;padding:5.5rem 3rem 4rem;}
-.two-col{display:grid;grid-template-columns:1fr 380px;gap:3rem;align-items:start;}
-
-/* SECTION LABEL */
+.w-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);transition:all 0.3s;}
+.wrap{max-width:1100px;margin:0 auto;padding:5.5rem 3rem 4rem;}
+.two-col{display:grid;grid-template-columns:1fr 360px;gap:3rem;align-items:start;}
 .sl{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--neon);display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;}
-.sl::before{content:'';width:2rem;height:1px;background:var(--neon);box-shadow:0 0 4px var(--neon);}
-
-/* FORM SECTION */
-.form-section{background:var(--surface);border:1px solid var(--border);margin-bottom:2px;position:relative;overflow:hidden;}
-.form-section-header{padding:1.25rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
-.form-section-header:hover .section-title{color:var(--neon);}
-.section-num{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--surface3);line-height:1;letter-spacing:0.02em;margin-right:1rem;flex-shrink:0;}
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;color:var(--text);transition:color 0.2s;}
+.sl::before{content:'';width:2rem;height:1px;background:var(--neon);}
+.form-section{background:var(--surface);border:1px solid var(--border);margin-bottom:2px;overflow:hidden;}
+.section-header{padding:1.25rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.section-num{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--surface3);line-height:1;margin-right:1rem;flex-shrink:0;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;color:var(--text);}
 .section-sub{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);margin-top:0.15rem;}
-.section-icon{font-size:0.8rem;color:var(--dim);transition:transform 0.3s;flex-shrink:0;}
-.section-icon.open{transform:rotate(180deg);color:var(--neon);}
-.form-section-body{padding:2rem;}
-.form-section-body.collapsed{display:none;}
-
-/* Active section glow */
-.form-section.active{border-color:rgba(0,212,255,0.2);}
-.form-section.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0.6;}
-
-/* INPUTS */
+.section-body{padding:2rem;}
+.section-body.collapsed{display:none;}
 .field-row{display:grid;gap:1rem;margin-bottom:1rem;}
-.field-row.cols-2{grid-template-columns:1fr 1fr;}
-.field-row.cols-3{grid-template-columns:1fr 1fr 1fr;}
-.field-row.cols-4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.cols-2{grid-template-columns:1fr 1fr;}
+.cols-3{grid-template-columns:1fr 1fr 1fr;}
 .field-wrap{display:flex;flex-direction:column;gap:0.35rem;}
-.field-label{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);}
-.field-label .req{color:var(--neon);margin-left:2px;}
-.field-label .opt{color:var(--dim);font-size:0.5rem;margin-left:4px;letter-spacing:0.1em;}
-.inp{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.8rem 1rem;font-family:'DM Mono',monospace;font-size:0.78rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;width:100%;-webkit-appearance:none;}
+.lbl{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);}
+.req{color:var(--neon);}
+.inp{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.8rem 1rem;font-family:'DM Mono',monospace;font-size:0.78rem;outline:none;transition:border-color 0.2s;width:100%;}
 .inp:focus{border-color:var(--neon);box-shadow:0 0 0 2px rgba(0,212,255,0.08);}
 .inp::placeholder{color:var(--dim);}
-.inp.error{border-color:var(--red);}
-.inp.valid{border-color:rgba(0,255,136,0.4);}
-select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23444460'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;}
-.field-hint{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;color:var(--dim);margin-top:0.2rem;}
-.field-error{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;color:var(--red);margin-top:0.2rem;display:none;}
-
-/* RADIO / CHECKBOX GROUP */
+select.inp{cursor:pointer;-webkit-appearance:none;}
+.hint{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;color:var(--dim);margin-top:0.2rem;}
 .radio-group{display:flex;gap:2px;flex-wrap:wrap;}
-.radio-opt{flex:1;min-width:80px;padding:0.7rem 0.85rem;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:all 0.2s;text-align:center;}
-.radio-opt:hover{border-color:var(--border2);}
+.radio-opt{flex:1;min-width:80px;padding:0.7rem 0.85rem;background:var(--surface2);border:1px solid var(--border);cursor:pointer;text-align:center;transition:all 0.2s;}
 .radio-opt.selected{background:rgba(0,212,255,0.08);border-color:var(--neon);}
-.radio-opt-label{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);transition:color 0.2s;}
-.radio-opt.selected .radio-opt-label{color:var(--neon);}
-
-/* CHECKBOX */
-.check-row{display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;padding:0.75rem;background:var(--surface2);border:1px solid var(--border);transition:border-color 0.2s;}
-.check-row:hover{border-color:var(--border2);}
-.check-row.checked{border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.04);}
-.check-box{width:16px;height:16px;border:1px solid var(--border);background:transparent;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.radio-opt-lbl{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
+.radio-opt.selected .radio-opt-lbl{color:var(--neon);}
+.check-row{display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;padding:0.75rem;background:var(--surface2);border:1px solid var(--border);margin-bottom:0.5rem;transition:border-color 0.2s;}
+.check-row.checked{border-color:rgba(0,212,255,0.3);}
+.check-box{width:16px;height:16px;border:1px solid var(--border);background:transparent;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;}
 .check-box.on{background:var(--neon);border-color:var(--neon);}
 .check-text{font-size:0.82rem;color:var(--muted);line-height:1.55;}
-.check-text strong{color:var(--text);font-weight:400;}
-
-/* CRYPTO SECTION */
-.crypto-section{background:rgba(136,85,255,0.04);border:1px solid rgba(136,85,255,0.2);padding:1.5rem;margin-top:1.5rem;position:relative;overflow:hidden;}
-.crypto-section::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--purple),transparent);opacity:0.5;}
-.crypto-label{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
-
-/* WALLET TAG */
-.wallet-tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem;}
-.wallet-tag{display:flex;align-items:center;gap:0.5rem;background:var(--surface2);border:1px solid var(--border);padding:0.35rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.08em;}
-.wallet-tag button{background:none;border:none;color:var(--dim);cursor:pointer;font-size:0.7rem;line-height:1;padding:0;margin-left:0.25rem;}
-.wallet-tag button:hover{color:var(--red);}
-.add-wallet-row{display:flex;gap:0.5rem;margin-top:0.5rem;}
-
-/* ASSET CHAIN GRID */
-.chain-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:0.5rem;}
-.chain-opt{padding:0.65rem;background:var(--surface2);border:1px solid var(--border);cursor:pointer;text-align:center;transition:all 0.2s;}
-.chain-opt:hover{border-color:var(--border2);}
-.chain-opt.on{background:rgba(136,85,255,0.1);border-color:rgba(136,85,255,0.4);}
-.chain-icon{font-size:1.2rem;margin-bottom:0.2rem;}
-.chain-name{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);}
-.chain-opt.on .chain-name{color:var(--purple);}
-
-/* CO-APPLICANT */
-.co-app-toggle{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2rem;background:var(--surface);border:1px solid var(--border);cursor:pointer;margin-bottom:2px;transition:border-color 0.2s;}
-.co-app-toggle:hover{border-color:var(--border2);}
-.co-app-toggle.active{border-color:rgba(240,192,64,0.3);}
-.toggle-switch{width:40px;height:22px;background:var(--surface3);border:1px solid var(--border);border-radius:11px;position:relative;transition:all 0.3s;flex-shrink:0;}
-.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--dim);border-radius:50%;transition:all 0.3s;}
-.toggle-switch.on{background:rgba(240,192,64,0.15);border-color:var(--gold);}
-.toggle-switch.on::after{left:21px;background:var(--gold);box-shadow:0 0 6px rgba(240,192,64,0.4);}
-
-/* BUTTONS */
-.btn-neon{background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;width:100%;}
-.btn-neon:hover{box-shadow:0 0 20px var(--neon-glow);}
+.co-toggle{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2rem;background:var(--surface);border:1px solid var(--border);cursor:pointer;margin-bottom:2px;}
+.toggle-sw{width:40px;height:22px;background:var(--surface3);border:1px solid var(--border);border-radius:11px;position:relative;transition:all 0.3s;flex-shrink:0;}
+.toggle-sw::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--dim);border-radius:50%;transition:all 0.3s;}
+.toggle-sw.on{background:rgba(240,192,64,0.15);border-color:var(--gold);}
+.toggle-sw.on::after{left:21px;background:var(--gold);}
 .btn-gold{background:var(--gold);border:none;color:#050507;padding:1rem 2rem;font-family:'DM Mono',monospace;font-size:0.75rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;width:100%;}
 .btn-gold:hover{background:#f8d060;box-shadow:0 0 24px rgba(240,192,64,0.4);}
-.btn-gold:disabled{background:var(--surface3);color:var(--dim);cursor:not-allowed;box-shadow:none;}
-
-/* SIDEBAR */
-.sidebar{position:sticky;top:80px;display:flex;flex-direction:column;gap:1rem;}
-.summary-card{background:var(--surface);border:1px solid var(--border);padding:1.5rem;position:relative;overflow:hidden;}
+.btn-gold:disabled{background:var(--surface3);color:var(--dim);cursor:not-allowed;}
+.btn-purple{background:var(--purple);border:none;color:#fff;padding:0.65rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;width:100%;margin-bottom:0.5rem;}
+.summary-card{background:var(--surface);border:1px solid var(--border);padding:1.5rem;position:relative;overflow:hidden;margin-bottom:1rem;}
 .summary-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.5;}
-.summary-row{display:flex;justify-content:space-between;align-items:baseline;padding:0.6rem 0;border-bottom:1px solid var(--border);}
-.summary-row:last-child{border-bottom:none;}
-.summary-key{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);}
-.summary-val{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.05em;color:var(--text);}
-
-/* PROGRESS INDICATOR */
-.app-progress{display:flex;flex-direction:column;gap:2px;}
-.prog-step{display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.85rem;background:var(--surface2);border:1px solid var(--border);transition:all 0.2s;}
-.prog-step.done{border-color:rgba(0,255,136,0.2);background:rgba(0,255,136,0.03);}
-.prog-step.active{border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.04);}
-.prog-dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex-shrink:0;transition:all 0.3s;}
-.prog-step.done .prog-dot{background:var(--green);box-shadow:0 0 6px rgba(0,255,136,0.4);}
-.prog-step.active .prog-dot{background:var(--neon);box-shadow:0 0 6px var(--neon-glow);}
-.prog-step-label{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);transition:color 0.2s;}
-.prog-step.done .prog-step-label{color:var(--green);}
-.prog-step.active .prog-step-label{color:var(--neon);}
-
-/* SUCCESS */
-.success-wrap{text-align:center;padding:4rem 2rem;}
-
-/* DISCLAIMER */
+.sum-row{display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+.sum-row:last-child{border-bottom:none;}
+.sum-key{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);}
+.sum-val{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.05em;color:var(--text);}
 .disclaimer{background:rgba(255,68,85,0.04);border:1px solid rgba(255,68,85,0.15);padding:1rem 1.25rem;margin-top:1rem;}
 .disclaimer p{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;color:var(--dim);line-height:1.7;}
-
-/* ANIMATIONS */
-@keyframes pulse-neon{0%,100%{box-shadow:0 0 8px var(--neon),0 0 16px var(--neon-glow);}50%{box-shadow:0 0 4px var(--neon);}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-.fade-in{animation:fadeUp 0.4s ease forwards;}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:var(--bg);}
-::-webkit-scrollbar-thumb{background:var(--border2);}
-::-webkit-scrollbar-thumb:hover{background:var(--neon);}
-
-@media(max-width:1024px){.two-col{grid-template-columns:1fr;}.sidebar{position:static;}}
-@media(max-width:768px){.page-wrap{padding:5rem 1.5rem 3rem;}.nav{padding:1rem 1.5rem;}.nav-links{display:none;}.field-row.cols-3,.field-row.cols-4{grid-template-columns:1fr 1fr;}.field-row.cols-2{grid-template-columns:1fr;}.chain-grid{grid-template-columns:repeat(4,1fr);}}
+.success-wrap{text-align:center;padding:4rem 2rem;max-width:580px;margin:0 auto;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+@media(max-width:1024px){.two-col{grid-template-columns:1fr;}}
+@media(max-width:768px){.wrap{padding:5rem 1.5rem 3rem;}.cols-2,.cols-3{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-
-<div id="applyGate" style="position:fixed;inset:0;z-index:9999;background:#050507;display:flex;align-items:center;justify-content:center;padding:2rem;">
-  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.01) 0px,rgba(0,212,255,0.01) 1px,transparent 1px,transparent 4px);pointer-events:none;"></div>
-  <div style="text-align:center;position:relative;z-index:1;max-width:480px;">
-    <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-bottom:2.5rem;">
-      <div style="width:8px;height:8px;border-radius:50%;background:#00d4ff;box-shadow:0 0 10px #00d4ff;animation:pulse-neon 2s infinite;"></div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.15em;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div>
-    </div>
-    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,4.5rem);line-height:0.9;letter-spacing:0.02em;margin-bottom:1.5rem;">
-      PRIVATE<br><span style="color:#00d4ff;text-shadow:0 0 20px rgba(0,212,255,0.4);">ACCESS</span><br>ONLY
-    </h2>
-    <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#444460;margin-bottom:1.5rem;">Private Beta · By Invitation Only</p>
-    <p style="font-family:'Inter',sans-serif;font-size:0.85rem;color:#444460;line-height:1.75;max-width:400px;margin:0 auto 2.5rem;">A peer-to-peer auto finance platform built on blockchain. Classic vehicles tokenized as digital assets. Loans funded by investors. Yield distributed on-chain in USDC. Built in Las Vegas.</p>
-    <button id="applyGateBtn" onclick="applyGateConnect()" style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;background:transparent;border:1px solid #1e1e2e;color:#8888aa;padding:1rem 2.5rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.75rem;transition:all 0.2s;margin-bottom:1.5rem;">
-      <span id="applyGateDot" style="width:7px;height:7px;border-radius:50%;background:#444460;transition:all 0.3s;flex-shrink:0;"></span>
-      <span id="applyGateLabel">Connect Wallet to Enter</span>
-    </button>
-    <div id="applyDenied" style="display:none;background:rgba(255,68,85,0.08);border:1px solid rgba(255,68,85,0.2);padding:0.85rem 1.5rem;margin-bottom:1.5rem;">
-      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:#ff4455;">Access Denied — Unauthorized Wallet</div>
-    </div>
-    <p style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;color:#2a2a3e;line-height:1.8;">⚠ Private beta — authorized wallets only</p>
-  </div>
-</div>
-
 <nav class="nav">
-  <a class="nav-logo" href="index.html">
-    <div class="nav-dot"></div>IMC
-  </a>
-  <ul class="nav-links">
-    <li><a href="index.html">Marketplace</a></li>
-    <li><a href="index.html#dashboard">Dashboard</a></li>
-    <li><a style="color:var(--neon);">Apply</a></li>
-  </ul>
-  <button class="nav-wallet" id="walletBtn" onclick="connectWallet()">
-    <div style="width:6px;height:6px;border-radius:50%;background:var(--dim);transition:all 0.3s;" id="wDot"></div>
-    <span id="wLabel">Connect Wallet</span>
-  </button>
+  <a href="index.html" class="nav-logo"><div class="nav-dot"></div>IMC</a>
+  <div style="display:flex;align-items:center;gap:1.5rem;">
+    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Marketplace</a>
+    <button class="nav-wallet" id="walletBtn" onclick="connectWallet()">
+      <div class="w-dot" id="wDot"></div>
+      <span id="wLabel">Connect Wallet</span>
+    </button>
+  </div>
 </nav>
 
-<div class="page-wrap" id="appWrap">
-  <!-- Header -->
+<div class="wrap" id="appWrap">
   <div style="margin-bottom:3rem;">
     <div class="sl">Borrower Portal · IMC Auto Finance</div>
-    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);line-height:0.92;letter-spacing:0.02em;margin-bottom:1rem;">
-      Auto Finance<br><span style="color:var(--neon);text-shadow:0 0 20px var(--neon-glow);">Application</span>
-    </h1>
-    <p style="color:var(--muted);font-size:0.9rem;max-width:520px;line-height:1.75;">
-      Complete the form below to apply for financing on any IMC vehicle.
-      Applications are reviewed by our underwriting team within 24–48 hours.
-      Crypto assets are optional but may strengthen your application.
-    </p>
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);line-height:0.92;letter-spacing:0.02em;margin-bottom:1rem;">Auto Finance<br><span style="color:var(--neon);text-shadow:0 0 20px rgba(0,212,255,0.3);">Application</span></h1>
+    <p style="color:var(--muted);font-size:0.9rem;max-width:520px;line-height:1.75;">Complete the form and connect your wallet to submit. Applications reviewed within 24-48 hours.</p>
   </div>
 
   <div class="two-col">
-    <!-- ════════════════════════════════
-         LEFT: FORM
-    ════════════════════════════════ -->
-    <div id="formWrap">
+    <div>
 
-      <!-- ── SECTION 1: VEHICLE & LOAN ── -->
-      <div class="form-section active" id="sec1">
-        <div class="form-section-header" onclick="toggleSection('sec1')">
+      <!-- SECTION 1 -->
+      <div class="form-section" id="sec1">
+        <div class="section-header" onclick="toggleSec('sec1')">
           <div style="display:flex;align-items:center;">
             <div class="section-num">01</div>
-            <div>
-              <div class="section-title">Vehicle & Loan</div>
-              <div class="section-sub">Select vehicle · Amount · Term</div>
-            </div>
+            <div><div class="section-title">Vehicle & Loan</div><div class="section-sub">Amount · Term · Use</div></div>
           </div>
-          <div class="section-icon open" id="icon-sec1">▼</div>
+          <div id="icon1" style="color:var(--neon);font-size:0.8rem;">v</div>
         </div>
-        <div class="form-section-body" id="body-sec1">
-          <div class="field-row">
-            <div class="field-wrap">
-              <label class="field-label">Select Vehicle<span class="req">*</span></label>
-              <div style="background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.2);padding:1.25rem 1.5rem;position:relative;cursor:pointer;">
-                <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);box-shadow:0 0 6px var(--neon);opacity:0.6;"></div>
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.05em;color:var(--text);margin-bottom:0.3rem;">1957 Chevrolet Bel Air — Aquamarine</div>
-                <div style="display:flex;flex-wrap:wrap;gap:1.5rem;">
-                  <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;">⚡ Tesla EV Conversion</span>
-                  <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;">Appraised: <span style="color:var(--gold);">$55,000</span></span>
-                  <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;">Max Loan: <span style="color:var(--neon);">$49,500</span></span>
-                </div>
-              </div>
+        <div class="section-body" id="body1">
+          <div style="background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.2);padding:1.25rem 1.5rem;position:relative;margin-bottom:1rem;">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);opacity:0.6;"></div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.05em;color:var(--text);margin-bottom:0.25rem;">1957 Chevrolet Bel Air — Aquamarine EV</div>
+            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
+              <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);">Appraised: <span style="color:var(--gold);">$55,000</span></span>
+              <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);">Max Loan: <span style="color:var(--neon);">$49,500</span></span>
             </div>
           </div>
-
           <div class="field-row cols-2">
-            <div class="field-wrap">
-              <label class="field-label">Requested Loan Amount (USD)<span class="req">*</span></label>
-              <input class="inp" type="number" id="loanAmt" placeholder="e.g. 40000" min="1000" max="49500" oninput="updateSummary()">
-              <div class="field-hint">Min $1,000 · Max $49,500 (90% LTV)</div>
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">Down Payment Amount (USD)<span class="req">*</span></label>
-              <input class="inp" type="number" id="downPmt" placeholder="e.g. 5500" min="0" oninput="updateSummary()">
-              <div class="field-hint">Min 10% of vehicle value</div>
+            <div class="field-wrap"><label class="lbl">Loan Amount (USD)<span class="req">*</span></label><input class="inp" type="number" id="loanAmt" placeholder="e.g. 40000" max="49500" oninput="calcLoan()"><div class="hint">Max $49,500</div></div>
+            <div class="field-wrap"><label class="lbl">Down Payment (USD)</label><input class="inp" type="number" id="downPmt" placeholder="e.g. 5500" oninput="calcLoan()"></div>
+          </div>
+          <div class="field-wrap" style="margin-bottom:1rem;">
+            <label class="lbl">Loan Term<span class="req">*</span></label>
+            <div class="radio-group" id="termGroup">
+              <div class="radio-opt" onclick="selectTerm(this,24)"><div class="radio-opt-lbl">24 mo</div></div>
+              <div class="radio-opt" onclick="selectTerm(this,36)"><div class="radio-opt-lbl">36 mo</div></div>
+              <div class="radio-opt" onclick="selectTerm(this,48)"><div class="radio-opt-lbl">48 mo</div></div>
+              <div class="radio-opt selected" onclick="selectTerm(this,60)"><div class="radio-opt-lbl">60 mo</div></div>
             </div>
           </div>
-
-          <div class="field-row">
-            <div class="field-wrap">
-              <label class="field-label">Preferred Loan Term<span class="req">*</span></label>
-              <div class="radio-group" id="termGroup">
-                <div class="radio-opt" onclick="selectTerm(this,24)"><div class="radio-opt-label">24 mo</div></div>
-                <div class="radio-opt" onclick="selectTerm(this,36)"><div class="radio-opt-label">36 mo</div></div>
-                <div class="radio-opt" onclick="selectTerm(this,48)"><div class="radio-opt-label">48 mo</div></div>
-                <div class="radio-opt selected" onclick="selectTerm(this,60)"><div class="radio-opt-label">60 mo</div></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div class="field-wrap">
-              <label class="field-label">Intended Use<span class="req">*</span></label>
-              <select class="inp" id="intendedUse" onchange="updateSummary()">
-                <option value="">Select...</option>
-                <option>Personal / Daily Driver</option>
-                <option>Collector / Show Car</option>
-                <option>Weekend / Recreational</option>
-                <option>Investment / Appreciation</option>
-              </select>
-            </div>
+          <div class="field-wrap"><label class="lbl">Intended Use<span class="req">*</span></label>
+            <select class="inp" id="intendedUse"><option value="">Select...</option><option>Personal / Daily Driver</option><option>Collector / Show Car</option><option>Weekend / Recreational</option><option>Investment / Appreciation</option></select>
           </div>
         </div>
       </div>
 
-      <!-- ── SECTION 2: PERSONAL INFO ── -->
+      <!-- SECTION 2 -->
       <div class="form-section" id="sec2">
-        <div class="form-section-header" onclick="toggleSection('sec2')">
+        <div class="section-header" onclick="toggleSec('sec2')">
           <div style="display:flex;align-items:center;">
             <div class="section-num">02</div>
-            <div>
-              <div class="section-title">Personal Information</div>
-              <div class="section-sub">Identity · Contact · Residence</div>
-            </div>
+            <div><div class="section-title">Personal Information</div><div class="section-sub">Identity · Contact · Address</div></div>
           </div>
-          <div class="section-icon" id="icon-sec2">▼</div>
+          <div id="icon2" style="color:var(--dim);font-size:0.8rem;">v</div>
         </div>
-        <div class="form-section-body collapsed" id="body-sec2">
+        <div class="section-body collapsed" id="body2">
+          <div class="field-row cols-2">
+            <div class="field-wrap"><label class="lbl">First Name<span class="req">*</span></label><input class="inp" type="text" id="firstName" placeholder="John" oninput="updateSum()"></div>
+            <div class="field-wrap"><label class="lbl">Last Name<span class="req">*</span></label><input class="inp" type="text" id="lastName" placeholder="Doe" oninput="updateSum()"></div>
+          </div>
           <div class="field-row cols-3">
-            <div class="field-wrap">
-              <label class="field-label">First Name<span class="req">*</span></label>
-              <input class="inp" type="text" id="firstName" placeholder="John" oninput="updateSummary()">
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">Middle Name<span class="opt">(opt)</span></label>
-              <input class="inp" type="text" placeholder="A.">
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">Last Name<span class="req">*</span></label>
-              <input class="inp" type="text" id="lastName" placeholder="Doe" oninput="updateSummary()">
-            </div>
+            <div class="field-wrap"><label class="lbl">Date of Birth<span class="req">*</span></label><input class="inp" type="date" id="dob"></div>
+            <div class="field-wrap"><label class="lbl">SSN Last 4<span class="req">*</span></label><input class="inp" type="text" id="ssn4" placeholder="1234" maxlength="4"></div>
+            <div class="field-wrap"><label class="lbl">Citizenship<span class="req">*</span></label><select class="inp" id="citizenship"><option value="">Select...</option><option>US Citizen</option><option>Permanent Resident</option><option>Visa Holder</option></select></div>
           </div>
-
+          <div class="field-row cols-2">
+            <div class="field-wrap"><label class="lbl">Email<span class="req">*</span></label><input class="inp" type="email" id="email" placeholder="john@email.com" oninput="updateSum()"></div>
+            <div class="field-wrap"><label class="lbl">Mobile Phone<span class="req">*</span></label><input class="inp" type="tel" id="phone" placeholder="(702) 555-0100"></div>
+          </div>
+          <div class="field-row"><div class="field-wrap"><label class="lbl">Street Address<span class="req">*</span></label><input class="inp" type="text" id="street" placeholder="123 Main Street"></div></div>
           <div class="field-row cols-3">
-            <div class="field-wrap">
-              <label class="field-label">Date of Birth<span class="req">*</span></label>
-              <input class="inp" type="date" id="dob">
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">SSN (Last 4 Only)<span class="req">*</span></label>
-              <input class="inp" type="text" placeholder="1234" maxlength="4" pattern="[0-9]{4}">
-              <div class="field-hint">Used for identity verification only</div>
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">US Citizenship<span class="req">*</span></label>
-              <select class="inp">
-                <option value="">Select...</option>
-                <option>US Citizen</option>
-                <option>Permanent Resident</option>
-                <option>Visa Holder</option>
-                <option>Other</option>
-              </select>
-            </div>
+            <div class="field-wrap"><label class="lbl">City<span class="req">*</span></label><input class="inp" type="text" id="city" placeholder="Las Vegas"></div>
+            <div class="field-wrap"><label class="lbl">State<span class="req">*</span></label><select class="inp" id="state"><option value="">State...</option><option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option></select></div>
+            <div class="field-wrap"><label class="lbl">ZIP<span class="req">*</span></label><input class="inp" type="text" id="zip" placeholder="89101" maxlength="5"></div>
           </div>
-
-          <div style="border-top:1px solid var(--border);margin:1.5rem 0;padding-top:1.5rem;">
-            <div class="sl" style="margin-bottom:1rem;">Contact</div>
-            <div class="field-row cols-2">
-              <div class="field-wrap">
-                <label class="field-label">Email Address<span class="req">*</span></label>
-                <input class="inp" type="email" id="email" placeholder="john@email.com" id="email" oninput="updateSummary()">
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">Mobile Phone<span class="req">*</span></label>
-                <input class="inp" type="tel" placeholder="(702) 555-0100" id="phone">
-              </div>
-            </div>
-            <div class="field-row cols-2">
-              <div class="field-wrap">
-                <label class="field-label">Alternate Phone<span class="opt">(opt)</span></label>
-                <input class="inp" type="tel" placeholder="(702) 555-0200">
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">Best Time to Contact</label>
-                <select class="inp">
-                  <option value="">Select...</option>
-                  <option>Morning (8am–12pm)</option>
-                  <option>Afternoon (12pm–5pm)</option>
-                  <option>Evening (5pm–8pm)</option>
-                  <option>Anytime</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div style="border-top:1px solid var(--border);margin:1.5rem 0;padding-top:1.5rem;">
-            <div class="sl" style="margin-bottom:1rem;">Current Address</div>
-            <div class="field-row">
-              <div class="field-wrap">
-                <label class="field-label">Street Address<span class="req">*</span></label>
-                <input class="inp" type="text" placeholder="123 Main Street, Apt 4B" id="streetAddress">
-              </div>
-            </div>
-            <div class="field-row cols-3">
-              <div class="field-wrap">
-                <label class="field-label">City<span class="req">*</span></label>
-                <input class="inp" type="text" placeholder="Las Vegas" id="city">
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">State<span class="req">*</span></label>
-                <select class="inp" id="state">
-                  <option value="">State...</option>
-                  <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
-                </select>
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">ZIP Code<span class="req">*</span></label>
-                <input class="inp" type="text" placeholder="89101" maxlength="5" id="zip">
-              </div>
-            </div>
-            <div class="field-row cols-3">
-              <div class="field-wrap">
-                <label class="field-label">Time at Address<span class="req">*</span></label>
-                <select class="inp" id="timeAtAddress">
-                  <option value="">Select...</option>
-                  <option>Less than 1 year</option>
-                  <option>1–2 years</option>
-                  <option>2–5 years</option>
-                  <option>5+ years</option>
-                </select>
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">Housing Status<span class="req">*</span></label>
-                <select class="inp" id="housingStatus" onchange="updateSummary()">
-                  <option value="">Select...</option>
-                  <option>Own — No Mortgage</option>
-                  <option>Own — With Mortgage</option>
-                  <option>Rent</option>
-                  <option>Live with Family</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">Monthly Housing Payment</label>
-                <input class="inp" type="number" placeholder="1500" id="monthlyHousingPmt">
-              </div>
-            </div>
+          <div class="field-row cols-2">
+            <div class="field-wrap"><label class="lbl">Housing Status<span class="req">*</span></label><select class="inp" id="housingStatus" onchange="updateSum()"><option value="">Select...</option><option>Own - No Mortgage</option><option>Own - With Mortgage</option><option>Rent</option><option>Live with Family</option></select></div>
+            <div class="field-wrap"><label class="lbl">Monthly Housing Payment</label><input class="inp" type="number" id="housingPmt" placeholder="1500"></div>
           </div>
         </div>
       </div>
 
-      <!-- ── SECTION 3: EMPLOYMENT & INCOME ── -->
+      <!-- SECTION 3 -->
       <div class="form-section" id="sec3">
-        <div class="form-section-header" onclick="toggleSection('sec3')">
+        <div class="section-header" onclick="toggleSec('sec3')">
           <div style="display:flex;align-items:center;">
             <div class="section-num">03</div>
-            <div>
-              <div class="section-title">Employment & Income</div>
-              <div class="section-sub">Employment · Income · Assets</div>
-            </div>
+            <div><div class="section-title">Employment & Income</div><div class="section-sub">Work · Income · Assets · Crypto</div></div>
           </div>
-          <div class="section-icon" id="icon-sec3">▼</div>
+          <div id="icon3" style="color:var(--dim);font-size:0.8rem;">v</div>
         </div>
-        <div class="form-section-body collapsed" id="body-sec3">
+        <div class="section-body collapsed" id="body3">
           <div class="field-row cols-2">
-            <div class="field-wrap">
-              <label class="field-label">Employment Status<span class="req">*</span></label>
-              <select class="inp" id="empStatus" onchange="toggleEmployer();updateSummary()">
-                <option value="">Select...</option>
-                <option>Full-Time Employed</option>
-                <option>Part-Time Employed</option>
-                <option>Self-Employed</option>
-                <option>Business Owner</option>
-                <option>Contract / Freelance</option>
-                <option>Retired</option>
-                <option>Other Income</option>
-              </select>
-            </div>
-            <div class="field-wrap" id="employerField">
-              <label class="field-label">Employer / Business Name<span class="req">*</span></label>
-              <input class="inp" type="text" placeholder="ACME Corp" id="employer">
-            </div>
+            <div class="field-wrap"><label class="lbl">Employment Status<span class="req">*</span></label><select class="inp" id="empStatus" onchange="updateSum()"><option value="">Select...</option><option>Full-Time Employed</option><option>Part-Time Employed</option><option>Self-Employed</option><option>Business Owner</option><option>Retired</option><option>Other</option></select></div>
+            <div class="field-wrap"><label class="lbl">Employer / Business</label><input class="inp" type="text" id="employer" placeholder="Company name"></div>
+          </div>
+          <div class="field-row cols-2">
+            <div class="field-wrap"><label class="lbl">Gross Monthly Income<span class="req">*</span></label><input class="inp" type="number" id="monthlyIncome" placeholder="6000" oninput="updateSum()"></div>
+            <div class="field-wrap"><label class="lbl">Credit Score Range<span class="req">*</span></label><select class="inp" id="creditScore" onchange="updateSum()"><option value="">Select...</option><option value="800">800+ Exceptional</option><option value="750">750-799 Very Good</option><option value="700">700-749 Good</option><option value="650">650-699 Fair</option><option value="600">600-649 Poor</option><option value="550">Below 600</option></select></div>
+          </div>
+          <div class="field-row cols-3">
+            <div class="field-wrap"><label class="lbl">Checking/Savings</label><input class="inp" type="number" id="checkingSavings" placeholder="10000"></div>
+            <div class="field-wrap"><label class="lbl">Investment Accounts</label><input class="inp" type="number" id="investments" placeholder="0"></div>
+            <div class="field-wrap"><label class="lbl">Other Monthly Income</label><input class="inp" type="number" id="otherIncome" placeholder="0"></div>
           </div>
 
-          <div class="field-row cols-3" id="employerDetails">
-            <div class="field-wrap">
-              <label class="field-label">Job Title</label>
-              <input class="inp" type="text" placeholder="Operations Manager" id="jobTitle">
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">Time at Employer<span class="req">*</span></label>
-              <select class="inp">
-                <option value="">Select...</option>
-                <option>Less than 6 months</option>
-                <option>6–12 months</option>
-                <option>1–2 years</option>
-                <option>2–5 years</option>
-                <option>5+ years</option>
-              </select>
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">Work Phone</label>
-              <input class="inp" type="tel" placeholder="(702) 555-0300">
-            </div>
-          </div>
-
-          <div style="border-top:1px solid var(--border);margin:1.5rem 0;padding-top:1.5rem;">
-            <div class="sl" style="margin-bottom:1rem;">Income</div>
-            <div class="field-row cols-2">
-              <div class="field-wrap">
-                <label class="field-label">Gross Monthly Income (USD)<span class="req">*</span></label>
-                <input class="inp" type="number" id="monthlyIncome" placeholder="6000" oninput="updateSummary()">
-                <div class="field-hint">Before taxes</div>
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">Income Type<span class="req">*</span></label>
-                <select class="inp" id="incomeType">
-                  <option value="">Select...</option>
-                  <option>Salary</option>
-                  <option>Hourly</option>
-                  <option>Commission</option>
-                  <option>Self-Employment / Business</option>
-                  <option>Retirement / Pension</option>
-                  <option>Social Security</option>
-                  <option>Other</option>
-                </select>
-              </div>
-            </div>
-            <div class="field-row cols-2">
-              <div class="field-wrap">
-                <label class="field-label">Other Monthly Income<span class="opt">(opt)</span></label>
-                <input class="inp" type="number" id="otherIncome" placeholder="0">
-                <div class="field-hint">Side income, rental, investments</div>
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">Other Income Source</label>
-                <input class="inp" type="text" placeholder="e.g. Rental property">
-              </div>
-            </div>
-          </div>
-
-          <div style="border-top:1px solid var(--border);margin:1.5rem 0;padding-top:1.5rem;">
-            <div class="sl" style="margin-bottom:1rem;">Traditional Assets</div>
-            <div class="field-row cols-3">
-              <div class="field-wrap">
-                <label class="field-label">Checking / Savings Balance</label>
-                <input class="inp" type="number" placeholder="10000">
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">Investment Accounts</label>
-                <input class="inp" type="number" placeholder="0">
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">Est. Credit Score<span class="req">*</span></label>
-                <select class="inp" id="creditScore" onchange="updateSummary()">
-                  <option value="">Select...</option>
-                  <option value="800">800+ Exceptional</option>
-                  <option value="750">750–799 Very Good</option>
-                  <option value="700">700–749 Good</option>
-                  <option value="650">650–699 Fair</option>
-                  <option value="600">600–649 Poor</option>
-                  <option value="550">Below 600</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- CRYPTO ASSETS -->
-          <div class="crypto-section">
-            <div class="crypto-label">
-              <span style="font-size:1rem;">◈</span>
-              Crypto Assets — Optional
-            </div>
-            <div class="check-row" id="cryptoCheck" onclick="toggleCrypto()" style="margin-bottom:1rem;">
+          <!-- Crypto -->
+          <div style="background:rgba(136,85,255,0.04);border:1px solid rgba(136,85,255,0.2);padding:1.5rem;margin-top:1.5rem;">
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">Crypto Assets - Optional</div>
+            <div class="check-row" id="cryptoRow" onclick="toggleCrypto()">
               <div class="check-box" id="cryptoBox"></div>
-              <div class="check-text">
-                <strong>Include crypto assets in my application.</strong>
-                I authorize IMC to verify my on-chain wallet balance(s) as part of the credit decisioning process. This may improve my approval odds and/or rate.
-              </div>
+              <div class="check-text"><strong style="color:var(--text);">Include crypto assets in my application.</strong> I authorize IMC to verify on-chain wallet balance as part of credit decisioning.</div>
             </div>
-
-            <div id="cryptoFields" style="display:none;">
-              <div class="field-wrap" style="margin-bottom:1rem;">
-                <label class="field-label">Wallet Address(es)</label>
-                <div class="wallet-tags" id="walletTags"></div>
-                <div class="add-wallet-row">
-                  <input class="inp" type="text" id="walletInput" placeholder="0x... or ENS name" style="flex:1;">
-                  <button class="btn-neon" onclick="addWallet()" style="width:auto;padding:0.8rem 1.25rem;white-space:nowrap;">+ Add</button>
-                </div>
-                <div class="field-hint">Add all wallets you want considered. We verify balances on-chain — read only.</div>
-              </div>
-
-              <div class="field-wrap" style="margin-bottom:1rem;">
-                <label class="field-label">Which assets should we consider?</label>
-                <div class="chain-grid" id="chainGrid">
-                  <div class="chain-opt on" onclick="toggleChain(this)"><div class="chain-icon">Ξ</div><div class="chain-name">ETH</div></div>
-                  <div class="chain-opt on" onclick="toggleChain(this)"><div class="chain-icon">₿</div><div class="chain-name">BTC</div></div>
-                  <div class="chain-opt on" onclick="toggleChain(this)"><div class="chain-icon">◈</div><div class="chain-name">MATIC</div></div>
-                  <div class="chain-opt on" onclick="toggleChain(this)"><div class="chain-icon">$</div><div class="chain-name">USDC</div></div>
-                  <div class="chain-opt" onclick="toggleChain(this)"><div class="chain-icon">$</div><div class="chain-name">USDT</div></div>
-                  <div class="chain-opt" onclick="toggleChain(this)"><div class="chain-icon">◎</div><div class="chain-name">SOL</div></div>
-                  <div class="chain-opt" onclick="toggleChain(this)"><div class="chain-icon">⟠</div><div class="chain-name">LINK</div></div>
-                  <div class="chain-opt" onclick="toggleChain(this)"><div class="chain-icon">◉</div><div class="chain-name">Other</div></div>
-                </div>
-              </div>
-
+            <div id="cryptoFields" style="display:none;margin-top:1rem;">
               <div class="field-row cols-2">
-                <div class="field-wrap">
-                  <label class="field-label">Estimated Total Crypto Value (USD)</label>
-                  <input class="inp" type="number" id="cryptoValue" placeholder="25000" oninput="updateSummary()">
-                  <div class="field-hint">Self-reported estimate — we verify on-chain</div>
-                </div>
-                <div class="field-wrap">
-                  <label class="field-label">Willing to use as collateral?</label>
-                  <div class="radio-group">
-                    <div class="radio-opt" onclick="selectRadio(this,'collat')"><div class="radio-opt-label">Yes</div></div>
-                    <div class="radio-opt selected" onclick="selectRadio(this,'collat')"><div class="radio-opt-label">No</div></div>
-                    <div class="radio-opt" onclick="selectRadio(this,'collat')"><div class="radio-opt-label">Open to it</div></div>
-                  </div>
+                <div class="field-wrap"><label class="lbl">Wallet Address</label><input class="inp" type="text" id="cryptoWallet" placeholder="0x..."></div>
+                <div class="field-wrap"><label class="lbl">Est. Total Value (USD)</label><input class="inp" type="number" id="cryptoValue" placeholder="25000" oninput="updateSum()"></div>
+              </div>
+              <div class="field-wrap"><label class="lbl">Willing to use as collateral?</label>
+                <div class="radio-group">
+                  <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-opt-lbl">Yes</div></div>
+                  <div class="radio-opt selected" onclick="selectRadio(this)"><div class="radio-opt-lbl">No</div></div>
+                  <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-opt-lbl">Open to it</div></div>
                 </div>
               </div>
             </div>
@@ -607,499 +214,246 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
         </div>
       </div>
 
-      <!-- ── SECTION 4: CO-APPLICANT ── -->
-      <div class="co-app-toggle" id="coToggle" onclick="toggleCoApp()">
-        <div style="display:flex;align-items:center;gap:1rem;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--surface3);line-height:1;">04</div>
-          <div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;color:var(--text);">Co-Applicant</div>
-            <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);margin-top:0.15rem;">Optional — may improve approval</div>
-          </div>
+      <!-- CO-APPLICANT TOGGLE -->
+      <div class="co-toggle" id="coToggle" onclick="toggleCoApp()">
+        <div style="display:flex;align-items:center;">
+          <div class="section-num">04</div>
+          <div><div class="section-title">Co-Applicant</div><div class="section-sub">Optional - may improve approval</div></div>
         </div>
-        <div class="toggle-switch" id="coSwitch"></div>
+        <div class="toggle-sw" id="coSwitch"></div>
       </div>
-
-      <div class="form-section" id="secCoApp" style="display:none;">
-        <div class="form-section-body">
-          <div style="background:rgba(240,192,64,0.04);border:1px solid rgba(240,192,64,0.15);padding:0.85rem 1rem;margin-bottom:1.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--gold);letter-spacing:0.1em;">
-            ★ Adding a co-applicant with strong credit or income may improve your rate and approval odds.
-          </div>
+      <div class="form-section" id="secCo" style="display:none;">
+        <div class="section-body">
+          <div style="background:rgba(240,192,64,0.04);border:1px solid rgba(240,192,64,0.15);padding:0.85rem 1rem;margin-bottom:1.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--gold);">Adding a co-applicant may improve your rate and approval odds.</div>
           <div class="field-row cols-2">
-            <div class="field-wrap">
-              <label class="field-label">Relationship to Applicant<span class="req">*</span></label>
-              <select class="inp">
-                <option value="">Select...</option>
-                <option>Spouse / Partner</option>
-                <option>Parent</option>
-                <option>Sibling</option>
-                <option>Business Partner</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">Co-App Full Name<span class="req">*</span></label>
-              <input class="inp" type="text" placeholder="Jane Doe">
-            </div>
+            <div class="field-wrap"><label class="lbl">Relationship<span class="req">*</span></label><select class="inp" id="coRelationship"><option value="">Select...</option><option>Spouse / Partner</option><option>Parent</option><option>Sibling</option><option>Business Partner</option></select></div>
+            <div class="field-wrap"><label class="lbl">Co-App Full Name<span class="req">*</span></label><input class="inp" type="text" id="coName" placeholder="Jane Doe"></div>
           </div>
           <div class="field-row cols-3">
-            <div class="field-wrap">
-              <label class="field-label">Date of Birth<span class="req">*</span></label>
-              <input class="inp" type="date">
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">SSN (Last 4)<span class="req">*</span></label>
-              <input class="inp" type="text" placeholder="5678" maxlength="4">
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">Email<span class="req">*</span></label>
-              <input class="inp" type="email" placeholder="jane@email.com">
-            </div>
-          </div>
-          <div class="field-row cols-3">
-            <div class="field-wrap">
-              <label class="field-label">Employment Status<span class="req">*</span></label>
-              <select class="inp">
-                <option value="">Select...</option>
-                <option>Full-Time Employed</option>
-                <option>Self-Employed</option>
-                <option>Business Owner</option>
-                <option>Retired</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">Gross Monthly Income<span class="req">*</span></label>
-              <input class="inp" type="number" placeholder="5000">
-            </div>
-            <div class="field-wrap">
-              <label class="field-label">Est. Credit Score<span class="req">*</span></label>
-              <select class="inp">
-                <option value="">Select...</option>
-                <option>800+ Exceptional</option>
-                <option>750–799 Very Good</option>
-                <option>700–749 Good</option>
-                <option>650–699 Fair</option>
-                <option>600–649 Poor</option>
-                <option>Below 600</option>
-              </select>
-            </div>
-          </div>
-          <div class="crypto-section">
-            <div class="crypto-label"><span style="font-size:1rem;">◈</span>Co-Applicant Crypto Assets — Optional</div>
-            <div class="field-row cols-2">
-              <div class="field-wrap">
-                <label class="field-label">Co-App Wallet Address<span class="opt">(opt)</span></label>
-                <input class="inp" type="text" placeholder="0x...">
-              </div>
-              <div class="field-wrap">
-                <label class="field-label">Est. Crypto Value (USD)<span class="opt">(opt)</span></label>
-                <input class="inp" type="number" placeholder="0">
-              </div>
-            </div>
+            <div class="field-wrap"><label class="lbl">Email<span class="req">*</span></label><input class="inp" type="email" id="coEmail" placeholder="jane@email.com"></div>
+            <div class="field-wrap"><label class="lbl">Monthly Income<span class="req">*</span></label><input class="inp" type="number" id="coIncome" placeholder="5000"></div>
+            <div class="field-wrap"><label class="lbl">Credit Score<span class="req">*</span></label><select class="inp" id="coCredit"><option value="">Select...</option><option>800+ Exceptional</option><option>750-799 Very Good</option><option>700-749 Good</option><option>650-699 Fair</option><option>Below 650</option></select></div>
           </div>
         </div>
       </div>
 
-      <!-- ── SECTION 5: DECLARATIONS ── -->
+      <!-- SECTION 5: DECLARATIONS -->
       <div class="form-section" id="sec5">
-        <div class="form-section-header" onclick="toggleSection('sec5')">
+        <div class="section-header" onclick="toggleSec('sec5')">
           <div style="display:flex;align-items:center;">
             <div class="section-num">05</div>
-            <div>
-              <div class="section-title">Declarations & Consent</div>
-              <div class="section-sub">Review · Agree · Submit</div>
-            </div>
+            <div><div class="section-title">Declarations & Consent</div><div class="section-sub">Review and submit</div></div>
           </div>
-          <div class="section-icon" id="icon-sec5">▼</div>
+          <div id="icon5" style="color:var(--dim);font-size:0.8rem;">v</div>
         </div>
-        <div class="form-section-body collapsed" id="body-sec5">
-          <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;">
-            <div class="check-row" id="decl1" onclick="toggleDecl('decl1','db1')">
-              <div class="check-box" id="db1"></div>
-              <div class="check-text">I certify that all information provided is true and accurate to the best of my knowledge. I understand that providing false information is grounds for immediate denial.</div>
-            </div>
-            <div class="check-row" id="decl2" onclick="toggleDecl('decl2','db2')">
-              <div class="check-box" id="db2"></div>
-              <div class="check-text">I authorize Illusive Motor Concepts to obtain a credit report and verify the information provided in this application including employment, income, and banking references.</div>
-            </div>
-            <div class="check-row" id="decl3" onclick="toggleDecl('decl3','db3')">
-              <div class="check-box" id="db3"></div>
-              <div class="check-text">I understand that loan payments are made in <strong>USDC on the Polygon network</strong>. I agree to maintain a wallet capable of sending USDC and acknowledge that late or missed payments may result in default proceedings.</div>
-            </div>
-            <div class="check-row" id="decl4" onclick="toggleDecl('decl4','db4')">
-              <div class="check-box" id="db4"></div>
-              <div class="check-text">I have read and agree to the IMC <strong>Terms of Service</strong>, <strong>Privacy Policy</strong>, and <strong>Electronic Communications Consent</strong>. I consent to receive loan disclosures and communications electronically.</div>
-            </div>
-          </div>
-
-          <div class="disclaimer">
-            <p>This application does not constitute a loan offer or approval. Final loan terms, APR, and approval are subject to credit review and underwriting by IMC. All loans are subject to applicable federal and state lending laws including CFPB, REG B, and ECOA. Equal Credit Opportunity — we do not discriminate based on race, color, religion, national origin, sex, marital status, age, or any other protected characteristic.</p>
-          </div>
-
+        <div class="section-body collapsed" id="body5">
+          <div class="check-row" id="d1" onclick="toggleDecl('d1','db1')"><div class="check-box" id="db1"></div><div class="check-text">All information provided is true and accurate. I understand providing false information is grounds for immediate denial.</div></div>
+          <div class="check-row" id="d2" onclick="toggleDecl('d2','db2')"><div class="check-box" id="db2"></div><div class="check-text">I authorize IMC to obtain a credit report and verify employment, income, and banking references.</div></div>
+          <div class="check-row" id="d3" onclick="toggleDecl('d3','db3')"><div class="check-box" id="db3"></div><div class="check-text">I understand loan payments are made in <strong style="color:var(--text);">USDC on Polygon</strong> and agree to maintain a compatible wallet.</div></div>
+          <div class="check-row" id="d4" onclick="toggleDecl('d4','db4')"><div class="check-box" id="db4"></div><div class="check-text">I agree to IMC Terms of Service, Privacy Policy, and consent to electronic communications.</div></div>
+          <div class="disclaimer"><p>This application does not constitute a loan offer. Final terms subject to underwriting. Equal Credit Opportunity - CFPB / REG B compliant.</p></div>
           <div style="margin-top:1.5rem;">
-            <button onclick="debugSubmit()" style="background:var(--purple);border:none;color:#fff;padding:0.5rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;cursor:pointer;margin-bottom:0.5rem;width:100%;">DEBUG: Quick Submit Test</button>
-          <button class="btn-gold" id="submitBtn" onclick="submitApp()" disabled>Submit Application →</button>
+            <button class="btn-purple" onclick="debugSubmit()">DEBUG: Quick Test Submit</button>
+            <button class="btn-gold" id="submitBtn" onclick="submitApp()" disabled>Submit Application</button>
           </div>
         </div>
       </div>
 
-    </div><!-- end formWrap -->
+    </div>
 
-    <!-- ════════════════════════════════
-         RIGHT: SIDEBAR
-    ════════════════════════════════ -->
-    <div class="sidebar" id="sidebar">
-
-      <!-- Application Progress -->
+    <!-- SIDEBAR -->
+    <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:1rem;">
       <div class="summary-card">
-        <div class="sl" style="margin-bottom:1rem;">Progress</div>
-        <div class="app-progress">
-          <div class="prog-step active" id="ps1"><div class="prog-dot"></div><div class="prog-step-label">Vehicle &amp; Loan</div></div>
-          <div class="prog-step" id="ps2"><div class="prog-dot"></div><div class="prog-step-label">Personal Info</div></div>
-          <div class="prog-step" id="ps3"><div class="prog-dot"></div><div class="prog-step-label">Employment &amp; Income</div></div>
-          <div class="prog-step" id="ps4"><div class="prog-dot"></div><div class="prog-step-label">Co-Applicant</div></div>
-          <div class="prog-step" id="ps5"><div class="prog-dot"></div><div class="prog-step-label">Declarations</div></div>
-        </div>
+        <div class="sl" style="margin-bottom:1rem;">Wallet Status</div>
+        <div id="walletStatus" style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--dim);letter-spacing:0.1em;">Not connected - connect wallet above</div>
       </div>
-
-      <!-- Loan Summary -->
       <div class="summary-card">
         <div class="sl" style="margin-bottom:1rem;">Loan Summary</div>
-        <div class="summary-row">
-          <div class="summary-key">Vehicle</div>
-          <div class="summary-val" style="font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.06em;text-align:right;">1957 Bel Air EV</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Loan Amount</div>
-          <div class="summary-val" id="sumAmt">—</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Down Payment</div>
-          <div class="summary-val" id="sumDown">—</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Term</div>
-          <div class="summary-val" id="sumTerm">60 months</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Est. APR</div>
-          <div class="summary-val" style="color:var(--neon);" id="sumAPR">—</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Est. Monthly</div>
-          <div class="summary-val" style="color:var(--gold);" id="sumMonthly">—</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Total Interest</div>
-          <div class="summary-val" style="color:var(--muted);font-size:0.9rem;" id="sumInterest">—</div>
-        </div>
+        <div class="sum-row"><div class="sum-key">Vehicle</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);text-align:right;">1957 Bel Air EV</div></div>
+        <div class="sum-row"><div class="sum-key">Amount</div><div class="sum-val" id="sumAmt">--</div></div>
+        <div class="sum-row"><div class="sum-key">Term</div><div class="sum-val" id="sumTerm">60 mo</div></div>
+        <div class="sum-row"><div class="sum-key">Est. APR</div><div class="sum-val" style="color:var(--neon);" id="sumAPR">--</div></div>
+        <div class="sum-row"><div class="sum-key">Est. Monthly</div><div class="sum-val" style="color:var(--gold);" id="sumMonthly">--</div></div>
+        <div class="sum-row"><div class="sum-key">Total Interest</div><div class="sum-val" style="font-size:0.85rem;color:var(--muted);" id="sumInterest">--</div></div>
       </div>
-
-      <!-- Applicant Summary -->
       <div class="summary-card">
         <div class="sl" style="margin-bottom:1rem;">Applicant</div>
-        <div class="summary-row">
-          <div class="summary-key">Name</div>
-          <div class="summary-val" style="font-size:0.85rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.06em;" id="sumName">—</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Email</div>
-          <div class="summary-val" style="font-size:0.65rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.06em;" id="sumEmail">—</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Employment</div>
-          <div class="summary-val" style="font-size:0.7rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.06em;" id="sumEmp">—</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Monthly Income</div>
-          <div class="summary-val" id="sumIncome">—</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Housing</div>
-          <div class="summary-val" style="font-size:0.7rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.06em;" id="sumHousing">—</div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-key">Credit Score</div>
-          <div class="summary-val" id="sumCredit" style="color:var(--green);">—</div>
-        </div>
-        <div class="summary-row" id="sumCryptoRow" style="display:none;">
-          <div class="summary-key">Crypto Assets</div>
-          <div class="summary-val" style="color:var(--purple);" id="sumCrypto">—</div>
-        </div>
+        <div class="sum-row"><div class="sum-key">Name</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);" id="sumName">--</div></div>
+        <div class="sum-row"><div class="sum-key">Email</div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);" id="sumEmail">--</div></div>
+        <div class="sum-row"><div class="sum-key">Employment</div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);" id="sumEmp">--</div></div>
+        <div class="sum-row"><div class="sum-key">Income</div><div class="sum-val" id="sumIncome">--</div></div>
+        <div class="sum-row"><div class="sum-key">Credit</div><div class="sum-val" style="color:var(--green);" id="sumCredit">--</div></div>
       </div>
-
-      <!-- DTI Indicator -->
       <div class="summary-card" id="dtiCard" style="display:none;">
-        <div class="sl" style="margin-bottom:1rem;">Debt-to-Income</div>
-        <div id="dtiDisplay" style="margin-bottom:0.75rem;"></div>
-        <div style="width:100%;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
-          <div id="dtiBar" style="height:100%;border-radius:3px;transition:width 0.5s,background 0.5s;"></div>
-        </div>
-        <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.1em;margin-top:0.5rem;" id="dtiNote"></div>
+        <div class="sl" style="margin-bottom:0.75rem;">DTI Ratio</div>
+        <div id="dtiVal" style="font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;"></div>
+        <div style="height:5px;background:var(--surface3);border-radius:2px;margin-top:0.5rem;overflow:hidden;"><div id="dtiBar" style="height:100%;border-radius:2px;transition:width 0.5s;"></div></div>
+        <div id="dtiNote" style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);margin-top:0.4rem;letter-spacing:0.1em;"></div>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- SUCCESS SCREEN -->
-<div id="successWrap" style="display:none;max-width:600px;margin:0 auto;padding:8rem 3rem;">
+<!-- SUCCESS -->
+<div id="successWrap" style="display:none;padding:5.5rem 3rem 4rem;">
   <div class="success-wrap">
-    <div style="font-size:4rem;margin-bottom:1.5rem;filter:drop-shadow(0 0 20px var(--neon));">⬡</div>
-    <div class="sl" style="justify-content:center;margin-bottom:0.5rem;">Application Received</div>
-    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;letter-spacing:0.05em;line-height:0.9;margin-bottom:1.5rem;">
-      APPLICATION<br><span style="color:var(--neon);text-shadow:0 0 30px var(--neon-glow);">SUBMITTED</span>
-    </h2>
-    <p style="color:var(--muted);font-size:0.9rem;line-height:1.75;margin-bottom:2rem;">
-      Your application has been received and is under review by our underwriting team.
-      You can expect a decision within <strong style="color:var(--text);">24–48 hours</strong>.
-    </p>
-    <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;text-align:left;margin-bottom:2rem;" id="successSummary"></div>
-    <div style="display:flex;flex-direction:column;gap:0.75rem;">
-      <button class="btn-neon" onclick="location.href='index.html'">← Back to Marketplace</button>
-    </div>
+    <div style="font-size:3rem;margin-bottom:1.5rem;">&#11042;</div>
+    <div class="sl" style="justify-content:center;">Application Received</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;letter-spacing:0.05em;line-height:0.9;margin-bottom:1.5rem;">APPLICATION<br><span style="color:var(--neon);text-shadow:0 0 20px rgba(0,212,255,0.3);">SUBMITTED</span></h2>
+    <p style="color:var(--muted);font-size:0.9rem;line-height:1.75;margin-bottom:2rem;">Your application is under review. Expect a decision within 24-48 hours.</p>
+    <div id="successDetails" style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;text-align:left;margin-bottom:2rem;"></div>
+    <a href="index.html"><button style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;width:100%;">Back to Marketplace</button></a>
   </div>
 </div>
 
 <script>
+var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
+var WALLET = '';
 var walletConnected = false;
 var selectedTerm = 60;
 var coAppEnabled = false;
 var cryptoEnabled = false;
-var wallets = [];
-var decls = {decl1:false,decl2:false,decl3:false,decl4:false};
+var decls = {d1:false,d2:false,d3:false,d4:false};
 
-// -- WALLET CONNECT --
 function connectWallet() {
-  if (!window.ethereum) { alert('Install MetaMask to connect.'); return; }
+  if (!window.ethereum) { alert('Please install MetaMask.'); return; }
   window.ethereum.request({ method: 'eth_requestAccounts' })
     .then(function(accounts) {
-      var addr = accounts[0];
-      CONNECTED_WALLET = addr;
+      WALLET = accounts[0];
       walletConnected = true;
-      var short = addr.slice(0,6) + '...' + addr.slice(-4);
-      document.getElementById('wDot').style.background = 'var(--neon)';
-      document.getElementById('wDot').style.boxShadow = '0 0 6px var(--neon)';
+      var short = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
+      document.getElementById('wDot').style.background = '#00d4ff';
+      document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
       document.getElementById('wLabel').textContent = short;
-      document.getElementById('walletBtn').style.borderColor = 'var(--neon)';
-      document.getElementById('walletBtn').style.color = 'var(--neon)';
+      document.getElementById('walletBtn').style.borderColor = '#00d4ff';
+      document.getElementById('walletBtn').style.color = '#00d4ff';
+      document.getElementById('walletStatus').textContent = accounts[0];
+      document.getElementById('walletStatus').style.color = '#00d4ff';
     })
-    .catch(function() {});
+    .catch(function(e) { console.error(e); });
 }
 
-// -- SECTION TOGGLE --
-function toggleSection(id) {
-  var body = document.getElementById('body-' + id);
-  var icon = document.getElementById('icon-' + id);
-  var sec = document.getElementById(id);
+function toggleSec(id) {
+  var body = document.getElementById('body' + id.replace('sec',''));
+  var icon = document.getElementById('icon' + id.replace('sec',''));
   var isOpen = !body.classList.contains('collapsed');
   body.classList.toggle('collapsed', isOpen);
-  icon.classList.toggle('open', !isOpen);
-  sec.classList.toggle('active', !isOpen);
-  updateProgress();
+  icon.style.color = isOpen ? 'var(--dim)' : 'var(--neon)';
 }
 
-// -- TERM SELECT --
 function selectTerm(el, t) {
   selectedTerm = t;
   document.querySelectorAll('#termGroup .radio-opt').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
-  document.getElementById('sumTerm').textContent = t + ' months';
-  updateSummary();
+  document.getElementById('sumTerm').textContent = t + ' mo';
+  calcLoan();
 }
 
-// -- RADIO SELECT --
-function selectRadio(el, group) {
+function selectRadio(el) {
   el.closest('.radio-group').querySelectorAll('.radio-opt').forEach(function(o) { o.classList.remove('selected'); });
   el.classList.add('selected');
 }
 
-// -- CO-APPLICANT --
 function toggleCoApp() {
   coAppEnabled = !coAppEnabled;
   document.getElementById('coSwitch').classList.toggle('on', coAppEnabled);
-  document.getElementById('coToggle').classList.toggle('active', coAppEnabled);
-  var sec = document.getElementById('secCoApp');
-  sec.style.display = coAppEnabled ? 'block' : 'none';
-  document.getElementById('ps4').classList.toggle('active', coAppEnabled);
-  document.getElementById('ps4').classList.toggle('done', false);
+  document.getElementById('secCo').style.display = coAppEnabled ? 'block' : 'none';
 }
 
-// -- CRYPTO TOGGLE --
 function toggleCrypto() {
   cryptoEnabled = !cryptoEnabled;
-  var box = document.getElementById('cryptoBox');
-  var row = document.getElementById('cryptoCheck');
-  box.classList.toggle('on', cryptoEnabled);
-  row.classList.toggle('checked', cryptoEnabled);
+  document.getElementById('cryptoBox').classList.toggle('on', cryptoEnabled);
+  document.getElementById('cryptoRow').classList.toggle('checked', cryptoEnabled);
   document.getElementById('cryptoFields').style.display = cryptoEnabled ? 'block' : 'none';
-  if (!cryptoEnabled) { document.getElementById('sumCryptoRow').style.display = 'none'; }
-  updateSummary();
 }
 
-// -- ADD WALLET --
-function addWallet() {
-  var inp = document.getElementById('walletInput');
-  var val = inp.value.trim();
-  if (!val) return;
-  wallets.push(val);
-  inp.value = '';
-  renderWallets();
-}
-
-function renderWallets() {
-  var container = document.getElementById('walletTags');
-  container.innerHTML = wallets.map(function(w, i) {
-    return '<div class="wallet-tag">' + w.slice(0,8) + '...' + w.slice(-4) + '<button onclick="removeWallet(' + i + ')">-</button></div>';
-  }).join('');
-}
-
-function removeWallet(i) {
-  wallets.splice(i, 1);
-  renderWallets();
-}
-
-// -- CHAIN TOGGLE --
-function toggleChain(el) { el.classList.toggle('on'); }
-
-// -- EMPLOYER TOGGLE --
-function toggleEmployer() {
-  var status = document.getElementById('empStatus').value;
-  var showEmp = status && status !== 'Retired' && status !== 'Other Income';
-  document.getElementById('employerField').style.display = showEmp ? 'block' : 'none';
-  document.getElementById('employerDetails').style.display = showEmp ? 'grid' : 'none';
-}
-
-// -- DECLARATIONS --
 function toggleDecl(rowId, boxId) {
   decls[rowId] = !decls[rowId];
-  var box = document.getElementById(boxId);
-  var row = document.getElementById(rowId);
-  box.classList.toggle('on', decls[rowId]);
-  box.innerHTML = decls[rowId] ? '<span style="color:#050507;font-size:10px;font-weight:700;">-</span>' : '';
-  row.classList.toggle('checked', decls[rowId]);
-  checkSubmit();
+  document.getElementById(boxId).classList.toggle('on', decls[rowId]);
+  document.getElementById(boxId).innerHTML = decls[rowId] ? '<span style="color:#050507;font-size:10px;font-weight:700;">v</span>' : '';
+  document.getElementById(rowId).classList.toggle('checked', decls[rowId]);
+  document.getElementById('submitBtn').disabled = !(decls.d1 && decls.d2 && decls.d3 && decls.d4);
 }
 
-function checkSubmit() {
-  var allDecl = decls.decl1 && decls.decl2 && decls.decl3 && decls.decl4;
-  document.getElementById('submitBtn').disabled = !allDecl;
-}
+function gv(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function gn(id) { var v = parseFloat(gv(id)); return isNaN(v) ? 0 : v; }
 
-// -- PROGRESS --
-function updateProgress() {
-  var openSecs = ['sec1','sec2','sec3','sec5'];
-  var psMap = {'sec1':'ps1','sec2':'ps2','sec3':'ps3','sec5':'ps5'};
-  openSecs.forEach(function(id) {
-    var isOpen = !document.getElementById('body-' + id).classList.contains('collapsed');
-    var psEl = document.getElementById(psMap[id]);
-    if (psEl) { psEl.classList.toggle('active', isOpen); }
-  });
-}
-
-// -- SUMMARY UPDATE --
-function updateSummary() {
-  var amt = parseFloat(document.getElementById('loanAmt').value) || 0;
-  var down = parseFloat(document.getElementById('downPmt').value) || 0;
-  var term = selectedTerm;
-  var income = parseFloat(document.getElementById('monthlyIncome').value) || 0;
-  var creditVal = document.getElementById('creditScore').value;
-  var cryptoVal = parseFloat(document.getElementById('cryptoValue') ? document.getElementById('cryptoValue').value : 0) || 0;
-  var fname = document.getElementById('firstName').value;
-  var lname = document.getElementById('lastName').value;
-  var email = document.getElementById('email').value;
-  var emp = document.getElementById('empStatus').value;
-  var housing = document.getElementById('housingStatus').value;
-
-  // Estimate APR based on credit score
-  var apr = 15;
-  if (creditVal >= 800) apr = 7.9;
-  else if (creditVal >= 750) apr = 9.9;
-  else if (creditVal >= 700) apr = 11.9;
-  else if (creditVal >= 650) apr = 13.9;
-  else if (creditVal >= 600) apr = 14.9;
-
-  // If crypto considered, potential rate improvement
-  if (cryptoEnabled && cryptoVal > amt * 0.5) apr = Math.max(6.9, apr - 1.5);
-
-  var monthly = 0;
-  var interest = 0;
-  if (amt > 0 && term > 0) {
-    var r = apr / 100 / 12;
-    monthly = (amt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1);
-    interest = monthly * term - amt;
-  }
-
-  // Update summary
-  document.getElementById('sumAmt').textContent = amt > 0 ? '$' + amt.toLocaleString() : '-';
-  document.getElementById('sumDown').textContent = down > 0 ? '$' + down.toLocaleString() : '-';
-  document.getElementById('sumAPR').textContent = amt > 0 && creditVal ? apr.toFixed(1) + '%' : '-';
-  document.getElementById('sumMonthly').textContent = monthly > 0 ? '$' + monthly.toFixed(2) : '-';
-  document.getElementById('sumInterest').textContent = interest > 0 ? '$' + interest.toFixed(0) : '-';
-  document.getElementById('sumName').textContent = (fname || lname) ? (fname + ' ' + lname).trim() : '-';
-  document.getElementById('sumEmail').textContent = email || '-';
-  document.getElementById('sumEmp').textContent = emp || '-';
-  document.getElementById('sumIncome').textContent = income > 0 ? '$' + income.toLocaleString() : '-';
-  document.getElementById('sumHousing').textContent = housing || '-';
-  document.getElementById('sumCredit').textContent = creditVal ? creditVal + '+' : '-';
-
-  if (cryptoEnabled && cryptoVal > 0) {
-    document.getElementById('sumCryptoRow').style.display = 'flex';
-    document.getElementById('sumCrypto').textContent = '$' + cryptoVal.toLocaleString();
-  }
-
-  // DTI
-  if (monthly > 0 && income > 0) {
-    var dti = (monthly / income) * 100;
-    var dtiCard = document.getElementById('dtiCard');
-    dtiCard.style.display = 'block';
-    var dtiColor = dti < 28 ? 'var(--green)' : dti < 36 ? 'var(--gold)' : 'var(--red)';
-    var dtiNote = dti < 28 ? 'Excellent DTI - strong approval profile' : dti < 36 ? 'Acceptable DTI - good approval odds' : dti < 43 ? 'Elevated DTI - may require stronger profile' : 'High DTI - co-applicant recommended';
-    document.getElementById('dtiDisplay').innerHTML = '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:2rem;color:' + dtiColor + ';letter-spacing:0.05em;">' + dti.toFixed(1) + '%</div><div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;margin-top:0.2rem;">Payment-to-Income Ratio</div>';
-    document.getElementById('dtiBar').style.width = Math.min(dti * 1.5, 100) + '%';
-    document.getElementById('dtiBar').style.background = dtiColor;
-    document.getElementById('dtiNote').textContent = dtiNote;
+function calcLoan() {
+  var amt = gn('loanAmt');
+  var apr = 12;
+  var credit = parseFloat(gv('creditScore')) || 0;
+  if (credit >= 800) apr = 7.9; else if (credit >= 750) apr = 9.9; else if (credit >= 700) apr = 11.9; else if (credit >= 650) apr = 13.9; else if (credit > 0) apr = 14.9;
+  if (cryptoEnabled && gn('cryptoValue') > amt * 0.5) apr = Math.max(6.9, apr - 1.5);
+  var r = apr / 100 / 12;
+  var monthly = amt > 0 ? (amt * r * Math.pow(1+r,selectedTerm)) / (Math.pow(1+r,selectedTerm)-1) : 0;
+  var interest = monthly * selectedTerm - amt;
+  document.getElementById('sumAmt').textContent = amt > 0 ? '$' + amt.toLocaleString() : '--';
+  document.getElementById('sumAPR').textContent = amt > 0 && credit > 0 ? apr.toFixed(1) + '%' : '--';
+  document.getElementById('sumMonthly').textContent = monthly > 0 ? '$' + monthly.toFixed(2) : '--';
+  document.getElementById('sumInterest').textContent = interest > 0 ? '$' + interest.toFixed(0) : '--';
+  if (monthly > 0 && gn('monthlyIncome') > 0) {
+    var dti = (monthly / gn('monthlyIncome') * 100);
+    var color = dti < 28 ? 'var(--green)' : dti < 36 ? 'var(--gold)' : 'var(--red)';
+    document.getElementById('dtiCard').style.display = 'block';
+    document.getElementById('dtiVal').textContent = dti.toFixed(1) + '%';
+    document.getElementById('dtiVal').style.color = color;
+    document.getElementById('dtiBar').style.width = Math.min(dti*1.5,100) + '%';
+    document.getElementById('dtiBar').style.background = color;
+    document.getElementById('dtiNote').textContent = dti < 28 ? 'Excellent DTI' : dti < 36 ? 'Acceptable DTI' : 'Elevated DTI - co-applicant recommended';
   }
 }
 
-// -- SUBMIT --
-var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
-var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
-var CONNECTED_WALLET = '';
+function updateSum() {
+  calcLoan();
+  var fn = gv('firstName'), ln = gv('lastName');
+  document.getElementById('sumName').textContent = (fn + ' ' + ln).trim() || '--';
+  document.getElementById('sumEmail').textContent = gv('email') || '--';
+  document.getElementById('sumEmp').textContent = gv('empStatus') || '--';
+  var inc = gn('monthlyIncome');
+  document.getElementById('sumIncome').textContent = inc > 0 ? '$' + inc.toLocaleString() : '--';
+  var credit = gv('creditScore');
+  document.getElementById('sumCredit').textContent = credit ? credit + '+' : '--';
+}
 
-function submitApp() {
-  var btn = document.getElementById('submitBtn');
-  btn.textContent = 'Submitting...';
-  btn.disabled = true;
-
-  var wallet = CONNECTED_WALLET || document.getElementById('wLabel').textContent;
-  if (!wallet || wallet === 'Connect Wallet') wallet = '0x8050d5462309dd334116Bb3e949386c3238DB9ac';
-
-  function gv(id) { var el = document.getElementById(id); return el ? el.value : ''; }
-  function gn(id) { var v = parseFloat(gv(id)); return isNaN(v) ? 0 : v; }
-
-  var payload = {
-    wallet_address: wallet,
+function buildPayload(wallet) {
+  return {
+    wallet_address: wallet || WALLET || 'unknown',
     loan_amount: gn('loanAmt') || 1,
     down_payment: gn('downPmt'),
-    term_months: selectedTerm || 60,
+    term_months: selectedTerm,
     intended_use: gv('intendedUse'),
     first_name: gv('firstName'),
     last_name: gv('lastName'),
     dob: gv('dob'),
     email: gv('email'),
+    phone: gv('phone'),
+    street_address: gv('street'),
+    city: gv('city'),
+    state: gv('state'),
+    zip: gv('zip'),
     housing_status: gv('housingStatus'),
+    monthly_housing_payment: gn('housingPmt'),
     employment_status: gv('empStatus'),
+    employer: gv('employer'),
     gross_monthly_income: gn('monthlyIncome'),
     credit_score_range: gv('creditScore'),
+    checking_savings: gn('checkingSavings'),
+    investment_accounts: gn('investments'),
+    other_income: gn('otherIncome'),
     crypto_included: cryptoEnabled,
     crypto_estimated_value: cryptoEnabled ? gn('cryptoValue') : 0,
     co_app_included: coAppEnabled,
+    co_app_relationship: coAppEnabled ? gv('coRelationship') : null,
+    co_app_name: coAppEnabled ? gv('coName') : null,
+    co_app_email: coAppEnabled ? gv('coEmail') : null,
+    co_app_income: coAppEnabled ? gn('coIncome') : null,
+    co_app_credit_score: coAppEnabled ? gv('coCredit') : null,
     status: 'pending'
   };
+}
 
-  console.log('Payload:', JSON.stringify(payload));
-
+function sendToSupabase(payload, onSuccess, onError) {
   fetch(SB_URL + '/rest/v1/imc_applications', {
     method: 'POST',
     headers: {
@@ -1110,138 +464,65 @@ function submitApp() {
     },
     body: JSON.stringify(payload)
   })
-  .then(function(res) { return res.json(); })
-  .then(function(data) {
-    console.log('Supabase response:', data);
-    if (data && data[0] && data[0].id) {
-      showSuccess(gv('firstName'), gv('lastName'), gv('email'), gn('loanAmt'), 12, data[0].id);
-    } else if (data && data.message) {
-      console.error('Supabase error:', data.message);
-      alert('Submit error: ' + data.message);
-      btn.disabled = false;
-      btn.textContent = 'Submit Application ->';
-    } else {
-      showSuccess(gv('firstName'), gv('lastName'), gv('email'), gn('loanAmt'), 12, 'pending');
-    }
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    console.log('Supabase response:', d);
+    if (d && d[0] && d[0].id) { onSuccess(d[0].id); }
+    else if (d && d.message) { onError(d.message); }
+    else { onSuccess('pending'); }
   })
-  .catch(function(err) {
-    console.error('Fetch error:', err);
-    alert('Error: ' + err.message);
-    btn.disabled = false;
-    btn.textContent = 'Submit Application ->';
-  });
+  .catch(function(e) { onError(e.message); });
 }
 
-function showSuccess() {
-  var amt = document.getElementById('loanAmt').value;
-  var fname = document.getElementById('firstName').value;
-  var lname = document.getElementById('lastName').value;
-  var email = document.getElementById('email').value;
+function submitApp() {
+  var btn = document.getElementById('submitBtn');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+  var payload = buildPayload(WALLET);
+  console.log('Submitting:', JSON.stringify(payload));
+  sendToSupabase(payload,
+    function(id) { showSuccess(id); },
+    function(err) {
+      console.error('Error:', err);
+      alert('Submission error: ' + err);
+      btn.disabled = false;
+      btn.textContent = 'Submit Application';
+    }
+  );
+}
 
+function debugSubmit() {
+  var payload = buildPayload('0x8050d5462309dd334116Bb3e949386c3238DB9ac');
+  payload.first_name = payload.first_name || 'Test';
+  payload.last_name = payload.last_name || 'User';
+  payload.loan_amount = payload.loan_amount || 40000;
+  payload.term_months = payload.term_months || 60;
+  console.log('Debug submit:', JSON.stringify(payload));
+  sendToSupabase(payload,
+    function(id) { alert('SUCCESS! ID: ' + id.slice(0,8).toUpperCase() + ' - Check admin panel'); },
+    function(err) { alert('ERROR: ' + err); }
+  );
+}
+
+function showSuccess(id) {
   document.getElementById('appWrap').style.display = 'none';
   document.getElementById('successWrap').style.display = 'block';
-
-  var r = parseFloat(document.getElementById('creditScore').value) || 700;
-  var apr = 15;
-  if (r >= 800) apr = 7.9; else if (r >= 750) apr = 9.9; else if (r >= 700) apr = 11.9; else if (r >= 650) apr = 13.9; else apr = 14.9;
-  if (cryptoEnabled) apr = Math.max(6.9, apr - 1.5);
-
   var rows = [
-    ['Applicant', (fname + ' ' + lname).trim() || 'Not provided'],
-    ['Email', email || 'Not provided'],
-    ['Vehicle', '1957 Chevrolet Bel Air - Aquamarine EV'],
-    ['Loan Amount', amt ? '$' + parseFloat(amt).toLocaleString() : 'Not provided'],
+    ['Application ID', id ? id.slice(0,8).toUpperCase() : 'PENDING'],
+    ['Applicant', (gv('firstName') + ' ' + gv('lastName')).trim() || 'Not provided'],
+    ['Email', gv('email') || 'Not provided'],
+    ['Loan Amount', gn('loanAmt') > 0 ? '$' + gn('loanAmt').toLocaleString() : 'Not provided'],
     ['Term', selectedTerm + ' months'],
-    ['Est. APR', apr.toFixed(1) + '%'],
-    ['Co-Applicant', coAppEnabled ? 'Yes' : 'No'],
-    ['Crypto Assets', cryptoEnabled ? 'Included in review' : 'Not submitted'],
-    ['Status', '- Under Review'],
+    ['Wallet', WALLET ? WALLET.slice(0,6)+'...'+WALLET.slice(-4) : 'Not connected'],
+    ['Status', 'Under Review'],
   ];
-
-  document.getElementById('successSummary').innerHTML = rows.map(function(r2) {
-    return '<div style="display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;">' +
-      '<span style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);">' + r2[0] + '</span>' +
-      '<span style="color:' + (r2[0] === 'Status' ? 'var(--neon)' : 'var(--text)') + ';">' + r2[1] + '</span></div>';
+  document.getElementById('successDetails').innerHTML = rows.map(function(r) {
+    return '<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;">' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);">' + r[0] + '</span>' +
+      '<span style="color:' + (r[0]==='Status'?'var(--neon)':r[0]==='Application ID'?'var(--gold)':'var(--text)') + ';">' + r[1] + '</span></div>';
   }).join('');
   window.scrollTo(0,0);
 }
-
-var APPLY_AUTHORIZED = ['0x6c6ad1de674c292c088b29aa1312b991590bbb9f','0x8050d5462309dd334116bb3e949386c3238db9ac'];
-function applyGateConnect() {
-  var lbl = document.getElementById('applyGateLabel');
-  var dot = document.getElementById('applyGateDot');
-  var btn = document.getElementById('applyGateBtn');
-  if (typeof window.ethereum === 'undefined') {
-    lbl.textContent = 'No wallet found - Install MetaMask';
-    return;
-  }
-  lbl.textContent = 'Connecting...';
-  window.ethereum.request({ method: 'eth_requestAccounts' })
-    .then(function(accounts) {
-      var addr = accounts[0].toLowerCase();
-      if (APPLY_AUTHORIZED.indexOf(addr) > -1) {
-        dot.style.background = '#00d4ff';
-        dot.style.boxShadow = '0 0 8px #00d4ff';
-        lbl.textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4) + ' - Unlocked';
-        btn.style.borderColor = '#00d4ff';
-        btn.style.color = '#00d4ff';
-        var gate = document.getElementById('applyGate');
-        gate.style.transition = 'opacity 0.8s';
-        CONNECTED_WALLET = accounts[0];
-        gate.style.opacity = '0';
-        setTimeout(function() {
-          gate.style.display = 'none';
-          document.getElementById('wDot').style.background = '#00d4ff';
-          document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
-          document.getElementById('wLabel').textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
-          walletConnected = true;
-        CONNECTED_WALLET = accounts[0];
-        }, 800);
-      } else {
-        document.getElementById('applyDenied').style.display = 'block';
-        dot.style.background = '#ff4455';
-        btn.style.borderColor = 'rgba(255,68,85,0.4)';
-        btn.style.color = '#ff4455';
-        lbl.textContent = 'Access Denied';
-      }
-    })
-    .catch(function() { lbl.textContent = 'Connect Wallet to Enter'; });
-}
-
-
-function debugSubmit() {
-  var SB = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
-  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
-  var wallet = CONNECTED_WALLET || document.getElementById('wLabel').textContent || '0x8050d5462309dd334116Bb3e949386c3238DB9ac';
-  var payload = {
-    wallet_address: wallet,
-    loan_amount: 40000,
-    down_payment: 5500,
-    term_months: 60,
-    first_name: 'Luis',
-    last_name: 'Ocadiz',
-    email: 'hello@luisocadiz.online',
-    employment_status: 'Self-Employed',
-    gross_monthly_income: 8000,
-    credit_score_range: '750',
-    status: 'pending'
-  };
-  console.log('Submitting payload:', payload);
-  fetch(SB + '/rest/v1/imc_applications', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': KEY,
-      'Authorization': 'Bearer ' + KEY,
-      'Prefer': 'return=representation'
-    },
-    body: JSON.stringify(payload)
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(d) { console.log('SUCCESS:', d); alert('Saved! Check admin panel. ID: ' + (d[0] ? d[0].id.slice(0,8) : 'unknown')); })
-  .catch(function(e) { console.error('ERROR:', e); alert('Error: ' + e.message); });
-}
-
 </script>
 </body>
 </html>
