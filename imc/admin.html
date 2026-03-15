@@ -357,6 +357,9 @@ function renderTable(apps) {
     var date = new Date(app.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
     var statusClass = app.status === 'approved' ? 'b-approved' : app.status === 'denied' ? 'b-denied' : app.status === 'review' ? 'b-review' : 'b-pending';
     var statusLabel = app.status === 'review' ? 'In Review' : app.status || 'Pending';
+    // Flag: denied but system recommends approve
+    var rec = getApprovalRecommendation(app);
+    var showFlag = app.status === 'denied' && rec.status === 'approve';
     var monthly = 0;
     if (app.loan_amount && app.term_months) {
       var apr = (app.final_apr || 12) / 100 / 12;
@@ -374,7 +377,9 @@ function renderTable(apps) {
       '<td style="font-family:\'DM Mono\',monospace;font-size:0.7rem;color:' + dtiColor + ';">' + dti + '%</td>' +
       '<td>' + (app.credit_score_range ? '<span style="font-family:\'DM Mono\',monospace;font-size:0.62rem;color:var(--muted);">' + app.credit_score_range + '</span>' : '--') + '</td>' +
       '<td>' + (app.crypto_included ? '<span style="color:var(--purple);font-family:\'DM Mono\',monospace;font-size:0.6rem;">Yes</span>' : '<span style="color:var(--dim);font-family:\'DM Mono\',monospace;font-size:0.6rem;">No</span>') + '</td>' +
-      '<td><span class="badge ' + statusClass + '">' + statusLabel + '</span></td>' +
+      '<td><span class="badge ' + statusClass + '">' + statusLabel + '</span>' +
+      (showFlag ? '<span title="System recommended approval - review required" style="margin-left:6px;display:inline-flex;align-items:center;gap:4px;font-family:\'DM Mono\',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:#f0c040;background:rgba(240,192,64,0.1);border:1px solid rgba(240,192,64,0.3);padding:0.15rem 0.5rem;"><span style="width:6px;height:6px;border-radius:50%;background:#f0c040;box-shadow:0 0 6px rgba(240,192,64,0.6);animation:pulse 1.5s infinite;flex-shrink:0;"></span>REG B FLAG</span>' : '') +
+      '</td>' +
       '<td><button onclick="event.stopPropagation();openApp(\'' + app.id + '\')" style="font-family:\'DM Mono\',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'var(--gold)\';this.style.color=\'var(--gold)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.color=\'var(--dim)\'">Review</button></td>' +
     '</tr>';
   }).join('');
@@ -559,6 +564,196 @@ function getApprovalRecommendation(app) {
   }
 }
 
+
+function buildDeclineEmail(app, reasons, uwNotes) {
+  var name = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Applicant';
+  var appId = app.id ? app.id.slice(0,8).toUpperCase() : 'N/A';
+  var vehicle = app.vehicle_name || '1957 Chevrolet Bel Air - Aquamarine EV';
+  var appDate = new Date(app.created_at).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  var reapplyDate = new Date(Date.now() + 90*24*60*60*1000).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  var creditBand = getCreditBand(app.credit_score_range);
+  var isCreditFactor = reasons.some(function(r) { return r.includes('credit') || r.includes('Credit'); });
+
+  var reasonsHtml = reasons.map(function(r) {
+    return '<tr><td style="padding:8px 0;border-bottom:1px solid #1e1e2e;font-family:monospace;font-size:13px;color:#8888aa;">' + r + '</td></tr>';
+  }).join('');
+
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>IMC Application Decision</title></head>' +
+  '<body style="margin:0;padding:0;background:#050507;font-family:Inter,Arial,sans-serif;">' +
+  '<div style="max-width:600px;margin:0 auto;background:#050507;">' +
+
+  // Header
+  '<div style="background:#0a0a0f;border-bottom:2px solid #00d4ff;padding:32px 40px;text-align:center;">' +
+  '<div style="display:inline-flex;align-items:center;gap:12px;margin-bottom:8px;">' +
+  '<div style="width:10px;height:10px;border-radius:50%;background:#00d4ff;box-shadow:0 0 12px #00d4ff;"></div>' +
+  '<div style="font-family:Georgia,serif;font-size:22px;letter-spacing:4px;color:#e8e8f0;text-transform:uppercase;">ILLUSIVE MOTOR CONCEPTS</div>' +
+  '</div>' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#444460;margin-top:4px;">Web3 Auto Finance - Las Vegas, NV</div>' +
+  '</div>' +
+
+  // Decision banner
+  '<div style="background:#0f0f18;border-left:3px solid #ff4455;padding:24px 40px;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#ff4455;margin-bottom:8px;">Application Decision</div>' +
+  '<div style="font-family:Georgia,serif;font-size:28px;color:#e8e8f0;letter-spacing:1px;">Unable to Approve</div>' +
+  '<div style="font-family:monospace;font-size:11px;color:#444460;margin-top:8px;letter-spacing:1px;">Application ID: ' + appId + ' | Date: ' + appDate + '</div>' +
+  '</div>' +
+
+  // Applicant + vehicle
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:16px;">Application Details</div>' +
+  '<table style="width:100%;border-collapse:collapse;">' +
+  '<tr><td style="padding:6px 0;font-family:monospace;font-size:11px;color:#444460;text-transform:uppercase;letter-spacing:1px;width:140px;">Applicant</td><td style="font-family:monospace;font-size:13px;color:#e8e8f0;">' + name + '</td></tr>' +
+  '<tr><td style="padding:6px 0;font-family:monospace;font-size:11px;color:#444460;text-transform:uppercase;letter-spacing:1px;">Vehicle</td><td style="font-family:monospace;font-size:13px;color:#e8e8f0;">' + vehicle + '</td></tr>' +
+  '<tr><td style="padding:6px 0;font-family:monospace;font-size:11px;color:#444460;text-transform:uppercase;letter-spacing:1px;">Loan Requested</td><td style="font-family:monospace;font-size:13px;color:#e8e8f0;">$' + (app.loan_amount||0).toLocaleString() + ' USDC</td></tr>' +
+  '</table>' +
+  '</div>' +
+
+  // Required ECOA notice
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;background:#0a0a0f;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:16px;">Reason(s) for Decision</div>' +
+  '<p style="font-family:monospace;font-size:12px;color:#8888aa;line-height:1.6;margin:0 0 16px;">After careful review of your application, we are unable to extend credit at this time for the following reason(s):</p>' +
+  '<table style="width:100%;border-collapse:collapse;">' + reasonsHtml + '</table>' +
+  (isCreditFactor && creditBand ? '<div style="margin-top:16px;padding:12px 16px;background:#14141f;border:1px solid #2a2a3e;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:4px;">Credit Score Range Considered</div>' +
+  '<div style="font-family:monospace;font-size:14px;color:#f0c040;">' + creditBand + '</div>' +
+  '<div style="font-family:monospace;font-size:10px;color:#444460;margin-top:4px;">IMC minimum threshold: 700+</div>' +
+  '</div>' : '') +
+  '</div>' +
+
+  // Reapplication
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:12px;">Reapplication</div>' +
+  '<p style="font-family:monospace;font-size:12px;color:#8888aa;line-height:1.6;margin:0;">You may reapply after <span style="color:#00d4ff;">' + reapplyDate + '</span> (90 days from this decision). We encourage you to review the resources below to strengthen your application before reapplying.</p>' +
+  '</div>' +
+
+  // Credit referral resources
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;background:#0a0a0f;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#00d4ff;margin-bottom:16px;">Resources to Strengthen Your Application</div>' +
+  '<p style="font-family:monospace;font-size:11px;color:#444460;margin:0 0 16px;line-height:1.6;">These free resources may help improve your credit profile before your next application:</p>' +
+  '<table style="width:100%;border-collapse:collapse;">' +
+  '<tr><td style="padding:10px 0;border-bottom:1px solid #1e1e2e;">' +
+  '<a href="https://www.experian.com/boost" style="color:#00d4ff;font-family:monospace;font-size:12px;text-decoration:none;">Experian Boost</a>' +
+  '<div style="font-family:monospace;font-size:10px;color:#444460;margin-top:2px;">Instantly raise your FICO score by adding utility and phone payments</div>' +
+  '</td></tr>' +
+  '<tr><td style="padding:10px 0;border-bottom:1px solid #1e1e2e;">' +
+  '<a href="https://www.self.inc" style="color:#00d4ff;font-family:monospace;font-size:12px;text-decoration:none;">Self Credit Builder</a>' +
+  '<div style="font-family:monospace;font-size:10px;color:#444460;margin-top:2px;">Build credit history with a secured credit builder loan</div>' +
+  '</td></tr>' +
+  '<tr><td style="padding:10px 0;">' +
+  '<a href="https://www.creditkarma.com" style="color:#00d4ff;font-family:monospace;font-size:12px;text-decoration:none;">Credit Karma</a>' +
+  '<div style="font-family:monospace;font-size:10px;color:#444460;margin-top:2px;">Free credit monitoring, score tracking, and personalized improvement tips</div>' +
+  '</td></tr>' +
+  '</table>' +
+  '</div>' +
+
+  // Appeals
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:12px;">Questions or Appeals</div>' +
+  '<p style="font-family:monospace;font-size:12px;color:#8888aa;line-height:1.6;margin:0 0 8px;">If you believe this decision was made in error or would like to discuss your application, please contact us:</p>' +
+  '<div style="font-family:monospace;font-size:12px;color:#00d4ff;">appeals@illusivemotorconcepts.com</div>' +
+  '<div style="font-family:monospace;font-size:11px;color:#444460;margin-top:4px;">Response within 3-5 business days</div>' +
+  '</div>' +
+
+  // ECOA footer
+  '<div style="padding:24px 40px;background:#0a0a0f;">' +
+  '<p style="font-family:monospace;font-size:10px;color:#2a2a3e;line-height:1.7;margin:0;">' +
+  'NOTICE: The Federal Equal Credit Opportunity Act prohibits creditors from discriminating against credit applicants on the basis of race, color, religion, national origin, sex, marital status, age (provided the applicant has the capacity to enter into a binding contract), because all or part of the applicant's income derives from any public assistance program, or because the applicant has in good faith exercised any right under the Consumer Credit Protection Act.' +
+  '<br><br>Illusive Motor Concepts | Las Vegas, NV | ' +
+  '<a href="https://ooak21.github.io/luisocadiz-portfolio/imc/" style="color:#2a2a3e;">illusivemotorconcepts.com</a>' +
+  '</p>' +
+  '</div>' +
+
+  '</div></body></html>';
+}
+
+function getCreditBand(scoreRange) {
+  if (!scoreRange) return null;
+  var score = parseFloat(scoreRange);
+  if (score >= 800) return '800+ (Exceptional)';
+  if (score >= 750) return '750-799 (Very Good)';
+  if (score >= 700) return '700-749 (Good)';
+  if (score >= 650) return '650-699 (Fair)';
+  if (score >= 600) return '600-649 (Poor)';
+  return 'Below 600';
+}
+
+function getDeclineReasons(app) {
+  var reasons = [];
+  var credit = parseFloat(app.credit_score_range) || 0;
+  var income = app.gross_monthly_income || 0;
+  var loanAmt = app.loan_amount || 0;
+  var term = app.term_months || 60;
+  var r = 12/100/12;
+  var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+  var dti = income > 0 ? (monthly / income * 100) : 0;
+
+  if (credit > 0 && credit < 700) reasons.push('Credit score below minimum threshold');
+  if (dti > 45) reasons.push('Debt-to-income ratio exceeds maximum limit (' + dti.toFixed(1) + '% vs 45% max)');
+  if (income < 2000 && income > 0) reasons.push('Insufficient verifiable income');
+  if (!app.employment_status) reasons.push('Insufficient employment information provided');
+  if (!app.email) reasons.push('Application information incomplete - email required');
+  if (reasons.length === 0) reasons.push('Application did not meet current lending criteria');
+  return reasons;
+}
+
+function sendDecisionEmail(app, decision, update) {
+  var RESEND_KEY = 're_cKYozSSD_FY3oWRdcEWh2FyGVfmJobUDR';
+  var name = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Applicant';
+
+  var subject, htmlBody;
+
+  if (decision === 'denied') {
+    var reasons = getDeclineReasons(app);
+    if (update.underwriter_notes) reasons.push('Underwriter notes: ' + update.underwriter_notes);
+    htmlBody = buildDeclineEmail(app, reasons, update.underwriter_notes);
+    subject = 'Your IMC Auto Finance Application - Decision Notice';
+  } else {
+    // Approval email - simple for now
+    var appId = app.id ? app.id.slice(0,8).toUpperCase() : 'N/A';
+    subject = 'Your IMC Application Has Been Approved!';
+    htmlBody = '<!DOCTYPE html><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;">' +
+      '<div style="max-width:600px;margin:0 auto;">' +
+      '<div style="border-bottom:2px solid #00d4ff;padding-bottom:24px;margin-bottom:32px;">' +
+      '<div style="font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div>' +
+      '</div>' +
+      '<div style="font-size:28px;color:#00ff88;margin-bottom:24px;">Application Approved</div>' +
+      '<p style="color:#8888aa;line-height:1.7;">Dear ' + name + ',</p>' +
+      '<p style="color:#8888aa;line-height:1.7;margin-top:12px;">Congratulations! Your loan application (ID: ' + appId + ') for the <strong style="color:#e8e8f0;">' + (app.vehicle_name||'vehicle') + '</strong> has been approved.</p>' +
+      '<div style="margin:24px 0;padding:20px;background:#0a0a0f;border:1px solid #1e1e2e;">' +
+      '<div style="color:#444460;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Approved Terms</div>' +
+      '<div style="color:#f0c040;font-size:14px;">APR: ' + (update.final_apr||'TBD') + '%</div>' +
+      '<div style="color:#e8e8f0;font-size:14px;margin-top:6px;">Amount: $' + (update.approved_amount||app.loan_amount||0).toLocaleString() + ' USDC</div>' +
+      '<div style="color:#e8e8f0;font-size:14px;margin-top:6px;">Term: ' + (app.term_months||60) + ' months</div>' +
+      '</div>' +
+      '<p style="color:#8888aa;line-height:1.7;">Our team will contact you shortly with next steps including documentation requirements and funding timeline.</p>' +
+      '<p style="color:#444460;font-size:11px;margin-top:32px;">Illusive Motor Concepts | Las Vegas, NV | appeals@illusivemotorconcepts.com</p>' +
+      '</div></body></html>';
+  }
+
+  if (!RESEND_KEY || RESEND_KEY === '') {
+    console.log('Resend key not set - email not sent. Would have sent to:', app.email);
+    console.log('Subject:', subject);
+    return;
+  }
+
+  fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + RESEND_KEY
+    },
+    body: JSON.stringify({
+      from: 'IMC Auto Finance <yourimcapplication@luisocadiz.online>',
+      to: [app.email],
+      subject: subject,
+      html: htmlBody
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) { console.log('Email sent:', d); })
+  .catch(function(e) { console.error('Email error:', e); });
+}
+
 function submitDecision(decision) {
   if (!currentAppId) return;
   var apr = parseFloat(document.getElementById('uwAPR').value);
@@ -574,6 +769,8 @@ function submitDecision(decision) {
     reviewed_at: new Date().toISOString()
   };
 
+  var app = allApps.find(function(a) { return a.id === currentAppId; });
+
   fetch(SB_URL + '/rest/v1/imc_applications?id=eq.' + currentAppId, {
     method: 'PATCH',
     headers: {
@@ -586,6 +783,10 @@ function submitDecision(decision) {
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
+    // Send email on denied or approved decisions
+    if (app && app.email && (decision === 'denied' || decision === 'approved')) {
+      sendDecisionEmail(app, decision, update);
+    }
     closeModal();
     loadApplications();
   })
