@@ -152,7 +152,7 @@ select.inp{cursor:pointer;appearance:none;}
     <p style="font-family:'Inter',sans-serif;font-size:0.85rem;color:#444460;line-height:1.75;max-width:400px;margin:0 auto 3rem;">A peer-to-peer auto finance platform built on blockchain. Classic vehicles tokenized as digital assets. Loans funded by investors. Yield distributed on-chain in USDC. Built in Las Vegas.</p>
 
     <!-- Wallet connect -->
-    <button id="gateWalletBtn" onclick="gateConnect()" class="gate-btn">
+    <button id="gateWalletBtn" class="gate-btn" style="cursor:pointer;" onclick="var AUTH='0x6c6ad1de674c292c088b29aa1312b991590bbb9f';var b=this,d=document.getElementById('gateDot'),l=document.getElementById('gateLabel');if(!window.ethereum){l.textContent='Install MetaMask';return;}l.textContent='Connecting...';window.ethereum.request({method:'eth_requestAccounts'}).then(function(a){var addr=a[0].toLowerCase();if(addr===AUTH){d.style.background='#00d4ff';d.style.boxShadow='0 0 8px #00d4ff';l.textContent=a[0].slice(0,6)+'...'+a[0].slice(-4)+' Unlocked';b.style.borderColor='#00d4ff';b.style.color='#00d4ff';document.getElementById('accessDenied').style.display='none';var g=document.getElementById('imcGate');g.style.transition='opacity 0.8s';g.style.opacity='0';setTimeout(function(){g.style.display='none';walletConnected=true;},800);}else{document.getElementById('accessDenied').style.display='block';document.getElementById('deniedAddr').textContent=a[0]+' not authorized';d.style.background='#ff4455';b.style.color='#ff4455';l.textContent='Access Denied';}}).catch(function(){l.textContent='Connect Wallet to Enter';});">
       <span id="gateDot" style="width:7px;height:7px;border-radius:50%;background:#444460;transition:all 0.3s;flex-shrink:0;"></span>
       <span id="gateLabel">Connect Wallet to Enter</span>
     </button>
@@ -634,51 +634,6 @@ function showPage(page) {
   if (navEl) navEl.classList.add('active');
   currentPage = page;
   window.scrollTo(0, 0);
-}
-
-var AUTHORIZED = '0x6c6ad1de674c292c088b29aa1312b991590bbb9f';
-
-function gateConnect() {
-  var lbl = document.getElementById('gateLabel');
-  var dot = document.getElementById('gateDot');
-  var btn = document.getElementById('gateWalletBtn');
-  if (typeof window.ethereum === 'undefined') {
-    lbl.textContent = 'No wallet found - Install MetaMask';
-    return;
-  }
-  lbl.textContent = 'Connecting...';
-  window.ethereum.request({ method: 'eth_requestAccounts' })
-    .then(function(accounts) {
-      var addr = accounts[0].toLowerCase();
-      if (addr === AUTHORIZED) {
-        dot.style.background = '#00d4ff';
-        dot.style.boxShadow = '0 0 8px #00d4ff';
-        lbl.textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4) + ' - Unlocked';
-        btn.style.borderColor = '#00d4ff';
-        btn.style.color = '#00d4ff';
-        document.getElementById('accessDenied').style.display = 'none';
-        var gate = document.getElementById('imcGate');
-        gate.style.transition = 'opacity 0.8s';
-        gate.style.opacity = '0';
-        setTimeout(function() {
-          gate.style.display = 'none';
-          document.getElementById('wDot').classList.add('on');
-          document.getElementById('wLabel').textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
-          document.getElementById('walletBtn').style.borderColor = 'var(--neon)';
-          document.getElementById('walletBtn').style.color = 'var(--neon)';
-          walletConnected = true;
-        }, 800);
-      } else {
-        document.getElementById('accessDenied').style.display = 'block';
-        document.getElementById('deniedAddr').textContent = accounts[0] + ' is not authorized';
-        dot.style.background = '#ff4455';
-        dot.style.boxShadow = '0 0 8px rgba(255,68,85,0.4)';
-        btn.style.borderColor = 'rgba(255,68,85,0.4)';
-        btn.style.color = '#ff4455';
-        lbl.textContent = 'Access Denied - Try Another Wallet';
-      }
-    })
-    .catch(function() { lbl.textContent = 'Connect Wallet to Enter'; });
 }
 
 function connectWallet() {
