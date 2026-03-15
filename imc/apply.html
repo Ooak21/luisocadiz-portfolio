@@ -1074,8 +1074,8 @@ function submitApp() {
 
   // Build application payload
   var payload = {
-    wallet_address: CONNECTED_WALLET || 'unknown',
-    loan_amount: parseFloat(amt) || 0,
+    wallet_address: CONNECTED_WALLET || document.getElementById('wLabel').textContent || 'unknown',
+    loan_amount: parseFloat(amt) || null,
     down_payment: parseFloat(document.getElementById('downPmt').value) || 0,
     term_months: selectedTerm,
     intended_use: document.getElementById('intendedUse').value,
@@ -1182,6 +1182,7 @@ function applyGateConnect() {
           document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
           document.getElementById('wLabel').textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
           walletConnected = true;
+        CONNECTED_WALLET = a[0];
         }, 800);
       } else {
         document.getElementById('applyDenied').style.display = 'block';
