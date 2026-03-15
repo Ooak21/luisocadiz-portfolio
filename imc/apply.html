@@ -103,14 +103,7 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
           <div id="icon1" style="color:var(--neon);font-size:0.8rem;">v</div>
         </div>
         <div class="section-body" id="body1">
-          <div style="background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.2);padding:1.25rem 1.5rem;position:relative;margin-bottom:1rem;">
-            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);opacity:0.6;"></div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.05em;color:var(--text);margin-bottom:0.25rem;">1957 Chevrolet Bel Air — Aquamarine EV</div>
-            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
-              <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);">Appraised: <span style="color:var(--gold);">$55,000</span></span>
-              <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);">Max Loan: <span style="color:var(--neon);">$49,500</span></span>
-            </div>
-          </div>
+          <div id="vehicleSelector" style="margin-bottom:1rem;display:flex;flex-direction:column;gap:2px;"></div>
           <div class="field-row cols-2">
             <div class="field-wrap"><label class="lbl">Loan Amount (USD)<span class="req">*</span></label><input class="inp" type="number" id="loanAmt" placeholder="e.g. 40000" max="49500" oninput="calcLoan()"><div class="hint">Max $49,500</div></div>
             <div class="field-wrap"><label class="lbl">Down Payment (USD)</label><input class="inp" type="number" id="downPmt" placeholder="e.g. 5500" oninput="calcLoan()"></div>
@@ -269,7 +262,7 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
       </div>
       <div class="summary-card">
         <div class="sl" style="margin-bottom:1rem;">Loan Summary</div>
-        <div class="sum-row"><div class="sum-key">Vehicle</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);text-align:right;">1957 Bel Air EV</div></div>
+        <div class="sum-row"><div class="sum-key">Vehicle</div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:right;" id="sumVehicle">--</div></div>
         <div class="sum-row"><div class="sum-key">Amount</div><div class="sum-val" id="sumAmt">--</div></div>
         <div class="sum-row"><div class="sum-key">Term</div><div class="sum-val" id="sumTerm">60 mo</div></div>
         <div class="sum-row"><div class="sum-key">Est. APR</div><div class="sum-val" style="color:var(--neon);" id="sumAPR">--</div></div>
@@ -307,6 +300,60 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
 </div>
 
 <script>
+
+var VEHICLES = [
+  { id:'1', name:'1957 Chevrolet Bel Air', color:'Aquamarine', tag:'Tesla EV Conversion - Las Vegas', appraised:55000, maxLoan:49500, status:'funding' },
+  { id:'2', name:'1969 Dodge Charger R/T', color:'Plum Crazy Purple', tag:'Tesla EV Conversion - Las Vegas', appraised:68000, maxLoan:61200, status:'active' },
+  { id:'3', name:'1970 Ford Mustang Boss 429', color:'Grabber Green', tag:'Tesla EV Conversion - Las Vegas', appraised:72000, maxLoan:64800, status:'active' }
+];
+var selectedVehicleId = '1';
+
+function getURLParam(name) {
+  var params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+function renderVehicles() {
+  var param = getURLParam('vehicle') || '1';
+  selectedVehicleId = param;
+  var container = document.getElementById('vehicleSelector');
+  container.innerHTML = VEHICLES.map(function(v) {
+    var isSelected = v.id === selectedVehicleId;
+    var statusColor = v.status === 'funding' ? 'var(--neon)' : 'var(--green)';
+    var statusLabel = v.status === 'funding' ? 'Open for Funding' : 'Active - Buyer Needed';
+    return '<div onclick="selectVehicle(\'' + v.id + '\')" style="background:' + (isSelected ? 'rgba(0,212,255,0.06)' : 'var(--surface2)') + ';border:1px solid ' + (isSelected ? 'rgba(0,212,255,0.4)' : 'var(--border)') + ';padding:1.25rem 1.5rem;position:relative;cursor:pointer;transition:all 0.2s;" id="vcard-' + v.id + '">' +
+      (isSelected ? '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);opacity:0.6;"></div>' : '') +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+      '<div>' +
+      '<div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.05em;color:var(--text);margin-bottom:0.2rem;">' + v.name + ' - ' + v.color + '</div>' +
+      '<div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.1em;">' + v.tag + '</div>' +
+      '<div style="display:flex;gap:1.5rem;margin-top:0.5rem;">' +
+      '<span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);">Appraised: <span style="color:var(--gold);">$' + v.appraised.toLocaleString() + '</span></span>' +
+      '<span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);">Max Loan: <span style="color:var(--neon);">$' + v.maxLoan.toLocaleString() + '</span></span>' +
+      '</div></div>' +
+      '<div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:' + statusColor + ';text-align:right;padding-top:0.25rem;">' + statusLabel + '</div>' +
+      '</div></div>';
+  }).join('');
+  updateVehicleSummary();
+}
+
+function selectVehicle(id) {
+  selectedVehicleId = id;
+  renderVehicles();
+  calcLoan();
+}
+
+function updateVehicleSummary() {
+  var v = VEHICLES.find(function(x) { return x.id === selectedVehicleId; });
+  if (!v) return;
+  document.getElementById('sumVehicle').textContent = v.name;
+  var loanInp = document.getElementById('loanAmt');
+  if (loanInp && !loanInp.value) loanInp.placeholder = 'Max $' + v.maxLoan.toLocaleString();
+}
+
+// Auto-run on page load
+window.addEventListener('load', function() { renderVehicles(); });
+
 var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
 var WALLET = '';
@@ -419,6 +466,8 @@ function updateSum() {
 function buildPayload(wallet) {
   return {
     wallet_address: wallet || WALLET || 'unknown',
+    vehicle_id: selectedVehicleId,
+    vehicle_name: (VEHICLES.find(function(v){return v.id===selectedVehicleId;})||{name:'Unknown'}).name,
     loan_amount: gn('loanAmt') || 1,
     down_payment: gn('downPmt'),
     term_months: selectedTerm,

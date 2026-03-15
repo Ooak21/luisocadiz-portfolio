@@ -177,7 +177,7 @@ select.inp{cursor:pointer;appearance:none;}
   </a>
   <ul class="nav-links">
     <li><a onclick="showPage('marketplace')" id="nav-marketplace">Marketplace</a></li>
-    <li><a onclick="location.href='apply.html'" id="nav-dashboard">Dashboard</a></li>
+    <li><a onclick="location.href='apply.html?vehicle=1'" id="nav-dashboard">Dashboard</a></li>
     <li><a href='apply.html' id="nav-apply">Apply</a></li>
   </ul>
   <button class="nav-wallet" id="walletBtn" onclick="connectWallet()">
@@ -207,7 +207,7 @@ select.inp{cursor:pointer;appearance:none;}
       </p>
       <div style="display:flex;gap:1rem;flex-wrap:wrap;">
         <button class="btn-gold" onclick="showPage('marketplace')">Browse Loans →</button>
-        <button class="btn-neon" onclick="location.href='apply.html'">Apply for Financing</button>
+        <button class="btn-neon" onclick="location.href='apply.html?vehicle=1'">Apply for Financing</button>
       </div>
     </div>
 
@@ -279,7 +279,7 @@ select.inp{cursor:pointer;appearance:none;}
 
           <div style="display:flex;gap:0.75rem;">
             <button class="btn-neon" style="flex:1;" onclick="showPage('marketplace')">View Details →</button>
-            <button class="btn-gold" style="padding:0.85rem 1.25rem;" onclick="location.href='apply.html'">Invest</button>
+            <button class="btn-gold" style="padding:0.85rem 1.25rem;" onclick="location.href='apply.html?vehicle=1'">Invest</button>
           </div>
         </div>
       </div>
@@ -321,7 +321,7 @@ select.inp{cursor:pointer;appearance:none;}
           </div>
           <div style="display:flex;gap:0.75rem;">
             <button style="flex:1;background:transparent;border:1px solid rgba(0,255,136,0.3);color:var(--green);padding:0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">View Details</button>
-            <button style="padding:0.85rem 1.25rem;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);color:var(--green);font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Funded</button>
+            <button onclick="location.href='apply.html?vehicle=2'" style="padding:0.85rem 1.25rem;background:var(--gold);border:none;color:#050507;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Apply Now</button>
           </div>
         </div>
       </div>
@@ -362,7 +362,7 @@ select.inp{cursor:pointer;appearance:none;}
           </div>
           <div style="display:flex;gap:0.75rem;">
             <button style="flex:1;background:transparent;border:1px solid rgba(0,255,136,0.3);color:var(--green);padding:0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">View Details</button>
-            <button style="padding:0.85rem 1.25rem;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);color:var(--green);font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Funded</button>
+            <button onclick="location.href='apply.html?vehicle=3'" style="padding:0.85rem 1.25rem;background:var(--gold);border:none;color:#050507;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Apply Now</button>
           </div>
         </div>
       </div>
