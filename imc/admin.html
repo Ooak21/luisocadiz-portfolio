@@ -106,6 +106,57 @@ textarea.inp{resize:vertical;min-height:80px;font-family:'DM Mono',monospace;}
 .filter-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
 .filter-tab:hover{color:var(--muted);}
 
+
+/* APPROVAL INDICATOR */
+.approval-indicator {
+  display:flex;
+  align-items:center;
+  gap:0.75rem;
+  padding:0.85rem 1.25rem;
+  margin-bottom:1rem;
+  font-family:'DM Mono',monospace;
+  font-size:0.62rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  border:1px solid var(--border);
+  background:var(--surface2);
+}
+.approval-indicator.recommend-approve {
+  background:rgba(0,255,136,0.06);
+  border-color:rgba(0,255,136,0.3);
+  color:var(--green);
+}
+.approval-indicator.recommend-deny {
+  background:rgba(255,68,85,0.06);
+  border-color:rgba(255,68,85,0.3);
+  color:var(--red);
+}
+.approval-indicator.recommend-review {
+  background:rgba(240,192,64,0.06);
+  border-color:rgba(240,192,64,0.3);
+  color:var(--gold);
+}
+.approval-dot {
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.recommend-approve .approval-dot {
+  background:var(--green);
+  box-shadow:0 0 8px rgba(0,255,136,0.6);
+  animation:pulse 1.5s infinite;
+}
+.recommend-deny .approval-dot {
+  background:var(--red);
+  box-shadow:0 0 8px rgba(255,68,85,0.4);
+}
+.recommend-review .approval-dot {
+  background:var(--gold);
+  box-shadow:0 0 8px rgba(240,192,64,0.5);
+  animation:pulse 2s infinite;
+}
+
 /* ANIMATIONS */
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
@@ -206,6 +257,10 @@ textarea.inp{resize:vertical;min-height:80px;font-family:'DM Mono',monospace;}
     </div>
     <div class="modal-body" id="modalBody"></div>
     <div class="uw-panel">
+      <div id="approvalIndicator" class="approval-indicator recommend-review">
+        <div class="approval-dot"></div>
+        <div id="approvalText">Analyzing application...</div>
+      </div>
       <div class="uw-title">Underwriting Decision</div>
       <div class="uw-grid">
         <div>
@@ -431,6 +486,18 @@ function openApp(id) {
     '<div>' + buildCols(col2) + '</div>';
 
   // Pre-fill underwriting fields if already reviewed
+  // Show approval recommendation
+  var rec = getApprovalRecommendation(app);
+  var ind = document.getElementById('approvalIndicator');
+  var txt = document.getElementById('approvalText');
+  ind.className = 'approval-indicator recommend-' + rec.status;
+  txt.innerHTML = rec.label + ' &nbsp;|&nbsp; ' + rec.reasons.join(' &nbsp;&middot;&nbsp; ');
+  if (rec.dti) {
+    document.getElementById('uwAPR').value = rec.status === 'approve' ?
+      (rec.credit >= 800 ? 7.9 : rec.credit >= 750 ? 9.9 : rec.credit >= 700 ? 11.9 : 12.9) : '';
+    document.getElementById('uwAmount').value = app.loan_amount || '';
+  }
+
   document.getElementById('uwDecision').value = app.decision || '';
   document.getElementById('uwAPR').value = app.final_apr || '';
   document.getElementById('uwAmount').value = app.approved_amount || app.loan_amount || '';
@@ -442,6 +509,54 @@ function openApp(id) {
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   currentAppId = null;
+}
+
+
+function getApprovalRecommendation(app) {
+  var credit = parseFloat(app.credit_score_range) || 0;
+  var income = app.gross_monthly_income || 0;
+  var loanAmt = app.loan_amount || 0;
+  var term = app.term_months || 60;
+  var cryptoVal = app.crypto_estimated_value || 0;
+  var cryptoCollateral = app.crypto_as_collateral;
+  var cryptoIncluded = app.crypto_included;
+
+  // Calculate monthly payment at 12% estimate
+  var r = 12 / 100 / 12;
+  var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+  var dti = income > 0 ? (monthly / income * 100) : 999;
+
+  // Rule 1: FICO 700+ AND DTI < 45%
+  var rule1 = credit >= 700 && dti < 45;
+
+  // Rule 2: Crypto holdings >= 70% of LTV in qualifying assets AND elected collateral
+  var ltv = loanAmt;
+  var rule2 = cryptoIncluded &&
+    (cryptoCollateral === 'Yes' || cryptoCollateral === 'Open to it') &&
+    cryptoVal >= (ltv * 0.70);
+
+  var approved = rule1 || rule2;
+  var reasons = [];
+
+  if (rule1) reasons.push('FICO ' + credit + ' + DTI ' + dti.toFixed(1) + '%');
+  if (rule2) reasons.push('Crypto collateral $' + cryptoVal.toLocaleString() + ' >= 70% LTV');
+
+  if (!rule1 && credit > 0) {
+    if (credit < 700) reasons.push('FICO ' + credit + ' below 700 threshold');
+    if (dti >= 45) reasons.push('DTI ' + dti.toFixed(1) + '% exceeds 45% limit');
+  }
+
+  if (credit === 0 && !cryptoIncluded) {
+    return { status: 'review', label: 'More Info Needed', reasons: ['Incomplete application data'] };
+  }
+
+  if (approved) {
+    return { status: 'approve', label: 'Recommended: Approve', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  } else if (credit >= 650 || (cryptoIncluded && cryptoVal > 0)) {
+    return { status: 'review', label: 'Manual Review Required', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  } else {
+    return { status: 'deny', label: 'Not Recommended', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  }
 }
 
 function submitDecision(decision) {
