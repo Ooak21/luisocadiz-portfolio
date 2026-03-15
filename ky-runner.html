@@ -108,39 +108,182 @@ function r(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h);}
 function circ(x,y,rad,c){ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill();}
 
 function drawBG(){
+  // Night sky gradient - deep purple/blue like Vegas night
   var g=ctx.createLinearGradient(0,0,0,GY);
-  g.addColorStop(0,'#030305');g.addColorStop(0.5,'#07070a');g.addColorStop(1,'#0f0f0e');
+  g.addColorStop(0,'#05030a');
+  g.addColorStop(0.4,'#0a0614');
+  g.addColorStop(0.8,'#120818');
+  g.addColorStop(1,'#1a0a10');
   ctx.fillStyle=g;ctx.fillRect(0,0,W,GY);
-  // Moon glow
-  var mg=ctx.createRadialGradient(680,55,0,680,55,40);
-  mg.addColorStop(0,'rgba(255,250,220,0.12)');mg.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=mg;ctx.beginPath();ctx.arc(680,55,40,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='rgba(255,250,220,0.06)';ctx.beginPath();ctx.arc(680,55,18,0,Math.PI*2);ctx.fill();
-  // Stars
+
+  // Stars - brighter for desert sky
   stars.forEach(function(s){
-    var t=0.2+0.8*Math.abs(Math.sin(frameCount*0.015+s.b));
-    ctx.globalAlpha=t*(s.s===2?0.5:0.25);
-    ctx.fillStyle='#c8f04d';ctx.fillRect(s.x,s.y,s.s,s.s);
+    var t=0.3+0.7*Math.abs(Math.sin(frameCount*0.015+s.b));
+    ctx.globalAlpha=t*(s.s===2?0.8:0.4);
+    ctx.fillStyle=s.b>5?'#ffffff':'#c8f04d';
+    ctx.fillRect(s.x,s.y,s.s,s.s);
   });
   ctx.globalAlpha=1;
-  // Far buildings
-  FAR.forEach(function(b){
-    var bx=((b.x-(frameCount*0.3))%(W+200)+W+200)%(W+200)-100;
-    r(bx,GY-b.h,b.w,b.h,'#0d0d0c');
-    // Windows
-    for(var wy=GY-b.h+8;wy<GY-10;wy+=15){
-      for(var wx=bx+5;wx<bx+b.w-5;wx+=11){
-        if((wx*7+wy*3+frameCount)%17>4){ctx.fillStyle='rgba(201,169,110,0.1)';ctx.fillRect(wx,wy,6,9);}
+
+  // Moon - big Vegas moon
+  var mx=680,my=50;
+  var moonGlow=ctx.createRadialGradient(mx,my,0,mx,my,55);
+  moonGlow.addColorStop(0,'rgba(255,245,200,0.18)');
+  moonGlow.addColorStop(0.5,'rgba(255,245,200,0.06)');
+  moonGlow.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=moonGlow;ctx.beginPath();ctx.arc(mx,my,55,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(255,248,210,0.1)';ctx.beginPath();ctx.arc(mx,my,22,0,Math.PI*2);ctx.fill();
+
+  // -- FAR LAYER: iconic Vegas silhouettes --
+  var fs = (frameCount*0.25)%(W+600);
+
+  // Stratosphere tower
+  function drawStratosphere(bx){
+    if(bx<-60||bx>W+60) return;
+    r(bx+18,GY-180,4,180,'#0e0e0d');   // main shaft
+    r(bx,GY-130,40,50,'#0e0e0d');       // observation pod base
+    ctx.fillStyle='#0e0e0d';
+    ctx.beginPath();ctx.moveTo(bx,GY-130);ctx.lineTo(bx+20,GY-160);ctx.lineTo(bx+40,GY-130);ctx.fill();
+    r(bx+16,GY-190,8,14,'#0e0e0d');     // spire
+    // Red warning lights
+    ctx.fillStyle='rgba(255,60,60,'+(0.4+0.4*Math.sin(frameCount*0.05))+')';
+    ctx.beginPath();ctx.arc(bx+20,GY-188,3,0,Math.PI*2);ctx.fill();
+    // Neon ring glow
+    ctx.strokeStyle='rgba(200,240,77,0.08)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.ellipse(bx+20,GY-130,22,5,0,0,Math.PI*2);ctx.stroke();
+  }
+
+  // MGM / big casino block
+  function drawCasinoBlock(bx,h,w,neonColor){
+    if(bx<-w-20||bx>W+20) return;
+    // Main building
+    var cg=ctx.createLinearGradient(bx,GY-h,bx+w,GY);
+    cg.addColorStop(0,'#0d0d0c');cg.addColorStop(1,'#111110');
+    ctx.fillStyle=cg;ctx.fillRect(bx,GY-h,w,h);
+    // Windows grid
+    for(var wy2=GY-h+10;wy2<GY-15;wy2+=12){
+      for(var wx2=bx+6;wx2<bx+w-6;wx2+=10){
+        var lit=(wx2*3+wy2*7+Math.floor(frameCount*0.01))%11;
+        if(lit>2){
+          ctx.fillStyle=lit>7?'rgba(201,169,110,0.2)':'rgba(201,169,110,0.08)';
+          ctx.fillRect(wx2,wy2,6,8);
+        }
       }
     }
-    if(b.h>100){r(bx+b.w/2-1,GY-b.h-14,2,14,'#1a1a18');circ(bx+b.w/2,GY-b.h-15,3,'rgba(200,240,77,0.35)');}
+    // Rooftop neon sign glow
+    ctx.shadowColor=neonColor;ctx.shadowBlur=15;
+    ctx.fillStyle=neonColor.replace('1)','0.15)');
+    ctx.fillRect(bx+4,GY-h,w-8,6);
+    ctx.shadowBlur=0;
+    // Vertical neon strips on sides
+    ctx.fillStyle=neonColor.replace('1)','0.08)');
+    ctx.fillRect(bx,GY-h,3,h);
+    ctx.fillRect(bx+w-3,GY-h,3,h);
+  }
+
+  // Eiffel Tower Paris silhouette
+  function drawEiffel(bx){
+    if(bx<-80||bx>W+80) return;
+    ctx.fillStyle='#0d0d0c';
+    // Wide base legs
+    ctx.beginPath();ctx.moveTo(bx,GY-60);ctx.lineTo(bx+12,GY-100);ctx.lineTo(bx+18,GY-60);ctx.fill();
+    ctx.beginPath();ctx.moveTo(bx+30,GY-60);ctx.lineTo(bx+36,GY-100);ctx.lineTo(bx+48,GY-60);ctx.fill();
+    // Mid section
+    ctx.beginPath();ctx.moveTo(bx+10,GY-100);ctx.lineTo(bx+16,GY-140);ctx.lineTo(bx+32,GY-140);ctx.lineTo(bx+38,GY-100);ctx.fill();
+    // Top section
+    ctx.beginPath();ctx.moveTo(bx+14,GY-140);ctx.lineTo(bx+22,GY-175);ctx.lineTo(bx+26,GY-175);ctx.lineTo(bx+34,GY-140);ctx.fill();
+    // Spire
+    r(bx+23,GY-195,3,20,'#0d0d0c');
+    // Light on top
+    ctx.fillStyle='rgba(255,200,100,'+(0.5+0.5*Math.sin(frameCount*0.07))+')';
+    ctx.beginPath();ctx.arc(bx+24,GY-196,2,0,Math.PI*2);ctx.fill();
+  }
+
+  // Pyramid (Luxor)
+  function drawPyramid(bx){
+    if(bx<-120||bx>W+120) return;
+    ctx.fillStyle='#0b0b0a';
+    ctx.beginPath();ctx.moveTo(bx,GY-10);ctx.lineTo(bx+55,GY-140);ctx.lineTo(bx+110,GY-10);ctx.fill();
+    // Sky beam from top
+    ctx.save();
+    var beam=ctx.createLinearGradient(bx+55,GY-140,bx+55,0);
+    beam.addColorStop(0,'rgba(255,255,220,0.12)');
+    beam.addColorStop(1,'rgba(255,255,220,0)');
+    ctx.fillStyle=beam;
+    ctx.beginPath();ctx.moveTo(bx+53,GY-140);ctx.lineTo(bx+40,0);ctx.lineTo(bx+70,0);ctx.lineTo(bx+57,GY-140);ctx.fill();
+    ctx.restore();
+    // Sphinx outline at base
+    r(bx-15,GY-35,30,25,'#0b0b0a');
+    r(bx-5,GY-50,14,20,'#0b0b0a');
+  }
+
+  // Generic strip hotel
+  function drawStripHotel(bx,h,w){
+    if(bx<-w||bx>W+20) return;
+    r(bx,GY-h,w,h,'#0d0d0c');
+    // Curved top (some hotels have this)
+    ctx.fillStyle='#111110';
+    for(var wi2=0;wi2<w;wi2+=8){
+      var curve=Math.sin((wi2/w)*Math.PI)*8;
+      ctx.fillRect(bx+wi2,GY-h-curve,8,curve+2);
+    }
+    for(var wy3=GY-h+8;wy3<GY-12;wy3+=11){
+      for(var wx3=bx+4;wx3<bx+w-4;wx3+=9){
+        if((wx3+wy3*2+Math.floor(frameCount*0.008))%13>3){
+          ctx.fillStyle='rgba(201,169,110,0.12)';
+          ctx.fillRect(wx3,wy3,5,7);
+        }
+      }
+    }
+  }
+
+  // Draw far layer - iconic landmarks
+  var landmarks = [
+    {type:'pyramid', x:50},
+    {type:'casino', x:200, h:110, w:90, nc:'rgba(200,240,77,1)'},
+    {type:'eiffel', x:340},
+    {type:'stratosphere', x:490},
+    {type:'casino', x:580, h:130, w:70, nc:'rgba(255,100,100,1)'},
+    {type:'hotel', x:700, h:95, w:80},
+    {type:'casino', x:820, h:120, w:100, nc:'rgba(201,169,110,1)'},
+    {type:'pyramid', x:980},
+    {type:'eiffel', x:1130},
+    {type:'casino', x:1260, h:110, w:90, nc:'rgba(200,240,77,1)'},
+    {type:'stratosphere', x:1420},
+    {type:'hotel', x:1530, h:100, w:85},
+  ];
+
+  landmarks.forEach(function(lm){
+    var bx=((lm.x-fs)%(W+700)+W+700)%(W+700)-150;
+    if(lm.type==='pyramid') drawPyramid(bx);
+    else if(lm.type==='casino') drawCasinoBlock(bx,lm.h,lm.w,lm.nc);
+    else if(lm.type==='eiffel') drawEiffel(bx);
+    else if(lm.type==='stratosphere') drawStratosphere(bx);
+    else if(lm.type==='hotel') drawStripHotel(bx,lm.h,lm.w);
   });
-  // Mid buildings
-  MID.forEach(function(b){
-    var bx=((b.x-(frameCount*1.4))%(W+300)+W+300)%(W+300)-150;
+
+  // -- MID LAYER: generic strip buildings closer --
+  var ms=(frameCount*1.2)%(W+400);
+  var midStrip=[
+    {x:0,w:55,h:50},{x:65,w:40,h:38},{x:115,w:70,h:44},{x:200,w:45,h:55},
+    {x:260,w:80,h:35},{x:355,w:50,h:48},{x:420,w:65,h:42},{x:500,w:90,h:52},
+    {x:605,w:45,h:38},{x:665,w:75,h:46},{x:755,w:55,h:40}
+  ];
+  midStrip.forEach(function(b){
+    var bx=((b.x-ms)%(W+400)+W+400)%(W+400)-100;
     r(bx,GY-b.h,b.w,b.h,'#0a0a09');
-    ctx.fillStyle='rgba(200,240,77,0.04)';ctx.fillRect(bx,GY-b.h,b.w,2);
+    // Neon sign at top
+    var neonColors=['rgba(200,240,77,0.06)','rgba(255,100,100,0.06)','rgba(100,150,255,0.06)','rgba(201,169,110,0.06)'];
+    ctx.fillStyle=neonColors[Math.floor(b.x/60)%4];
+    ctx.fillRect(bx+2,GY-b.h,b.w-4,4);
   });
+
+  // Horizon glow - The Strip light pollution
+  var hg=ctx.createLinearGradient(0,GY-30,0,GY-80);
+  hg.addColorStop(0,'rgba(255,150,50,0.06)');
+  hg.addColorStop(0.5,'rgba(200,100,200,0.04)');
+  hg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=hg;ctx.fillRect(0,GY-80,W,80);
 }
 
 function drawGround(){
