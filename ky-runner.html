@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaiseki Yuzu Runner</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:#0a0a0a; color:#e8e8e0; font-family:'DM Mono',monospace; overflow:hidden; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+
+#gameContainer {
+  position:relative;
+  width:800px;
+  max-width:100vw;
+}
+
+#gameCanvas {
+  display:block;
+  border:1px solid #222222;
+  background:#0a0a0a;
+  width:100%;
+}
+
+/* HUD */
+#hud {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0.75rem 1.5rem;
+  background:#111110;
+  border:1px solid #222222;
+  border-bottom:none;
+}
+.hud-item { display:flex; flex-direction:column; }
+.hud-label { font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:#333330; }
+.hud-value { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#c8f04d; letter-spacing:0.05em; line-height:1; }
+.hud-lives { display:flex; gap:0.4rem; align-items:center; margin-top:0.2rem; }
+.hud-heart { width:10px; height:10px; background:#c8f04d; clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.hud-heart.empty { background:#222222; }
+.hud-level { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#c9a96e; }
+
+/* SCREENS */
+.screen {
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:rgba(10,10,9,0.94);
+  backdrop-filter:blur(4px);
+  gap:1.5rem;
+  padding:2rem;
+}
+.screen.hidden { display:none; }
+
+.screen-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2.5rem,8vw,4rem);
+  color:#e8e8e0;
+  letter-spacing:0.05em;
+  text-align:center;
+  line-height:1;
+}
+.screen-title span { color:#c8f04d; }
+.screen-sub {
+  font-size:0.65rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:#555550;
+  text-align:center;
+}
+.screen-score {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:3rem;
+  color:#c8f04d;
+  letter-spacing:0.05em;
+}
+.screen-score-label {
+  font-size:0.6rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:#555550;
+  margin-bottom:-1rem;
+}
+
+.btn-play {
+  background:#c8f04d;
+  color:#0a0a0a;
+  border:none;
+  padding:1rem 3rem;
+  font-family:'DM Mono',monospace;
+  font-size:0.75rem;
+  font-weight:500;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:background 0.2s, transform 0.1s;
+}
+.btn-play:hover { background:#d9f55d; }
+.btn-play:active { transform:scale(0.97); }
+
+.btn-secondary {
+  background:transparent;
+  color:#555550;
+  border:1px solid #222222;
+  padding:0.75rem 2rem;
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.btn-secondary:hover { color:#c8f04d; border-color:#c8f04d; }
+
+/* LEADERBOARD */
+.leaderboard {
+  width:100%;
+  max-width:360px;
+  border:1px solid #1e1e1c;
+}
+.lb-header {
+  display:flex;
+  padding:0.6rem 1rem;
+  background:#111110;
+  font-size:0.55rem;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:#333330;
+  border-bottom:1px solid #1e1e1c;
+}
+.lb-row {
+  display:flex;
+  padding:0.6rem 1rem;
+  border-bottom:1px solid #1a1a18;
+  align-items:center;
+  gap:0.75rem;
+  font-size:0.7rem;
+}
+.lb-row:last-child { border-bottom:none; }
+.lb-row.highlight { background:#111110; }
+.lb-rank { color:#c8f04d; width:20px; font-family:'Bebas Neue',sans-serif; font-size:1rem; }
+.lb-wallet { color:#555550; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.6rem; }
+.lb-score { color:#c8f04d; font-family:'Bebas Neue',sans-serif; font-size:1.1rem; }
+.lb-loading { padding:1rem; text-align:center; color:#333330; font-size:0.65rem; letter-spacing:0.1em; }
+
+/* CONTROLS HINT */
+.controls-hint {
+  display:flex;
+  gap:2rem;
+  font-size:0.6rem;
+  letter-spacing:0.12em;
+  color:#333330;
+  text-transform:uppercase;
+}
+.controls-hint span { color:#555550; }
+
+/* LEVEL UP FLASH */
+#levelFlash {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:3rem;
+  color:#c8f04d;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 0.3s;
+  text-shadow:0 0 30px rgba(200,240,77,0.5);
+  white-space:nowrap;
+}
+
+@media (max-width:600px) {
+  #gameContainer { width:100vw; }
+  .hud-value { font-size:1.2rem; }
+  .screen-title { font-size:2rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="gameContainer">
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-item">
+      <div class="hud-label">Score</div>
+      <div class="hud-value" id="hudScore">0</div>
+    </div>
+    <div class="hud-item" style="align-items:center;">
+      <div class="hud-label" style="text-align:center;">Level</div>
+      <div class="hud-level" id="hudLevel">1</div>
+    </div>
+    <div class="hud-item" style="align-items:flex-end;">
+      <div class="hud-label">Lives</div>
+      <div class="hud-lives" id="hudLives">
+        <div class="hud-heart"></div>
+        <div class="hud-heart"></div>
+        <div class="hud-heart"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <canvas id="gameCanvas" width="800" height="300"></canvas>
+
+  <!-- LEVEL FLASH -->
+  <div id="levelFlash">LEVEL UP!</div>
+
+  <!-- START SCREEN -->
+  <div class="screen" id="startScreen">
+    <div class="screen-sub">Kaiseki Yuzu · Token Gated</div>
+    <div class="screen-title">Yuzu<br><span>Runner</span></div>
+    <div class="controls-hint">
+      <div>Space / Tap <span>→ Jump</span></div>
+      <div>↓ / Swipe <span>→ Slide</span></div>
+    </div>
+    <button class="btn-play" onclick="startGame()">▶ Start Running</button>
+    <button class="btn-secondary" onclick="showLeaderboard()">View Leaderboard</button>
+  </div>
+
+  <!-- GAME OVER SCREEN -->
+  <div class="screen hidden" id="gameOverScreen">
+    <div class="screen-sub">Game Over</div>
+    <div class="screen-title">You Got<br><span>Served</span></div>
+    <div class="screen-score-label">Final Score</div>
+    <div class="screen-score" id="finalScore">0</div>
+    <div id="newHighScore" style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e;display:none;">✦ New High Score!</div>
+    <button class="btn-play" onclick="startGame()">▶ Run Again</button>
+    <button class="btn-secondary" onclick="showLeaderboard()">Leaderboard</button>
+  </div>
+
+  <!-- LEADERBOARD SCREEN -->
+  <div class="screen hidden" id="lbScreen">
+    <div class="screen-sub">Top Runners</div>
+    <div class="screen-title">Leader<span>board</span></div>
+    <div class="leaderboard" id="leaderboard">
+      <div class="lb-header">
+        <span style="width:20px;">#</span>
+        <span style="flex:1;margin-left:0.75rem;">Wallet</span>
+        <span>Score</span>
+      </div>
+      <div class="lb-loading" id="lbLoading">Loading...</div>
+    </div>
+    <button class="btn-secondary" onclick="backToStart()">← Back</button>
+  </div>
+</div>
+
+<script>
+// ── SUPABASE CONFIG ──
+var SUPABASE_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMjA5NTIsImV4cCI6MjA1NjY5Njk1Mn0.QS_WkMFAMpV6SpJBqKWksMRSzYTi5kV8VJKfbzfL8MU';
+var WALLET_ADDRESS = 'Guest';
+
+// Try to get wallet from parent page
+try {
+  if (window.parent && window.parent.document.getElementById('walletLabel')) {
+    var lbl = window.parent.document.getElementById('walletLabel').textContent;
+    if (lbl && lbl !== 'Connect Wallet' && lbl !== 'Connected' && lbl !== 'Connecting...') {
+      WALLET_ADDRESS = lbl;
+    }
+  }
+} catch(e) {}
+
+// ── CANVAS SETUP ──
+var canvas = document.getElementById('gameCanvas');
+var ctx = canvas.getContext('2d');
+var W = canvas.width;
+var H = canvas.height;
+
+// ── COLORS ──
+var C = {
+  bg: '#0a0a0a',
+  ground: '#1a1a18',
+  groundLine: '#c8f04d',
+  accent: '#c8f04d',
+  gold: '#c9a96e',
+  chef: '#e8e8e0',
+  chefUniform: '#1a1a18',
+  chefApron: '#c8f04d',
+  obstacle: '#c9a96e',
+  obstacle2: '#cc5555',
+  dim: '#333330',
+  particle: '#c8f04d'
+};
+
+// ── GAME STATE ──
+var state = 'start';
+var score = 0;
+var highScore = parseInt(localStorage.getItem('kyRunnerHigh') || '0');
+var level = 1;
+var lives = 3;
+var gameSpeed = 4;
+var frameCount = 0;
+var animFrame = null;
+var invincible = false;
+var invincibleTimer = 0;
+var particles = [];
+
+// ── GROUND ──
+var GROUND_Y = H - 60;
+
+// ── CHEF (Player) ──
+var chef = {
+  x: 100,
+  y: GROUND_Y,
+  w: 36,
+  h: 52,
+  vy: 0,
+  jumping: false,
+  doubleJumped: false,
+  sliding: false,
+  slideTimer: 0,
+  frame: 0,
+  frameTimer: 0
+};
+
+// ── OBSTACLES ──
+var obstacles = [];
+var obstacleTimer = 0;
+var obstacleInterval = 90;
+
+// ── BACKGROUND ELEMENTS ──
+var bgLayers = [];
+var bgTimer = 0;
+
+// ── OBSTACLE TYPES ──
+var OBSTACLE_TYPES = [
+  { name:'knife',   w:12, h:40, color:C.obstacle,  yOff:0,   shape:'knife'  },
+  { name:'sushi',   w:28, h:20, color:C.gold,       yOff:32,  shape:'sushi'  },
+  { name:'bottle',  w:18, h:44, color:C.obstacle2,  yOff:0,   shape:'bottle' },
+  { name:'bowl',    w:30, h:18, color:C.gold,       yOff:34,  shape:'bowl'   },
+  { name:'chopstx', w:8,  h:36, color:C.obstacle,  yOff:4,   shape:'chop'   },
+];
+
+// ── DRAW CHEF ──
+function drawChef(x, y, sliding, frame) {
+  if (invincible && Math.floor(frameCount / 4) % 2 === 0) return;
+  ctx.save();
+  var h = sliding ? 28 : chef.h;
+  var yOff = sliding ? 24 : 0;
+
+  // Body / Uniform
+  ctx.fillStyle = C.chefUniform;
+  ctx.fillRect(x - 12, y - h + yOff + (sliding?0:16), 24, sliding?20:28);
+
+  // Apron
+  ctx.fillStyle = C.chefApron;
+  ctx.fillRect(x - 8, y - h + yOff + (sliding?4:20), 16, sliding?14:20);
+
+  // Head
+  ctx.fillStyle = '#e8c89a';
+  ctx.fillRect(x - 9, y - h + yOff, 18, 18);
+
+  // Chef hat
+  if (!sliding) {
+    ctx.fillStyle = '#e8e8e0';
+    ctx.fillRect(x - 8, y - h + yOff - 14, 16, 14);
+    ctx.fillRect(x - 10, y - h + yOff - 2, 20, 4);
+  }
+
+  // Eyes
+  ctx.fillStyle = '#1a1a18';
+  ctx.fillRect(x - 5, y - h + yOff + 5, 3, 3);
+  ctx.fillRect(x + 2, y - h + yOff + 5, 3, 3);
+
+  // Legs (animated)
+  if (!sliding) {
+    var legOff = Math.sin(frame * 0.3) * 4;
+    ctx.fillStyle = C.chefUniform;
+    ctx.fillRect(x - 10, y - 16, 8, 16);
+    ctx.fillRect(x + 2, y - 16 + legOff, 8, 16);
+    // Shoes
+    ctx.fillStyle = '#111110';
+    ctx.fillRect(x - 12, y - 4, 10, 6);
+    ctx.fillRect(x + 2, y - 4 + legOff, 10, 6);
+  }
+
+  // Arms
+  if (!sliding) {
+    var armOff = Math.sin(frame * 0.3 + Math.PI) * 6;
+    ctx.fillStyle = C.chefUniform;
+    ctx.fillRect(x - 18, y - h + yOff + 20 + armOff, 8, 14);
+    ctx.fillRect(x + 10, y - h + yOff + 20 - armOff, 8, 14);
+  }
+
+  ctx.restore();
+}
+
+// ── DRAW OBSTACLE ──
+function drawObstacle(obs) {
+  ctx.save();
+  ctx.fillStyle = obs.type.color;
+  var ox = obs.x;
+  var oy = GROUND_Y - obs.type.h - obs.type.yOff;
+
+  if (obs.type.shape === 'knife') {
+    // Blade
+    ctx.fillStyle = '#cccccc';
+    ctx.fillRect(ox - 2, oy, 6, obs.type.h - 10);
+    // Handle
+    ctx.fillStyle = '#8B6914';
+    ctx.fillRect(ox - 4, oy + obs.type.h - 12, 10, 12);
+    // Shine
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(ox, oy + 4, 2, 16);
+  } else if (obs.type.shape === 'sushi') {
+    // Rice
+    ctx.fillStyle = '#f0f0e8';
+    ctx.fillRect(ox - 14, oy + 4, 28, 14);
+    // Nori
+    ctx.fillStyle = '#1a1a18';
+    ctx.fillRect(ox - 14, oy, 28, 6);
+    // Topping
+    ctx.fillStyle = '#cc5555';
+    ctx.fillRect(ox - 10, oy + 2, 20, 4);
+  } else if (obs.type.shape === 'bottle') {
+    // Bottle body
+    ctx.fillStyle = '#c9a96e';
+    ctx.fillRect(ox - 6, oy + 12, 14, obs.type.h - 16);
+    // Neck
+    ctx.fillStyle = '#a88855';
+    ctx.fillRect(ox - 3, oy, 8, 14);
+    // Label
+    ctx.fillStyle = '#e8e8e0';
+    ctx.fillRect(ox - 5, oy + 18, 12, 10);
+    ctx.fillStyle = '#cc0000';
+    ctx.fillRect(ox - 3, oy + 20, 8, 2);
+  } else if (obs.type.shape === 'bowl') {
+    // Bowl
+    ctx.fillStyle = '#e8e8e0';
+    ctx.beginPath();
+    ctx.ellipse(ox, oy + 10, 15, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#c9a96e';
+    ctx.fillRect(ox - 14, oy + 8, 28, 8);
+    // Contents
+    ctx.fillStyle = '#cc5555';
+    ctx.beginPath();
+    ctx.ellipse(ox, oy + 8, 10, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (obs.type.shape === 'chop') {
+    ctx.fillStyle = '#8B6914';
+    ctx.fillRect(ox - 2, oy, 5, obs.type.h);
+    ctx.fillRect(ox + 4, oy + 8, 5, obs.type.h - 8);
+    // Tips
+    ctx.fillStyle = '#c8f04d';
+    ctx.fillRect(ox - 2, oy, 5, 4);
+    ctx.fillRect(ox + 4, oy + 8, 5, 4);
+  }
+  ctx.restore();
+}
+
+// ── DRAW GROUND ──
+function drawGround() {
+  // Ground fill
+  ctx.fillStyle = C.ground;
+  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+
+  // Ground line
+  ctx.fillStyle = C.groundLine;
+  ctx.fillRect(0, GROUND_Y, W, 2);
+
+  // Scrolling tiles
+  ctx.fillStyle = '#1e1e1c';
+  var tileW = 60;
+  var offset = (frameCount * gameSpeed) % tileW;
+  for (var tx = -offset; tx < W; tx += tileW) {
+    ctx.fillRect(tx, GROUND_Y + 2, 1, H - GROUND_Y - 2);
+  }
+}
+
+// ── DRAW BACKGROUND ──
+function drawBackground() {
+  // Sky gradient
+  var grad = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  grad.addColorStop(0, '#050505');
+  grad.addColorStop(1, '#0f0f0e');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, GROUND_Y);
+
+  // Stars
+  ctx.fillStyle = 'rgba(200,240,77,0.3)';
+  for (var s = 0; s < 30; s++) {
+    var sx = ((s * 137 + frameCount * 0.2) % W);
+    var sy = (s * 53) % (GROUND_Y - 20);
+    var ss = (s % 3 === 0) ? 2 : 1;
+    ctx.fillRect(sx, sy, ss, ss);
+  }
+
+  // Distant city silhouette
+  ctx.fillStyle = '#111110';
+  var buildings = [
+    {x:0,   w:80,  h:60},
+    {x:90,  w:50,  h:90},
+    {x:150, w:70,  h:50},
+    {x:230, w:40,  h:110},
+    {x:280, w:60,  h:70},
+    {x:350, w:90,  h:55},
+    {x:450, w:45,  h:85},
+    {x:510, w:65,  h:65},
+    {x:590, w:55,  h:95},
+    {x:660, w:80,  h:50},
+    {x:750, w:60,  h:75},
+  ];
+  buildings.forEach(function(b) {
+    var bx = ((b.x - frameCount * 0.5) % (W + 100) + W + 100) % (W + 100) - 100;
+    ctx.fillRect(bx, GROUND_Y - b.h, b.w, b.h);
+    // Windows
+    ctx.fillStyle = 'rgba(201,169,110,0.15)';
+    for (var wy = GROUND_Y - b.h + 8; wy < GROUND_Y - 8; wy += 14) {
+      for (var wx = bx + 6; wx < bx + b.w - 6; wx += 12) {
+        if ((wx + wy + frameCount) % 7 !== 0) {
+          ctx.fillRect(wx, wy, 6, 8);
+        }
+      }
+    }
+    ctx.fillStyle = '#111110';
+  });
+}
+
+// ── PARTICLES ──
+function spawnParticles(x, y, color, count) {
+  for (var i = 0; i < count; i++) {
+    particles.push({
+      x: x, y: y,
+      vx: (Math.random() - 0.5) * 6,
+      vy: -Math.random() * 5 - 2,
+      life: 1.0,
+      color: color,
+      size: Math.random() * 4 + 2
+    });
+  }
+}
+
+function updateParticles() {
+  particles = particles.filter(function(p) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.2;
+    p.life -= 0.04;
+    return p.life > 0;
+  });
+}
+
+function drawParticles() {
+  particles.forEach(function(p) {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
+  });
+  ctx.globalAlpha = 1;
+}
+
+// ── SPAWN OBSTACLE ──
+function spawnObstacle() {
+  var type = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)];
+  // Higher levels spawn doubles
+  if (level >= 3 && Math.random() < 0.25) {
+    var type2 = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)];
+    obstacles.push({ x: W + 80, type: type2 });
+  }
+  obstacles.push({ x: W + 20, type: type });
+}
+
+// ── JUMP ──
+function jump() {
+  if (state !== 'playing') return;
+  if (!chef.jumping) {
+    chef.vy = -13;
+    chef.jumping = true;
+    spawnParticles(chef.x, chef.y, C.accent, 6);
+  } else if (!chef.doubleJumped) {
+    chef.vy = -11;
+    chef.doubleJumped = true;
+    spawnParticles(chef.x, chef.y, C.gold, 8);
+  }
+  chef.sliding = false;
+}
+
+// ── SLIDE ──
+function slide() {
+  if (state !== 'playing') return;
+  if (!chef.jumping) {
+    chef.sliding = true;
+    chef.slideTimer = 30;
+  }
+}
+
+// ── HIT ──
+function hitObstacle(obs) {
+  if (invincible) return;
+  lives--;
+  invincible = true;
+  invincibleTimer = 120;
+  spawnParticles(chef.x, chef.y - chef.h/2, '#cc5555', 12);
+  updateLivesHUD();
+  if (lives <= 0) {
+    gameOver();
+  }
+  // Remove the obstacle
+  obstacles = obstacles.filter(function(o) { return o !== obs; });
+}
+
+// ── COLLISION ──
+function checkCollision() {
+  var cx = chef.x - 10;
+  var cy = chef.sliding ? GROUND_Y - 28 : GROUND_Y - chef.h;
+  var cw = 20;
+  var ch = chef.sliding ? 28 : chef.h;
+
+  obstacles.forEach(function(obs) {
+    var oy = GROUND_Y - obs.type.h - obs.type.yOff;
+    if (cx < obs.x + obs.type.w - 4 &&
+        cx + cw > obs.x + 4 &&
+        cy < oy + obs.type.h &&
+        cy + ch > oy) {
+      hitObstacle(obs);
+    }
+  });
+}
+
+// ── UPDATE HUID ──
+function updateHUD() {
+  document.getElementById('hudScore').textContent = score;
+  document.getElementById('hudLevel').textContent = level;
+}
+
+function updateLivesHUD() {
+  var hearts = document.getElementById('hudLives').children;
+  for (var i = 0; i < hearts.length; i++) {
+    hearts[i].className = i < lives ? 'hud-heart' : 'hud-heart empty';
+  }
+}
+
+// ── LEVEL UP ──
+function checkLevelUp() {
+  var newLevel = Math.floor(score / 500) + 1;
+  if (newLevel > level) {
+    level = newLevel;
+    gameSpeed = 4 + (level - 1) * 0.8;
+    obstacleInterval = Math.max(45, 90 - (level - 1) * 8);
+    // Flash
+    var flash = document.getElementById('levelFlash');
+    flash.textContent = 'LEVEL ' + level + '!';
+    flash.style.opacity = '1';
+    setTimeout(function() { flash.style.opacity = '0'; }, 1000);
+    spawnParticles(W/2, H/2, C.accent, 20);
+  }
+}
+
+// ── GAME LOOP ──
+function gameLoop() {
+  if (state !== 'playing') return;
+  frameCount++;
+
+  // Clear
+  ctx.clearRect(0, 0, W, H);
+
+  // Draw bg
+  drawBackground();
+  drawGround();
+
+  // Update chef
+  chef.vy += 0.6; // gravity
+  chef.y += chef.vy;
+  if (chef.y >= GROUND_Y) {
+    chef.y = GROUND_Y;
+    chef.vy = 0;
+    chef.jumping = false;
+    chef.doubleJumped = false;
+  }
+  if (chef.slideTimer > 0) {
+    chef.slideTimer--;
+    if (chef.slideTimer <= 0) chef.sliding = false;
+  }
+
+  // Animate chef
+  chef.frameTimer++;
+  if (chef.frameTimer > 6) { chef.frame++; chef.frameTimer = 0; }
+
+  // Update obstacles
+  obstacleTimer++;
+  if (obstacleTimer >= obstacleInterval) {
+    spawnObstacle();
+    obstacleTimer = 0;
+  }
+  obstacles = obstacles.filter(function(obs) {
+    obs.x -= gameSpeed;
+    return obs.x > -60;
+  });
+
+  // Draw obstacles
+  obstacles.forEach(drawObstacle);
+
+  // Draw chef
+  drawChef(chef.x, chef.y, chef.sliding, chef.frame);
+
+  // Particles
+  updateParticles();
+  drawParticles();
+
+  // Invincibility timer
+  if (invincible) {
+    invincibleTimer--;
+    if (invincibleTimer <= 0) invincible = false;
+  }
+
+  // Score
+  score += 1;
+  checkLevelUp();
+  updateHUD();
+
+  // Collision
+  checkCollision();
+
+  animFrame = requestAnimationFrame(gameLoop);
+}
+
+// ── START GAME ──
+function startGame() {
+  // Reset
+  score = 0;
+  level = 1;
+  lives = 3;
+  gameSpeed = 4;
+  obstacleInterval = 90;
+  obstacles = [];
+  particles = [];
+  frameCount = 0;
+  invincible = false;
+  chef.y = GROUND_Y;
+  chef.vy = 0;
+  chef.jumping = false;
+  chef.doubleJumped = false;
+  chef.sliding = false;
+  chef.frame = 0;
+  updateHUD();
+  updateLivesHUD();
+
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('gameOverScreen').classList.add('hidden');
+  document.getElementById('lbScreen').classList.add('hidden');
+
+  state = 'playing';
+  if (animFrame) cancelAnimationFrame(animFrame);
+  gameLoop();
+}
+
+// ── GAME OVER ──
+function gameOver() {
+  state = 'gameover';
+  if (animFrame) cancelAnimationFrame(animFrame);
+
+  document.getElementById('finalScore').textContent = score;
+
+  var isHigh = score > highScore;
+  if (isHigh) {
+    highScore = score;
+    localStorage.setItem('kyRunnerHigh', highScore);
+    document.getElementById('newHighScore').style.display = 'block';
+  } else {
+    document.getElementById('newHighScore').style.display = 'none';
+  }
+
+  document.getElementById('gameOverScreen').classList.remove('hidden');
+
+  // Save to leaderboard
+  saveScore(WALLET_ADDRESS, score);
+}
+
+// ── LEADERBOARD ──
+function saveScore(wallet, s) {
+  fetch(SUPABASE_URL + '/rest/v1/ky_leaderboard', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'resolution=merge-duplicates'
+    },
+    body: JSON.stringify({ wallet: wallet, score: s })
+  }).catch(function() {});
+}
+
+function showLeaderboard() {
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('gameOverScreen').classList.add('hidden');
+  document.getElementById('lbScreen').classList.remove('hidden');
+  state = 'leaderboard';
+  loadLeaderboard();
+}
+
+function loadLeaderboard() {
+  document.getElementById('lbLoading').style.display = 'block';
+  fetch(SUPABASE_URL + '/rest/v1/ky_leaderboard?select=wallet,score&order=score.desc&limit=10', {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY
+    }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var lb = document.getElementById('leaderboard');
+    // Remove old rows
+    var old = lb.querySelectorAll('.lb-row');
+    old.forEach(function(r) { r.remove(); });
+    document.getElementById('lbLoading').style.display = 'none';
+
+    if (!data || data.length === 0) {
+      var empty = document.createElement('div');
+      empty.className = 'lb-loading';
+      empty.textContent = 'No scores yet. Be the first!';
+      lb.appendChild(empty);
+      return;
+    }
+
+    data.forEach(function(entry, i) {
+      var row = document.createElement('div');
+      row.className = 'lb-row' + (entry.wallet === WALLET_ADDRESS ? ' highlight' : '');
+      var short = entry.wallet.length > 12 ? entry.wallet.slice(0,6) + '...' + entry.wallet.slice(-4) : entry.wallet;
+      row.innerHTML = '<div class="lb-rank">' + (i+1) + '</div>' +
+        '<div class="lb-wallet">' + short + '</div>' +
+        '<div class="lb-score">' + entry.score + '</div>';
+      lb.appendChild(row);
+    });
+  })
+  .catch(function() {
+    document.getElementById('lbLoading').textContent = 'Could not load scores.';
+  });
+}
+
+function backToStart() {
+  document.getElementById('lbScreen').classList.add('hidden');
+  document.getElementById('startScreen').classList.remove('hidden');
+  state = 'start';
+}
+
+// ── CONTROLS ──
+document.addEventListener('keydown', function(e) {
+  if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jump(); }
+  if (e.code === 'ArrowDown') { e.preventDefault(); slide(); }
+});
+
+// Touch controls
+var touchStartY = 0;
+canvas.addEventListener('touchstart', function(e) {
+  touchStartY = e.touches[0].clientY;
+  e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchend', function(e) {
+  var diff = touchStartY - e.changedTouches[0].clientY;
+  if (diff > 30) jump();
+  else if (diff < -30) slide();
+  else jump();
+  e.preventDefault();
+}, { passive: false });
+
+// Click to jump
+canvas.addEventListener('click', function() { jump(); });
+
+// ── IDLE ANIMATION ──
+function idleLoop() {
+  if (state !== 'start') return;
+  frameCount++;
+  ctx.clearRect(0, 0, W, H);
+  drawBackground();
+  drawGround();
+  chef.frame++;
+  drawChef(chef.x, GROUND_Y, false, chef.frame);
+  requestAnimationFrame(idleLoop);
+}
+idleLoop();
+</script>
+</body>
+</html>
