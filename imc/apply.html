@@ -19,17 +19,17 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .two-col{display:grid;grid-template-columns:1fr 360px;gap:3rem;align-items:start;}
 .sl{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--neon);display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;}
 .sl::before{content:'';width:2rem;height:1px;background:var(--neon);}
-.form-section{background:var(--surface);border:1px solid var(--border);margin-bottom:2px;overflow:hidden;}
-.section-header{padding:1.25rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
-.section-num{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--surface3);line-height:1;margin-right:1rem;flex-shrink:0;}
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;color:var(--text);}
-.section-sub{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);margin-top:0.15rem;}
-.section-body{padding:2rem;}
-.section-body.collapsed{display:none;}
-.field-row{display:grid;gap:1rem;margin-bottom:1rem;}
-.cols-2{grid-template-columns:1fr 1fr;}
-.cols-3{grid-template-columns:1fr 1fr 1fr;}
-.field-wrap{display:flex;flex-direction:column;gap:0.35rem;}
+.fsec{background:var(--surface);border:1px solid var(--border);margin-bottom:2px;overflow:hidden;}
+.fhdr{padding:1.25rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.fnum{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--surface3);line-height:1;margin-right:1rem;flex-shrink:0;}
+.ftitle{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;color:var(--text);}
+.fsub{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);margin-top:0.15rem;}
+.fbody{padding:2rem;}
+.fbody.collapsed{display:none;}
+.frow{display:grid;gap:1rem;margin-bottom:1rem;}
+.c2{grid-template-columns:1fr 1fr;}
+.c3{grid-template-columns:1fr 1fr 1fr;}
+.fw{display:flex;flex-direction:column;gap:0.35rem;}
 .lbl{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);}
 .req{color:var(--neon);}
 .inp{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.8rem 1rem;font-family:'DM Mono',monospace;font-size:0.78rem;outline:none;transition:border-color 0.2s;width:100%;}
@@ -38,36 +38,40 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 select.inp{cursor:pointer;-webkit-appearance:none;}
 .hint{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;color:var(--dim);margin-top:0.2rem;}
 .radio-group{display:flex;gap:2px;flex-wrap:wrap;}
-.radio-opt{flex:1;min-width:80px;padding:0.7rem 0.85rem;background:var(--surface2);border:1px solid var(--border);cursor:pointer;text-align:center;transition:all 0.2s;}
-.radio-opt.selected{background:rgba(0,212,255,0.08);border-color:var(--neon);}
-.radio-opt-lbl{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
-.radio-opt.selected .radio-opt-lbl{color:var(--neon);}
-.check-row{display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;padding:0.75rem;background:var(--surface2);border:1px solid var(--border);margin-bottom:0.5rem;transition:border-color 0.2s;}
-.check-row.checked{border-color:rgba(0,212,255,0.3);}
-.check-box{width:16px;height:16px;border:1px solid var(--border);background:transparent;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;}
-.check-box.on{background:var(--neon);border-color:var(--neon);}
-.check-text{font-size:0.82rem;color:var(--muted);line-height:1.55;}
+.ropt{flex:1;min-width:80px;padding:0.7rem 0.85rem;background:var(--surface2);border:1px solid var(--border);cursor:pointer;text-align:center;transition:all 0.2s;}
+.ropt.sel{background:rgba(0,212,255,0.08);border-color:var(--neon);}
+.ropt-lbl{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
+.ropt.sel .ropt-lbl{color:var(--neon);}
+.crow{display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;padding:0.75rem;background:var(--surface2);border:1px solid var(--border);margin-bottom:0.5rem;}
+.crow.checked{border-color:rgba(0,212,255,0.3);}
+.cbox{width:16px;height:16px;border:1px solid var(--border);background:transparent;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#050507;}
+.cbox.on{background:var(--neon);border-color:var(--neon);}
+.ctext{font-size:0.82rem;color:var(--muted);line-height:1.55;}
 .co-toggle{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2rem;background:var(--surface);border:1px solid var(--border);cursor:pointer;margin-bottom:2px;}
-.toggle-sw{width:40px;height:22px;background:var(--surface3);border:1px solid var(--border);border-radius:11px;position:relative;transition:all 0.3s;flex-shrink:0;}
-.toggle-sw::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--dim);border-radius:50%;transition:all 0.3s;}
-.toggle-sw.on{background:rgba(240,192,64,0.15);border-color:var(--gold);}
-.toggle-sw.on::after{left:21px;background:var(--gold);}
+.tsw{width:40px;height:22px;background:var(--surface3);border:1px solid var(--border);border-radius:11px;position:relative;transition:all 0.3s;flex-shrink:0;}
+.tsw::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--dim);border-radius:50%;transition:all 0.3s;}
+.tsw.on{background:rgba(240,192,64,0.15);border-color:var(--gold);}
+.tsw.on::after{left:21px;background:var(--gold);}
 .btn-gold{background:var(--gold);border:none;color:#050507;padding:1rem 2rem;font-family:'DM Mono',monospace;font-size:0.75rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;width:100%;}
 .btn-gold:hover{background:#f8d060;box-shadow:0 0 24px rgba(240,192,64,0.4);}
 .btn-gold:disabled{background:var(--surface3);color:var(--dim);cursor:not-allowed;}
 .btn-purple{background:var(--purple);border:none;color:#fff;padding:0.65rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;width:100%;margin-bottom:0.5rem;}
-.summary-card{background:var(--surface);border:1px solid var(--border);padding:1.5rem;position:relative;overflow:hidden;margin-bottom:1rem;}
-.summary-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.5;}
-.sum-row{display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border);}
-.sum-row:last-child{border-bottom:none;}
-.sum-key{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);}
-.sum-val{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.05em;color:var(--text);}
-.disclaimer{background:rgba(255,68,85,0.04);border:1px solid rgba(255,68,85,0.15);padding:1rem 1.25rem;margin-top:1rem;}
-.disclaimer p{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;color:var(--dim);line-height:1.7;}
-.success-wrap{text-align:center;padding:4rem 2rem;max-width:580px;margin:0 auto;}
+.scard{background:var(--surface);border:1px solid var(--border);padding:1.5rem;position:relative;overflow:hidden;margin-bottom:1rem;}
+.scard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.5;}
+.srow{display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+.srow:last-child{border-bottom:none;}
+.skey{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);}
+.sval{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.05em;color:var(--text);}
+.disc{background:rgba(255,68,85,0.04);border:1px solid rgba(255,68,85,0.15);padding:1rem 1.25rem;margin-top:1rem;}
+.disc p{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;color:var(--dim);line-height:1.7;}
+.vcard{padding:1.25rem 1.5rem;position:relative;cursor:pointer;transition:all 0.2s;margin-bottom:2px;border:1px solid var(--border);background:var(--surface2);}
+.vcard:hover{border-color:var(--border2);}
+.vcard.active{background:rgba(0,212,255,0.06);border-color:rgba(0,212,255,0.4);}
+.vcard-bar{position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);opacity:0.6;display:none;}
+.vcard.active .vcard-bar{display:block;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
 @media(max-width:1024px){.two-col{grid-template-columns:1fr;}}
-@media(max-width:768px){.wrap{padding:5rem 1.5rem 3rem;}.cols-2,.cols-3{grid-template-columns:1fr;}}
+@media(max-width:768px){.wrap{padding:5rem 1.5rem 3rem;}.c2,.c3{grid-template-columns:1fr;}.nav{padding:1rem 1.5rem;}}
 </style>
 </head>
 <body>
@@ -85,121 +89,167 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
 
 <div class="wrap" id="appWrap">
   <div style="margin-bottom:3rem;">
-    <div class="sl">Borrower Portal · IMC Auto Finance</div>
+    <div class="sl">Borrower Portal - IMC Auto Finance</div>
     <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);line-height:0.92;letter-spacing:0.02em;margin-bottom:1rem;">Auto Finance<br><span style="color:var(--neon);text-shadow:0 0 20px rgba(0,212,255,0.3);">Application</span></h1>
-    <p style="color:var(--muted);font-size:0.9rem;max-width:520px;line-height:1.75;">Complete the form and connect your wallet to submit. Applications reviewed within 24-48 hours.</p>
+    <p style="color:var(--muted);font-size:0.9rem;max-width:520px;line-height:1.75;">Select your vehicle, connect your wallet, and complete the form. Applications reviewed within 24-48 hours.</p>
   </div>
 
   <div class="two-col">
     <div>
 
-      <!-- SECTION 1 -->
-      <div class="form-section" id="sec1">
-        <div class="section-header" onclick="toggleSec('sec1')">
+      <!-- SECTION 1: VEHICLE & LOAN -->
+      <div class="fsec" id="sec1">
+        <div class="fhdr" onclick="toggleSec(1)">
           <div style="display:flex;align-items:center;">
-            <div class="section-num">01</div>
-            <div><div class="section-title">Vehicle & Loan</div><div class="section-sub">Amount · Term · Use</div></div>
+            <div class="fnum">01</div>
+            <div><div class="ftitle">Vehicle &amp; Loan</div><div class="fsub">Select vehicle - Amount - Term</div></div>
           </div>
-          <div id="icon1" style="color:var(--neon);font-size:0.8rem;">v</div>
+          <div id="icon1" style="color:var(--neon);font-size:0.8rem;">-</div>
         </div>
-        <div class="section-body" id="body1">
-          <div id="vehicleSelector" style="margin-bottom:1rem;display:flex;flex-direction:column;gap:2px;"></div>
-          <div class="field-row cols-2">
-            <div class="field-wrap"><label class="lbl">Loan Amount (USD)<span class="req">*</span></label><input class="inp" type="number" id="loanAmt" placeholder="e.g. 40000" max="49500" oninput="calcLoan()"><div class="hint">Max $49,500</div></div>
-            <div class="field-wrap"><label class="lbl">Down Payment (USD)</label><input class="inp" type="number" id="downPmt" placeholder="e.g. 5500" oninput="calcLoan()"></div>
+        <div class="fbody" id="body1">
+          <div id="vehicleCards" style="margin-bottom:1.25rem;"></div>
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Loan Amount (USD)<span class="req">*</span></label><input class="inp" type="number" id="loanAmt" placeholder="Enter amount" oninput="calcLoan()"><div class="hint" id="maxLoanHint">Max $49,500</div></div>
+            <div class="fw"><label class="lbl">Down Payment (USD)</label><input class="inp" type="number" id="downPmt" placeholder="e.g. 5500" oninput="calcLoan()"></div>
           </div>
-          <div class="field-wrap" style="margin-bottom:1rem;">
+          <div class="fw" style="margin-bottom:1rem;">
             <label class="lbl">Loan Term<span class="req">*</span></label>
             <div class="radio-group" id="termGroup">
-              <div class="radio-opt" onclick="selectTerm(this,24)"><div class="radio-opt-lbl">24 mo</div></div>
-              <div class="radio-opt" onclick="selectTerm(this,36)"><div class="radio-opt-lbl">36 mo</div></div>
-              <div class="radio-opt" onclick="selectTerm(this,48)"><div class="radio-opt-lbl">48 mo</div></div>
-              <div class="radio-opt selected" onclick="selectTerm(this,60)"><div class="radio-opt-lbl">60 mo</div></div>
+              <div class="ropt" onclick="selectTerm(this,24)"><div class="ropt-lbl">24 mo</div></div>
+              <div class="ropt" onclick="selectTerm(this,36)"><div class="ropt-lbl">36 mo</div></div>
+              <div class="ropt" onclick="selectTerm(this,48)"><div class="ropt-lbl">48 mo</div></div>
+              <div class="ropt sel" onclick="selectTerm(this,60)"><div class="ropt-lbl">60 mo</div></div>
             </div>
           </div>
-          <div class="field-wrap"><label class="lbl">Intended Use<span class="req">*</span></label>
-            <select class="inp" id="intendedUse"><option value="">Select...</option><option>Personal / Daily Driver</option><option>Collector / Show Car</option><option>Weekend / Recreational</option><option>Investment / Appreciation</option></select>
+          <div class="fw">
+            <label class="lbl">Intended Use<span class="req">*</span></label>
+            <select class="inp" id="intendedUse">
+              <option value="">Select...</option>
+              <option>Personal / Daily Driver</option>
+              <option>Collector / Show Car</option>
+              <option>Weekend / Recreational</option>
+              <option>Investment / Appreciation</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <!-- SECTION 2 -->
-      <div class="form-section" id="sec2">
-        <div class="section-header" onclick="toggleSec('sec2')">
+      <!-- SECTION 2: PERSONAL -->
+      <div class="fsec" id="sec2">
+        <div class="fhdr" onclick="toggleSec(2)">
           <div style="display:flex;align-items:center;">
-            <div class="section-num">02</div>
-            <div><div class="section-title">Personal Information</div><div class="section-sub">Identity · Contact · Address</div></div>
+            <div class="fnum">02</div>
+            <div><div class="ftitle">Personal Information</div><div class="fsub">Identity - Contact - Address</div></div>
           </div>
-          <div id="icon2" style="color:var(--dim);font-size:0.8rem;">v</div>
+          <div id="icon2" style="color:var(--dim);font-size:0.8rem;">+</div>
         </div>
-        <div class="section-body collapsed" id="body2">
-          <div class="field-row cols-2">
-            <div class="field-wrap"><label class="lbl">First Name<span class="req">*</span></label><input class="inp" type="text" id="firstName" placeholder="John" oninput="updateSum()"></div>
-            <div class="field-wrap"><label class="lbl">Last Name<span class="req">*</span></label><input class="inp" type="text" id="lastName" placeholder="Doe" oninput="updateSum()"></div>
+        <div class="fbody collapsed" id="body2">
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">First Name<span class="req">*</span></label><input class="inp" type="text" id="firstName" placeholder="John" oninput="updateSum()"></div>
+            <div class="fw"><label class="lbl">Last Name<span class="req">*</span></label><input class="inp" type="text" id="lastName" placeholder="Doe" oninput="updateSum()"></div>
           </div>
-          <div class="field-row cols-3">
-            <div class="field-wrap"><label class="lbl">Date of Birth<span class="req">*</span></label><input class="inp" type="date" id="dob"></div>
-            <div class="field-wrap"><label class="lbl">SSN Last 4<span class="req">*</span></label><input class="inp" type="text" id="ssn4" placeholder="1234" maxlength="4"></div>
-            <div class="field-wrap"><label class="lbl">Citizenship<span class="req">*</span></label><select class="inp" id="citizenship"><option value="">Select...</option><option>US Citizen</option><option>Permanent Resident</option><option>Visa Holder</option></select></div>
+          <div class="frow c3">
+            <div class="fw"><label class="lbl">Date of Birth<span class="req">*</span></label><input class="inp" type="date" id="dob"></div>
+            <div class="fw"><label class="lbl">SSN Last 4<span class="req">*</span></label><input class="inp" type="text" id="ssn4" placeholder="1234" maxlength="4"></div>
+            <div class="fw"><label class="lbl">Citizenship<span class="req">*</span></label>
+              <select class="inp" id="citizenship">
+                <option value="">Select...</option>
+                <option>US Citizen</option>
+                <option>Permanent Resident</option>
+                <option>Visa Holder</option>
+              </select>
+            </div>
           </div>
-          <div class="field-row cols-2">
-            <div class="field-wrap"><label class="lbl">Email<span class="req">*</span></label><input class="inp" type="email" id="email" placeholder="john@email.com" oninput="updateSum()"></div>
-            <div class="field-wrap"><label class="lbl">Mobile Phone<span class="req">*</span></label><input class="inp" type="tel" id="phone" placeholder="(702) 555-0100"></div>
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Email<span class="req">*</span></label><input class="inp" type="email" id="email" placeholder="john@email.com" oninput="updateSum()"></div>
+            <div class="fw"><label class="lbl">Mobile Phone<span class="req">*</span></label><input class="inp" type="tel" id="phone" placeholder="(702) 555-0100"></div>
           </div>
-          <div class="field-row"><div class="field-wrap"><label class="lbl">Street Address<span class="req">*</span></label><input class="inp" type="text" id="street" placeholder="123 Main Street"></div></div>
-          <div class="field-row cols-3">
-            <div class="field-wrap"><label class="lbl">City<span class="req">*</span></label><input class="inp" type="text" id="city" placeholder="Las Vegas"></div>
-            <div class="field-wrap"><label class="lbl">State<span class="req">*</span></label><select class="inp" id="state"><option value="">State...</option><option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option></select></div>
-            <div class="field-wrap"><label class="lbl">ZIP<span class="req">*</span></label><input class="inp" type="text" id="zip" placeholder="89101" maxlength="5"></div>
+          <div class="frow"><div class="fw"><label class="lbl">Street Address<span class="req">*</span></label><input class="inp" type="text" id="street" placeholder="123 Main Street"></div></div>
+          <div class="frow c3">
+            <div class="fw"><label class="lbl">City<span class="req">*</span></label><input class="inp" type="text" id="city" placeholder="Las Vegas"></div>
+            <div class="fw"><label class="lbl">State<span class="req">*</span></label>
+              <select class="inp" id="state">
+                <option value="">State...</option>
+                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+              </select>
+            </div>
+            <div class="fw"><label class="lbl">ZIP<span class="req">*</span></label><input class="inp" type="text" id="zip" placeholder="89101" maxlength="5"></div>
           </div>
-          <div class="field-row cols-2">
-            <div class="field-wrap"><label class="lbl">Housing Status<span class="req">*</span></label><select class="inp" id="housingStatus" onchange="updateSum()"><option value="">Select...</option><option>Own - No Mortgage</option><option>Own - With Mortgage</option><option>Rent</option><option>Live with Family</option></select></div>
-            <div class="field-wrap"><label class="lbl">Monthly Housing Payment</label><input class="inp" type="number" id="housingPmt" placeholder="1500"></div>
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Housing Status<span class="req">*</span></label>
+              <select class="inp" id="housingStatus" onchange="updateSum()">
+                <option value="">Select...</option>
+                <option>Own - No Mortgage</option>
+                <option>Own - With Mortgage</option>
+                <option>Rent</option>
+                <option>Live with Family</option>
+              </select>
+            </div>
+            <div class="fw"><label class="lbl">Monthly Housing Payment</label><input class="inp" type="number" id="housingPmt" placeholder="1500"></div>
           </div>
         </div>
       </div>
 
-      <!-- SECTION 3 -->
-      <div class="form-section" id="sec3">
-        <div class="section-header" onclick="toggleSec('sec3')">
+      <!-- SECTION 3: EMPLOYMENT -->
+      <div class="fsec" id="sec3">
+        <div class="fhdr" onclick="toggleSec(3)">
           <div style="display:flex;align-items:center;">
-            <div class="section-num">03</div>
-            <div><div class="section-title">Employment & Income</div><div class="section-sub">Work · Income · Assets · Crypto</div></div>
+            <div class="fnum">03</div>
+            <div><div class="ftitle">Employment &amp; Income</div><div class="fsub">Work - Income - Assets - Crypto</div></div>
           </div>
-          <div id="icon3" style="color:var(--dim);font-size:0.8rem;">v</div>
+          <div id="icon3" style="color:var(--dim);font-size:0.8rem;">+</div>
         </div>
-        <div class="section-body collapsed" id="body3">
-          <div class="field-row cols-2">
-            <div class="field-wrap"><label class="lbl">Employment Status<span class="req">*</span></label><select class="inp" id="empStatus" onchange="updateSum()"><option value="">Select...</option><option>Full-Time Employed</option><option>Part-Time Employed</option><option>Self-Employed</option><option>Business Owner</option><option>Retired</option><option>Other</option></select></div>
-            <div class="field-wrap"><label class="lbl">Employer / Business</label><input class="inp" type="text" id="employer" placeholder="Company name"></div>
+        <div class="fbody collapsed" id="body3">
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Employment Status<span class="req">*</span></label>
+              <select class="inp" id="empStatus" onchange="updateSum()">
+                <option value="">Select...</option>
+                <option>Full-Time Employed</option>
+                <option>Part-Time Employed</option>
+                <option>Self-Employed</option>
+                <option>Business Owner</option>
+                <option>Retired</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="fw"><label class="lbl">Employer / Business</label><input class="inp" type="text" id="employer" placeholder="Company name"></div>
           </div>
-          <div class="field-row cols-2">
-            <div class="field-wrap"><label class="lbl">Gross Monthly Income<span class="req">*</span></label><input class="inp" type="number" id="monthlyIncome" placeholder="6000" oninput="updateSum()"></div>
-            <div class="field-wrap"><label class="lbl">Credit Score Range<span class="req">*</span></label><select class="inp" id="creditScore" onchange="updateSum()"><option value="">Select...</option><option value="800">800+ Exceptional</option><option value="750">750-799 Very Good</option><option value="700">700-749 Good</option><option value="650">650-699 Fair</option><option value="600">600-649 Poor</option><option value="550">Below 600</option></select></div>
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Gross Monthly Income<span class="req">*</span></label><input class="inp" type="number" id="monthlyIncome" placeholder="6000" oninput="updateSum()"></div>
+            <div class="fw"><label class="lbl">Credit Score Range<span class="req">*</span></label>
+              <select class="inp" id="creditScore" onchange="updateSum()">
+                <option value="">Select...</option>
+                <option value="800">800+ Exceptional</option>
+                <option value="750">750-799 Very Good</option>
+                <option value="700">700-749 Good</option>
+                <option value="650">650-699 Fair</option>
+                <option value="600">600-649 Poor</option>
+                <option value="550">Below 600</option>
+              </select>
+            </div>
           </div>
-          <div class="field-row cols-3">
-            <div class="field-wrap"><label class="lbl">Checking/Savings</label><input class="inp" type="number" id="checkingSavings" placeholder="10000"></div>
-            <div class="field-wrap"><label class="lbl">Investment Accounts</label><input class="inp" type="number" id="investments" placeholder="0"></div>
-            <div class="field-wrap"><label class="lbl">Other Monthly Income</label><input class="inp" type="number" id="otherIncome" placeholder="0"></div>
+          <div class="frow c3">
+            <div class="fw"><label class="lbl">Checking / Savings</label><input class="inp" type="number" id="checkingSavings" placeholder="10000"></div>
+            <div class="fw"><label class="lbl">Investment Accounts</label><input class="inp" type="number" id="investments" placeholder="0"></div>
+            <div class="fw"><label class="lbl">Other Monthly Income</label><input class="inp" type="number" id="otherIncome" placeholder="0"></div>
           </div>
-
-          <!-- Crypto -->
           <div style="background:rgba(136,85,255,0.04);border:1px solid rgba(136,85,255,0.2);padding:1.5rem;margin-top:1.5rem;">
             <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">Crypto Assets - Optional</div>
-            <div class="check-row" id="cryptoRow" onclick="toggleCrypto()">
-              <div class="check-box" id="cryptoBox"></div>
-              <div class="check-text"><strong style="color:var(--text);">Include crypto assets in my application.</strong> I authorize IMC to verify on-chain wallet balance as part of credit decisioning.</div>
+            <div class="crow" id="cryptoRow" onclick="toggleCrypto()">
+              <div class="cbox" id="cryptoBox"></div>
+              <div class="ctext"><strong style="color:var(--text);">Include crypto assets in my application.</strong> I authorize IMC to verify on-chain wallet balance as part of credit decisioning. Qualifying assets: ETH, BTC, MATIC, USDC.</div>
             </div>
             <div id="cryptoFields" style="display:none;margin-top:1rem;">
-              <div class="field-row cols-2">
-                <div class="field-wrap"><label class="lbl">Wallet Address</label><input class="inp" type="text" id="cryptoWallet" placeholder="0x..."></div>
-                <div class="field-wrap"><label class="lbl">Est. Total Value (USD)</label><input class="inp" type="number" id="cryptoValue" placeholder="25000" oninput="updateSum()"></div>
+              <div class="frow c2">
+                <div class="fw"><label class="lbl">Wallet Address</label><input class="inp" type="text" id="cryptoWallet" placeholder="0x..."></div>
+                <div class="fw"><label class="lbl">Est. Total Value (USD)</label><input class="inp" type="number" id="cryptoValue" placeholder="25000" oninput="updateSum()"></div>
               </div>
-              <div class="field-wrap"><label class="lbl">Willing to use as collateral?</label>
-                <div class="radio-group">
-                  <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-opt-lbl">Yes</div></div>
-                  <div class="radio-opt selected" onclick="selectRadio(this)"><div class="radio-opt-lbl">No</div></div>
-                  <div class="radio-opt" onclick="selectRadio(this)"><div class="radio-opt-lbl">Open to it</div></div>
+              <div class="fw">
+                <label class="lbl">Willing to use as collateral?</label>
+                <div class="radio-group" id="collateralGroup">
+                  <div class="ropt" onclick="selectRadio(this,'collateralGroup')"><div class="ropt-lbl">Yes</div></div>
+                  <div class="ropt sel" onclick="selectRadio(this,'collateralGroup')"><div class="ropt-lbl">No</div></div>
+                  <div class="ropt" onclick="selectRadio(this,'collateralGroup')"><div class="ropt-lbl">Open to it</div></div>
                 </div>
               </div>
             </div>
@@ -207,46 +257,63 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
         </div>
       </div>
 
-      <!-- CO-APPLICANT TOGGLE -->
-      <div class="co-toggle" id="coToggle" onclick="toggleCoApp()">
+      <!-- CO-APPLICANT -->
+      <div class="co-toggle" onclick="toggleCoApp()">
         <div style="display:flex;align-items:center;">
-          <div class="section-num">04</div>
-          <div><div class="section-title">Co-Applicant</div><div class="section-sub">Optional - may improve approval</div></div>
+          <div class="fnum">04</div>
+          <div><div class="ftitle">Co-Applicant</div><div class="fsub">Optional - may improve approval</div></div>
         </div>
-        <div class="toggle-sw" id="coSwitch"></div>
+        <div class="tsw" id="coSwitch"></div>
       </div>
-      <div class="form-section" id="secCo" style="display:none;">
-        <div class="section-body">
+      <div class="fsec" id="secCo" style="display:none;">
+        <div class="fbody">
           <div style="background:rgba(240,192,64,0.04);border:1px solid rgba(240,192,64,0.15);padding:0.85rem 1rem;margin-bottom:1.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--gold);">Adding a co-applicant may improve your rate and approval odds.</div>
-          <div class="field-row cols-2">
-            <div class="field-wrap"><label class="lbl">Relationship<span class="req">*</span></label><select class="inp" id="coRelationship"><option value="">Select...</option><option>Spouse / Partner</option><option>Parent</option><option>Sibling</option><option>Business Partner</option></select></div>
-            <div class="field-wrap"><label class="lbl">Co-App Full Name<span class="req">*</span></label><input class="inp" type="text" id="coName" placeholder="Jane Doe"></div>
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Relationship<span class="req">*</span></label>
+              <select class="inp" id="coRelationship">
+                <option value="">Select...</option>
+                <option>Spouse / Partner</option>
+                <option>Parent</option>
+                <option>Sibling</option>
+                <option>Business Partner</option>
+              </select>
+            </div>
+            <div class="fw"><label class="lbl">Co-App Full Name<span class="req">*</span></label><input class="inp" type="text" id="coName" placeholder="Jane Doe"></div>
           </div>
-          <div class="field-row cols-3">
-            <div class="field-wrap"><label class="lbl">Email<span class="req">*</span></label><input class="inp" type="email" id="coEmail" placeholder="jane@email.com"></div>
-            <div class="field-wrap"><label class="lbl">Monthly Income<span class="req">*</span></label><input class="inp" type="number" id="coIncome" placeholder="5000"></div>
-            <div class="field-wrap"><label class="lbl">Credit Score<span class="req">*</span></label><select class="inp" id="coCredit"><option value="">Select...</option><option>800+ Exceptional</option><option>750-799 Very Good</option><option>700-749 Good</option><option>650-699 Fair</option><option>Below 650</option></select></div>
+          <div class="frow c3">
+            <div class="fw"><label class="lbl">Email<span class="req">*</span></label><input class="inp" type="email" id="coEmail" placeholder="jane@email.com"></div>
+            <div class="fw"><label class="lbl">Monthly Income<span class="req">*</span></label><input class="inp" type="number" id="coIncome" placeholder="5000"></div>
+            <div class="fw"><label class="lbl">Credit Score<span class="req">*</span></label>
+              <select class="inp" id="coCredit">
+                <option value="">Select...</option>
+                <option>800+ Exceptional</option>
+                <option>750-799 Very Good</option>
+                <option>700-749 Good</option>
+                <option>650-699 Fair</option>
+                <option>Below 650</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- SECTION 5: DECLARATIONS -->
-      <div class="form-section" id="sec5">
-        <div class="section-header" onclick="toggleSec('sec5')">
+      <div class="fsec" id="sec5">
+        <div class="fhdr" onclick="toggleSec(5)">
           <div style="display:flex;align-items:center;">
-            <div class="section-num">05</div>
-            <div><div class="section-title">Declarations & Consent</div><div class="section-sub">Review and submit</div></div>
+            <div class="fnum">05</div>
+            <div><div class="ftitle">Declarations &amp; Consent</div><div class="fsub">Review and submit</div></div>
           </div>
-          <div id="icon5" style="color:var(--dim);font-size:0.8rem;">v</div>
+          <div id="icon5" style="color:var(--dim);font-size:0.8rem;">+</div>
         </div>
-        <div class="section-body collapsed" id="body5">
-          <div class="check-row" id="d1" onclick="toggleDecl('d1','db1')"><div class="check-box" id="db1"></div><div class="check-text">All information provided is true and accurate. I understand providing false information is grounds for immediate denial.</div></div>
-          <div class="check-row" id="d2" onclick="toggleDecl('d2','db2')"><div class="check-box" id="db2"></div><div class="check-text">I authorize IMC to obtain a credit report and verify employment, income, and banking references.</div></div>
-          <div class="check-row" id="d3" onclick="toggleDecl('d3','db3')"><div class="check-box" id="db3"></div><div class="check-text">I understand loan payments are made in <strong style="color:var(--text);">USDC on Polygon</strong> and agree to maintain a compatible wallet.</div></div>
-          <div class="check-row" id="d4" onclick="toggleDecl('d4','db4')"><div class="check-box" id="db4"></div><div class="check-text">I agree to IMC Terms of Service, Privacy Policy, and consent to electronic communications.</div></div>
-          <div class="disclaimer"><p>This application does not constitute a loan offer. Final terms subject to underwriting. Equal Credit Opportunity - CFPB / REG B compliant.</p></div>
+        <div class="fbody collapsed" id="body5">
+          <div class="crow" id="d1" onclick="toggleDecl('d1','db1')"><div class="cbox" id="db1"></div><div class="ctext">All information is true and accurate. False information is grounds for immediate denial.</div></div>
+          <div class="crow" id="d2" onclick="toggleDecl('d2','db2')"><div class="cbox" id="db2"></div><div class="ctext">I authorize IMC to obtain a credit report and verify employment, income, and banking references.</div></div>
+          <div class="crow" id="d3" onclick="toggleDecl('d3','db3')"><div class="cbox" id="db3"></div><div class="ctext">I understand loan payments are made in <strong style="color:var(--text);">USDC on Polygon</strong> and agree to maintain a compatible wallet.</div></div>
+          <div class="crow" id="d4" onclick="toggleDecl('d4','db4')"><div class="cbox" id="db4"></div><div class="ctext">I agree to IMC Terms of Service, Privacy Policy, and consent to electronic communications.</div></div>
+          <div class="disc"><p>This application does not constitute a loan offer. Final terms subject to underwriting. Equal Credit Opportunity - CFPB / REG B compliant.</p></div>
           <div style="margin-top:1.5rem;">
-            <button class="btn-purple" onclick="debugSubmit()">DEBUG: Quick Test Submit</button>
+            <button class="btn-purple" id="debugBtn" onclick="debugSubmit()">DEBUG: Quick Test Submit</button>
             <button class="btn-gold" id="submitBtn" onclick="submitApp()" disabled>Submit Application</button>
           </div>
         </div>
@@ -256,28 +323,28 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
 
     <!-- SIDEBAR -->
     <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:1rem;">
-      <div class="summary-card">
-        <div class="sl" style="margin-bottom:1rem;">Wallet Status</div>
-        <div id="walletStatus" style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--dim);letter-spacing:0.1em;">Not connected - connect wallet above</div>
+      <div class="scard">
+        <div class="sl" style="margin-bottom:1rem;">Wallet</div>
+        <div id="walletStatus" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;line-height:1.6;">Not connected<br>Connect wallet above to link your address to this application.</div>
       </div>
-      <div class="summary-card">
+      <div class="scard">
         <div class="sl" style="margin-bottom:1rem;">Loan Summary</div>
-        <div class="sum-row"><div class="sum-key">Vehicle</div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:right;" id="sumVehicle">--</div></div>
-        <div class="sum-row"><div class="sum-key">Amount</div><div class="sum-val" id="sumAmt">--</div></div>
-        <div class="sum-row"><div class="sum-key">Term</div><div class="sum-val" id="sumTerm">60 mo</div></div>
-        <div class="sum-row"><div class="sum-key">Est. APR</div><div class="sum-val" style="color:var(--neon);" id="sumAPR">--</div></div>
-        <div class="sum-row"><div class="sum-key">Est. Monthly</div><div class="sum-val" style="color:var(--gold);" id="sumMonthly">--</div></div>
-        <div class="sum-row"><div class="sum-key">Total Interest</div><div class="sum-val" style="font-size:0.85rem;color:var(--muted);" id="sumInterest">--</div></div>
+        <div class="srow"><div class="skey">Vehicle</div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:right;max-width:55%;" id="sumVehicle">--</div></div>
+        <div class="srow"><div class="skey">Amount</div><div class="sval" id="sumAmt">--</div></div>
+        <div class="srow"><div class="skey">Term</div><div class="sval" id="sumTerm">60 mo</div></div>
+        <div class="srow"><div class="skey">Est. APR</div><div class="sval" style="color:var(--neon);" id="sumAPR">--</div></div>
+        <div class="srow"><div class="skey">Est. Monthly</div><div class="sval" style="color:var(--gold);" id="sumMonthly">--</div></div>
+        <div class="srow"><div class="skey">Total Interest</div><div style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);" id="sumInterest">--</div></div>
       </div>
-      <div class="summary-card">
+      <div class="scard">
         <div class="sl" style="margin-bottom:1rem;">Applicant</div>
-        <div class="sum-row"><div class="sum-key">Name</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);" id="sumName">--</div></div>
-        <div class="sum-row"><div class="sum-key">Email</div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);" id="sumEmail">--</div></div>
-        <div class="sum-row"><div class="sum-key">Employment</div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);" id="sumEmp">--</div></div>
-        <div class="sum-row"><div class="sum-key">Income</div><div class="sum-val" id="sumIncome">--</div></div>
-        <div class="sum-row"><div class="sum-key">Credit</div><div class="sum-val" style="color:var(--green);" id="sumCredit">--</div></div>
+        <div class="srow"><div class="skey">Name</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);" id="sumName">--</div></div>
+        <div class="srow"><div class="skey">Email</div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);" id="sumEmail">--</div></div>
+        <div class="srow"><div class="skey">Employment</div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);" id="sumEmp">--</div></div>
+        <div class="srow"><div class="skey">Income</div><div class="sval" id="sumIncome">--</div></div>
+        <div class="srow"><div class="skey">Credit</div><div class="sval" style="color:var(--green);" id="sumCredit">--</div></div>
       </div>
-      <div class="summary-card" id="dtiCard" style="display:none;">
+      <div class="scard" id="dtiCard" style="display:none;">
         <div class="sl" style="margin-bottom:0.75rem;">DTI Ratio</div>
         <div id="dtiVal" style="font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;"></div>
         <div style="height:5px;background:var(--surface3);border-radius:2px;margin-top:0.5rem;overflow:hidden;"><div id="dtiBar" style="height:100%;border-radius:2px;transition:width 0.5s;"></div></div>
@@ -289,10 +356,10 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
 
 <!-- SUCCESS -->
 <div id="successWrap" style="display:none;padding:5.5rem 3rem 4rem;">
-  <div class="success-wrap">
+  <div style="max-width:580px;margin:0 auto;text-align:center;">
     <div style="font-size:3rem;margin-bottom:1.5rem;">&#11042;</div>
     <div class="sl" style="justify-content:center;">Application Received</div>
-    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;letter-spacing:0.05em;line-height:0.9;margin-bottom:1.5rem;">APPLICATION<br><span style="color:var(--neon);text-shadow:0 0 20px rgba(0,212,255,0.3);">SUBMITTED</span></h2>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;letter-spacing:0.05em;line-height:0.9;margin-bottom:1.5rem;">APPLICATION<br><span style="color:var(--neon);">SUBMITTED</span></h2>
     <p style="color:var(--muted);font-size:0.9rem;line-height:1.75;margin-bottom:2rem;">Your application is under review. Expect a decision within 24-48 hours.</p>
     <div id="successDetails" style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;text-align:left;margin-bottom:2rem;"></div>
     <a href="index.html"><button style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;width:100%;">Back to Marketplace</button></a>
@@ -300,60 +367,6 @@ select.inp{cursor:pointer;-webkit-appearance:none;}
 </div>
 
 <script>
-
-var VEHICLES = [
-  { id:'1', name:'1957 Chevrolet Bel Air', color:'Aquamarine', tag:'Tesla EV Conversion - Las Vegas', appraised:55000, maxLoan:49500, status:'funding' },
-  { id:'2', name:'1969 Dodge Charger R/T', color:'Plum Crazy Purple', tag:'Tesla EV Conversion - Las Vegas', appraised:68000, maxLoan:61200, status:'active' },
-  { id:'3', name:'1970 Ford Mustang Boss 429', color:'Grabber Green', tag:'Tesla EV Conversion - Las Vegas', appraised:72000, maxLoan:64800, status:'active' }
-];
-var selectedVehicleId = '1';
-
-function getURLParam(name) {
-  var params = new URLSearchParams(window.location.search);
-  return params.get(name);
-}
-
-function renderVehicles() {
-  var param = getURLParam('vehicle') || '1';
-  selectedVehicleId = param;
-  var container = document.getElementById('vehicleSelector');
-  container.innerHTML = VEHICLES.map(function(v) {
-    var isSelected = v.id === selectedVehicleId;
-    var statusColor = v.status === 'funding' ? 'var(--neon)' : 'var(--green)';
-    var statusLabel = v.status === 'funding' ? 'Open for Funding' : 'Active - Buyer Needed';
-    return '<div onclick="selectVehicle(\'' + v.id + '\')" style="background:' + (isSelected ? 'rgba(0,212,255,0.06)' : 'var(--surface2)') + ';border:1px solid ' + (isSelected ? 'rgba(0,212,255,0.4)' : 'var(--border)') + ';padding:1.25rem 1.5rem;position:relative;cursor:pointer;transition:all 0.2s;" id="vcard-' + v.id + '">' +
-      (isSelected ? '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);opacity:0.6;"></div>' : '') +
-      '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
-      '<div>' +
-      '<div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.05em;color:var(--text);margin-bottom:0.2rem;">' + v.name + ' - ' + v.color + '</div>' +
-      '<div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.1em;">' + v.tag + '</div>' +
-      '<div style="display:flex;gap:1.5rem;margin-top:0.5rem;">' +
-      '<span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);">Appraised: <span style="color:var(--gold);">$' + v.appraised.toLocaleString() + '</span></span>' +
-      '<span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);">Max Loan: <span style="color:var(--neon);">$' + v.maxLoan.toLocaleString() + '</span></span>' +
-      '</div></div>' +
-      '<div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:' + statusColor + ';text-align:right;padding-top:0.25rem;">' + statusLabel + '</div>' +
-      '</div></div>';
-  }).join('');
-  updateVehicleSummary();
-}
-
-function selectVehicle(id) {
-  selectedVehicleId = id;
-  renderVehicles();
-  calcLoan();
-}
-
-function updateVehicleSummary() {
-  var v = VEHICLES.find(function(x) { return x.id === selectedVehicleId; });
-  if (!v) return;
-  document.getElementById('sumVehicle').textContent = v.name;
-  var loanInp = document.getElementById('loanAmt');
-  if (loanInp && !loanInp.value) loanInp.placeholder = 'Max $' + v.maxLoan.toLocaleString();
-}
-
-// Auto-run on page load
-window.addEventListener('load', function() { renderVehicles(); });
-
 var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
 var WALLET = '';
@@ -361,10 +374,103 @@ var walletConnected = false;
 var selectedTerm = 60;
 var coAppEnabled = false;
 var cryptoEnabled = false;
-var decls = {d1:false,d2:false,d3:false,d4:false};
+var decls = { d1: false, d2: false, d3: false, d4: false };
+var selectedVehicleId = '1';
+
+var VEHICLES = [
+  { id: '1', name: '1957 Chevrolet Bel Air', color: 'Aquamarine', tag: 'Tesla EV Conversion - Las Vegas', appraised: 55000, maxLoan: 49500, status: 'funding' },
+  { id: '2', name: '1969 Dodge Charger R/T', color: 'Plum Crazy Purple', tag: 'Tesla EV Conversion - Las Vegas', appraised: 68000, maxLoan: 61200, status: 'active' },
+  { id: '3', name: '1970 Ford Mustang Boss 429', color: 'Grabber Green', tag: 'Tesla EV Conversion - Las Vegas', appraised: 72000, maxLoan: 64800, status: 'active' }
+];
+
+function getURLParam(name) {
+  try {
+    return new URLSearchParams(window.location.search).get(name);
+  } catch(e) { return null; }
+}
+
+function renderVehicleCards() {
+  var container = document.getElementById('vehicleCards');
+  container.innerHTML = '';
+  VEHICLES.forEach(function(v) {
+    var isActive = v.id === selectedVehicleId;
+    var div = document.createElement('div');
+    div.className = 'vcard' + (isActive ? ' active' : '');
+    div.id = 'vc-' + v.id;
+    div.setAttribute('onclick', 'selectVehicle("' + v.id + '")');
+
+    var bar = document.createElement('div');
+    bar.className = 'vcard-bar';
+    div.appendChild(bar);
+
+    var inner = document.createElement('div');
+    inner.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;';
+
+    var left = document.createElement('div');
+    var title = document.createElement('div');
+    title.style.fontFamily = 'Bebas Neue, sans-serif';
+    title.style.fontSize = '1.2rem';
+    title.style.letterSpacing = '0.05em';
+    title.style.color = 'var(--text)';
+    title.style.marginBottom = '0.2rem';
+    title.textContent = v.name + ' - ' + v.color;
+    var sub = document.createElement('div');
+        sub.style.fontFamily = 'DM Mono,monospace';
+    sub.style.fontSize = '0.58rem';
+    sub.style.color = 'var(--dim)';
+    sub.style.letterSpacing = '0.1em';
+    sub.style.marginBottom = '0.4rem';;
+    sub.textContent = v.tag;
+    var meta = document.createElement('div');
+    meta.style.cssText = 'display:flex;gap:1.5rem;';
+    var a1 = document.createElement('span');
+        a1.style.fontFamily = 'DM Mono,monospace';
+    a1.style.fontSize = '0.6rem';
+    a1.style.color = 'var(--dim)';;
+    a1.innerHTML = 'Appraised: <span style="color:var(--gold);">$' + v.appraised.toLocaleString() + '</span>';
+    var a2 = document.createElement('span');
+        a2.style.fontFamily = 'DM Mono,monospace';
+    a2.style.fontSize = '0.6rem';
+    a2.style.color = 'var(--dim)';;
+    a2.innerHTML = 'Max Loan: <span style="color:var(--neon);">$' + v.maxLoan.toLocaleString() + '</span>';
+    meta.appendChild(a1);
+    meta.appendChild(a2);
+    left.appendChild(title);
+    left.appendChild(sub);
+    left.appendChild(meta);
+
+    var right = document.createElement('div');
+        right.style.fontFamily = 'DM Mono,monospace';
+    right.style.fontSize = '0.55rem';
+    right.style.letterSpacing = '0.12em';
+    right.style.textTransform = 'uppercase';
+    right.style.paddingTop = '0.25rem';
+    right.style.textAlign = 'right';;
+    right.style.color = v.status === 'funding' ? 'var(--neon)' : 'var(--green)';
+    right.textContent = v.status === 'funding' ? 'Open for Funding' : 'Active - Apply Now';
+
+    inner.appendChild(left);
+    inner.appendChild(right);
+    div.appendChild(inner);
+    container.appendChild(div);
+  });
+}
+
+function selectVehicle(id) {
+  selectedVehicleId = id;
+  renderVehicleCards();
+  var v = VEHICLES.find(function(x) { return x.id === id; });
+  if (v) {
+    document.getElementById('maxLoanHint').textContent = 'Max $' + v.maxLoan.toLocaleString();
+    document.getElementById('sumVehicle').textContent = v.name;
+    calcLoan();
+  }
+}
 
 function connectWallet() {
-  if (!window.ethereum) { alert('Please install MetaMask.'); return; }
+  if (!window.ethereum) { alert('Please install MetaMask to connect your wallet.'); return; }
+  var lbl = document.getElementById('wLabel');
+  lbl.textContent = 'Connecting...';
   window.ethereum.request({ method: 'eth_requestAccounts' })
     .then(function(accounts) {
       WALLET = accounts[0];
@@ -375,31 +481,34 @@ function connectWallet() {
       document.getElementById('wLabel').textContent = short;
       document.getElementById('walletBtn').style.borderColor = '#00d4ff';
       document.getElementById('walletBtn').style.color = '#00d4ff';
-      document.getElementById('walletStatus').textContent = accounts[0];
-      document.getElementById('walletStatus').style.color = '#00d4ff';
+      document.getElementById('walletStatus').innerHTML = '<span style="color:#00d4ff;">' + accounts[0] + '</span><br><span style="color:var(--green);font-size:0.55rem;">Connected - address will be linked to this application</span>';
     })
-    .catch(function(e) { console.error(e); });
+    .catch(function(e) {
+      document.getElementById('wLabel').textContent = 'Connect Wallet';
+      console.error(e);
+    });
 }
 
-function toggleSec(id) {
-  var body = document.getElementById('body' + id.replace('sec',''));
-  var icon = document.getElementById('icon' + id.replace('sec',''));
+function toggleSec(n) {
+  var body = document.getElementById('body' + n);
+  var icon = document.getElementById('icon' + n);
   var isOpen = !body.classList.contains('collapsed');
   body.classList.toggle('collapsed', isOpen);
+  icon.textContent = isOpen ? '+' : '-';
   icon.style.color = isOpen ? 'var(--dim)' : 'var(--neon)';
 }
 
 function selectTerm(el, t) {
   selectedTerm = t;
-  document.querySelectorAll('#termGroup .radio-opt').forEach(function(o) { o.classList.remove('selected'); });
-  el.classList.add('selected');
+  document.querySelectorAll('#termGroup .ropt').forEach(function(o) { o.classList.remove('sel'); });
+  el.classList.add('sel');
   document.getElementById('sumTerm').textContent = t + ' mo';
   calcLoan();
 }
 
-function selectRadio(el) {
-  el.closest('.radio-group').querySelectorAll('.radio-opt').forEach(function(o) { o.classList.remove('selected'); });
-  el.classList.add('selected');
+function selectRadio(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .ropt').forEach(function(o) { o.classList.remove('sel'); });
+  el.classList.add('sel');
 }
 
 function toggleCoApp() {
@@ -411,14 +520,17 @@ function toggleCoApp() {
 function toggleCrypto() {
   cryptoEnabled = !cryptoEnabled;
   document.getElementById('cryptoBox').classList.toggle('on', cryptoEnabled);
+  document.getElementById('cryptoBox').textContent = cryptoEnabled ? 'v' : '';
   document.getElementById('cryptoRow').classList.toggle('checked', cryptoEnabled);
   document.getElementById('cryptoFields').style.display = cryptoEnabled ? 'block' : 'none';
+  calcLoan();
 }
 
 function toggleDecl(rowId, boxId) {
   decls[rowId] = !decls[rowId];
-  document.getElementById(boxId).classList.toggle('on', decls[rowId]);
-  document.getElementById(boxId).innerHTML = decls[rowId] ? '<span style="color:#050507;font-size:10px;font-weight:700;">v</span>' : '';
+  var box = document.getElementById(boxId);
+  box.classList.toggle('on', decls[rowId]);
+  box.textContent = decls[rowId] ? 'v' : '';
   document.getElementById(rowId).classList.toggle('checked', decls[rowId]);
   document.getElementById('submitBtn').disabled = !(decls.d1 && decls.d2 && decls.d3 && decls.d4);
 }
@@ -426,28 +538,39 @@ function toggleDecl(rowId, boxId) {
 function gv(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
 function gn(id) { var v = parseFloat(gv(id)); return isNaN(v) ? 0 : v; }
 
+function getCollateral() {
+  var sel = document.querySelector('#collateralGroup .ropt.sel');
+  return sel ? sel.querySelector('.ropt-lbl').textContent : 'No';
+}
+
 function calcLoan() {
   var amt = gn('loanAmt');
-  var apr = 12;
   var credit = parseFloat(gv('creditScore')) || 0;
-  if (credit >= 800) apr = 7.9; else if (credit >= 750) apr = 9.9; else if (credit >= 700) apr = 11.9; else if (credit >= 650) apr = 13.9; else if (credit > 0) apr = 14.9;
-  if (cryptoEnabled && gn('cryptoValue') > amt * 0.5) apr = Math.max(6.9, apr - 1.5);
+  var apr = 12;
+  if (credit >= 800) apr = 7.9;
+  else if (credit >= 750) apr = 9.9;
+  else if (credit >= 700) apr = 11.9;
+  else if (credit >= 650) apr = 13.9;
+  else if (credit > 0) apr = 14.9;
+  var cryptoVal = gn('cryptoValue');
+  if (cryptoEnabled && getCollateral() !== 'No' && cryptoVal >= amt * 0.7) apr = Math.max(6.9, apr - 1.5);
   var r = apr / 100 / 12;
-  var monthly = amt > 0 ? (amt * r * Math.pow(1+r,selectedTerm)) / (Math.pow(1+r,selectedTerm)-1) : 0;
+  var monthly = amt > 0 && selectedTerm > 0 ? (amt * r * Math.pow(1+r,selectedTerm)) / (Math.pow(1+r,selectedTerm)-1) : 0;
   var interest = monthly * selectedTerm - amt;
   document.getElementById('sumAmt').textContent = amt > 0 ? '$' + amt.toLocaleString() : '--';
   document.getElementById('sumAPR').textContent = amt > 0 && credit > 0 ? apr.toFixed(1) + '%' : '--';
   document.getElementById('sumMonthly').textContent = monthly > 0 ? '$' + monthly.toFixed(2) : '--';
   document.getElementById('sumInterest').textContent = interest > 0 ? '$' + interest.toFixed(0) : '--';
-  if (monthly > 0 && gn('monthlyIncome') > 0) {
-    var dti = (monthly / gn('monthlyIncome') * 100);
+  var income = gn('monthlyIncome');
+  if (monthly > 0 && income > 0) {
+    var dti = monthly / income * 100;
     var color = dti < 28 ? 'var(--green)' : dti < 36 ? 'var(--gold)' : 'var(--red)';
     document.getElementById('dtiCard').style.display = 'block';
     document.getElementById('dtiVal').textContent = dti.toFixed(1) + '%';
     document.getElementById('dtiVal').style.color = color;
-    document.getElementById('dtiBar').style.width = Math.min(dti*1.5,100) + '%';
+    document.getElementById('dtiBar').style.width = Math.min(dti * 1.5, 100) + '%';
     document.getElementById('dtiBar').style.background = color;
-    document.getElementById('dtiNote').textContent = dti < 28 ? 'Excellent DTI' : dti < 36 ? 'Acceptable DTI' : 'Elevated DTI - co-applicant recommended';
+    document.getElementById('dtiNote').textContent = dti < 28 ? 'Excellent DTI' : dti < 36 ? 'Acceptable DTI' : 'Elevated - co-applicant recommended';
   }
 }
 
@@ -459,15 +582,15 @@ function updateSum() {
   document.getElementById('sumEmp').textContent = gv('empStatus') || '--';
   var inc = gn('monthlyIncome');
   document.getElementById('sumIncome').textContent = inc > 0 ? '$' + inc.toLocaleString() : '--';
-  var credit = gv('creditScore');
-  document.getElementById('sumCredit').textContent = credit ? credit + '+' : '--';
+  document.getElementById('sumCredit').textContent = gv('creditScore') ? gv('creditScore') + '+' : '--';
 }
 
-function buildPayload(wallet) {
+function buildPayload(walletOverride) {
+  var v = VEHICLES.find(function(x) { return x.id === selectedVehicleId; }) || VEHICLES[0];
   return {
-    wallet_address: wallet || WALLET || 'unknown',
-    vehicle_id: selectedVehicleId,
-    vehicle_name: (VEHICLES.find(function(v){return v.id===selectedVehicleId;})||{name:'Unknown'}).name,
+    wallet_address: walletOverride || WALLET || 'unknown',
+    vehicle_id: v.id,
+    vehicle_name: v.name + ' - ' + v.color,
     loan_amount: gn('loanAmt') || 1,
     down_payment: gn('downPmt'),
     term_months: selectedTerm,
@@ -492,6 +615,7 @@ function buildPayload(wallet) {
     other_income: gn('otherIncome'),
     crypto_included: cryptoEnabled,
     crypto_estimated_value: cryptoEnabled ? gn('cryptoValue') : 0,
+    crypto_as_collateral: cryptoEnabled ? getCollateral() : 'No',
     co_app_included: coAppEnabled,
     co_app_relationship: coAppEnabled ? gv('coRelationship') : null,
     co_app_name: coAppEnabled ? gv('coName') : null,
@@ -515,7 +639,7 @@ function sendToSupabase(payload, onSuccess, onError) {
   })
   .then(function(r) { return r.json(); })
   .then(function(d) {
-    console.log('Supabase response:', d);
+    console.log('Supabase:', d);
     if (d && d[0] && d[0].id) { onSuccess(d[0].id); }
     else if (d && d.message) { onError(d.message); }
     else { onSuccess('pending'); }
@@ -528,7 +652,7 @@ function submitApp() {
   btn.textContent = 'Submitting...';
   btn.disabled = true;
   var payload = buildPayload(WALLET);
-  console.log('Submitting:', JSON.stringify(payload));
+  console.log('Submit payload:', JSON.stringify(payload));
   sendToSupabase(payload,
     function(id) { showSuccess(id); },
     function(err) {
@@ -542,13 +666,14 @@ function submitApp() {
 
 function debugSubmit() {
   var payload = buildPayload('0x8050d5462309dd334116Bb3e949386c3238DB9ac');
-  payload.first_name = payload.first_name || 'Test';
-  payload.last_name = payload.last_name || 'User';
-  payload.loan_amount = payload.loan_amount || 40000;
-  payload.term_months = payload.term_months || 60;
-  console.log('Debug submit:', JSON.stringify(payload));
+  if (!payload.first_name) payload.first_name = 'Test';
+  if (!payload.last_name) payload.last_name = 'Applicant';
+  payload.loan_amount = payload.loan_amount > 1 ? payload.loan_amount : 40000;
+  payload.gross_monthly_income = payload.gross_monthly_income || 8000;
+  payload.credit_score_range = payload.credit_score_range || '750';
+  console.log('Debug payload:', JSON.stringify(payload));
   sendToSupabase(payload,
-    function(id) { alert('SUCCESS! ID: ' + id.slice(0,8).toUpperCase() + ' - Check admin panel'); },
+    function(id) { alert('SUCCESS - ID: ' + id.slice(0,8).toUpperCase() + ' - Check admin panel'); },
     function(err) { alert('ERROR: ' + err); }
   );
 }
@@ -556,22 +681,36 @@ function debugSubmit() {
 function showSuccess(id) {
   document.getElementById('appWrap').style.display = 'none';
   document.getElementById('successWrap').style.display = 'block';
+  var v = VEHICLES.find(function(x) { return x.id === selectedVehicleId; }) || VEHICLES[0];
   var rows = [
-    ['Application ID', id ? id.slice(0,8).toUpperCase() : 'PENDING'],
-    ['Applicant', (gv('firstName') + ' ' + gv('lastName')).trim() || 'Not provided'],
-    ['Email', gv('email') || 'Not provided'],
-    ['Loan Amount', gn('loanAmt') > 0 ? '$' + gn('loanAmt').toLocaleString() : 'Not provided'],
+    ['App ID', id ? id.slice(0,8).toUpperCase() : 'PENDING'],
+    ['Vehicle', v.name + ' - ' + v.color],
+    ['Loan Amount', gn('loanAmt') > 1 ? '$' + gn('loanAmt').toLocaleString() : 'Not provided'],
     ['Term', selectedTerm + ' months'],
-    ['Wallet', WALLET ? WALLET.slice(0,6)+'...'+WALLET.slice(-4) : 'Not connected'],
-    ['Status', 'Under Review'],
+    ['Wallet', WALLET ? WALLET.slice(0,6) + '...' + WALLET.slice(-4) : 'Not connected'],
+    ['Status', 'Under Review']
   ];
-  document.getElementById('successDetails').innerHTML = rows.map(function(r) {
-    return '<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;">' +
+  var html = '';
+  rows.forEach(function(r) {
+    html += '<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;">' +
       '<span style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);">' + r[0] + '</span>' +
-      '<span style="color:' + (r[0]==='Status'?'var(--neon)':r[0]==='Application ID'?'var(--gold)':'var(--text)') + ';">' + r[1] + '</span></div>';
-  }).join('');
+      '<span style="color:' + (r[0]==='Status'?'var(--neon)':r[0]==='App ID'?'var(--gold)':'var(--text)') + ';">' + r[1] + '</span></div>';
+  });
+  document.getElementById('successDetails').innerHTML = html;
   window.scrollTo(0,0);
 }
+
+// ---- INIT ----
+(function init() {
+  var param = getURLParam('vehicle') || '1';
+  selectedVehicleId = param;
+  renderVehicleCards();
+  var v = VEHICLES.find(function(x) { return x.id === param; });
+  if (v) {
+    document.getElementById('maxLoanHint').textContent = 'Max $' + v.maxLoan.toLocaleString();
+    document.getElementById('sumVehicle').textContent = v.name;
+  }
+})();
 </script>
 </body>
 </html>
