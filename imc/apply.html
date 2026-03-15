@@ -870,17 +870,20 @@ var decls = {decl1:false,decl2:false,decl3:false,decl4:false};
 
 // -- WALLET CONNECT --
 function connectWallet() {
-  walletConnected = !walletConnected;
-  document.getElementById('wDot').style.background = walletConnected ? 'var(--neon)' : 'var(--dim)';
-  document.getElementById('wDot').style.boxShadow = walletConnected ? '0 0 6px var(--neon)' : 'none';
-  document.getElementById('wLabel').textContent = walletConnected ? a[0].slice(0,6)+'...'+a[0].slice(-4) : 'Connect Wallet';
-  document.getElementById('walletBtn').style.borderColor = walletConnected ? 'var(--neon)' : 'var(--border2)';
-  document.getElementById('walletBtn').style.color = walletConnected ? 'var(--neon)' : 'var(--muted)';
-  if (walletConnected && !cryptoEnabled) {
-    document.getElementById('cryptoCheck').click();
-    var inp = document.getElementById('walletInput');
-    if (inp) inp.value = a[0].slice(0,6)+'...'+a[0].slice(-4);
-  }
+  if (!window.ethereum) { alert('Install MetaMask to connect.'); return; }
+  window.ethereum.request({ method: 'eth_requestAccounts' })
+    .then(function(accounts) {
+      var addr = accounts[0];
+      CONNECTED_WALLET = addr;
+      walletConnected = true;
+      var short = addr.slice(0,6) + '...' + addr.slice(-4);
+      document.getElementById('wDot').style.background = 'var(--neon)';
+      document.getElementById('wDot').style.boxShadow = '0 0 6px var(--neon)';
+      document.getElementById('wLabel').textContent = short;
+      document.getElementById('walletBtn').style.borderColor = 'var(--neon)';
+      document.getElementById('walletBtn').style.color = 'var(--neon)';
+    })
+    .catch(function() {});
 }
 
 // -- SECTION TOGGLE --
