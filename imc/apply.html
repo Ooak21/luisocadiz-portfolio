@@ -1187,10 +1187,10 @@ function applyGateConnect() {
         btn.style.color = '#00d4ff';
         var gate = document.getElementById('applyGate');
         gate.style.transition = 'opacity 0.8s';
+        CONNECTED_WALLET = a[0];
         gate.style.opacity = '0';
         setTimeout(function() {
           gate.style.display = 'none';
-          CONNECTED_WALLET = a[0];
           document.getElementById('wDot').style.background = '#00d4ff';
           document.getElementById('wDot').style.boxShadow = '0 0 6px #00d4ff';
           document.getElementById('wLabel').textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
