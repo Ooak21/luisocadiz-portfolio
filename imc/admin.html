@@ -249,9 +249,12 @@ function loadApplications() {
   document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">...</div><div class="empty-state-text">Loading applications</div></div>';
 
   fetch(SB_URL + '/rest/v1/imc_applications?select=*&order=created_at.desc', {
+    method: 'GET',
     headers: {
       'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     }
   })
   .then(function(r) { return r.json(); })
