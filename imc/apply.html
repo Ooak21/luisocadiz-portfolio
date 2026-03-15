@@ -737,7 +737,8 @@ select.inp{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=
           </div>
 
           <div style="margin-top:1.5rem;">
-            <button class="btn-gold" id="submitBtn" onclick="submitApp()" disabled>Submit Application →</button>
+            <button onclick="debugSubmit()" style="background:var(--purple);border:none;color:#fff;padding:0.5rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;cursor:pointer;margin-bottom:0.5rem;width:100%;">DEBUG: Quick Submit Test</button>
+          <button class="btn-gold" id="submitBtn" onclick="submitApp()" disabled>Submit Application →</button>
           </div>
         </div>
       </div>
@@ -1098,6 +1099,7 @@ function submitApp() {
     status: 'pending'
   };
 
+  console.log('Submitting payload:', JSON.stringify(payload));
   fetch(SB_URL + '/rest/v1/imc_applications', {
     method: 'POST',
     headers: {
@@ -1117,8 +1119,9 @@ function submitApp() {
       });
     }
   }).catch(function(err) {
-    console.error('Submit error:', err);
-    showSuccess(); // Show success anyway
+    alert('ERROR: ' + err.message);
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = 'Submit Application ->';
   });
 }
 
@@ -1196,6 +1199,40 @@ function applyGateConnect() {
       }
     })
     .catch(function() { lbl.textContent = 'Connect Wallet to Enter'; });
+}
+
+
+function debugSubmit() {
+  var SB = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
+  var wallet = CONNECTED_WALLET || document.getElementById('wLabel').textContent || '0x8050d5462309dd334116Bb3e949386c3238DB9ac';
+  var payload = {
+    wallet_address: wallet,
+    loan_amount: 40000,
+    down_payment: 5500,
+    term_months: 60,
+    first_name: 'Luis',
+    last_name: 'Ocadiz',
+    email: 'hello@luisocadiz.online',
+    employment_status: 'Self-Employed',
+    gross_monthly_income: 8000,
+    credit_score_range: '750',
+    status: 'pending'
+  };
+  console.log('Submitting payload:', payload);
+  fetch(SB + '/rest/v1/imc_applications', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': KEY,
+      'Authorization': 'Bearer ' + KEY,
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) { console.log('SUCCESS:', d); alert('Saved! Check admin panel. ID: ' + (d[0] ? d[0].id.slice(0,8) : 'unknown')); })
+  .catch(function(e) { console.error('ERROR:', e); alert('Error: ' + e.message); });
 }
 
 </script>
