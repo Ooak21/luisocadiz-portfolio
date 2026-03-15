@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMC — Dealer Vehicle Submission</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050507;--surface:#0a0a0f;--surface2:#0f0f18;--surface3:#14141f;--border:#1e1e2e;--border2:#2a2a3e;--neon:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff4455;--purple:#8855ff;--text:#e8e8f0;--muted:#8888aa;--dim:#444460;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.008) 0px,rgba(0,212,255,0.008) 1px,transparent 1px,transparent 4px);pointer-events:none;z-index:9000;}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(5,5,7,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.1em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:0.75rem;}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:pulse 2s infinite;}
+.nav-wallet{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border2);color:var(--muted);padding:0.5rem 1.25rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;transition:all 0.2s;}
+.nav-wallet:hover{border-color:var(--gold);color:var(--gold);}
+.w-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);transition:all 0.3s;}
+.wrap{max-width:1100px;margin:0 auto;padding:5.5rem 3rem 4rem;}
+.two-col{display:grid;grid-template-columns:1fr 340px;gap:3rem;align-items:start;}
+.sl{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;}
+.sl::before{content:'';width:2rem;height:1px;background:var(--gold);box-shadow:0 0 4px var(--gold);}
+.fsec{background:var(--surface);border:1px solid var(--border);margin-bottom:2px;overflow:hidden;}
+.fhdr{padding:1.25rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.fnum{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--surface3);line-height:1;margin-right:1rem;flex-shrink:0;}
+.ftitle{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;color:var(--text);}
+.fsub{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);margin-top:0.15rem;}
+.fbody{padding:2rem;}
+.fbody.collapsed{display:none;}
+.frow{display:grid;gap:1rem;margin-bottom:1rem;}
+.c2{grid-template-columns:1fr 1fr;}
+.c3{grid-template-columns:1fr 1fr 1fr;}
+.c4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.fw{display:flex;flex-direction:column;gap:0.35rem;}
+.lbl{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);}
+.req{color:var(--gold);}
+.inp{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.8rem 1rem;font-family:'DM Mono',monospace;font-size:0.78rem;outline:none;transition:border-color 0.2s;width:100%;}
+.inp:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(240,192,64,0.08);}
+.inp::placeholder{color:var(--dim);}
+select.inp{cursor:pointer;-webkit-appearance:none;}
+textarea.inp{resize:vertical;min-height:100px;font-family:'DM Mono',monospace;}
+.hint{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;color:var(--dim);margin-top:0.2rem;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);cursor:pointer;margin-bottom:1rem;}
+.tsw{width:40px;height:22px;background:var(--surface3);border:1px solid var(--border);border-radius:11px;position:relative;transition:all 0.3s;flex-shrink:0;}
+.tsw::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--dim);border-radius:50%;transition:all 0.3s;}
+.tsw.on{background:rgba(0,212,255,0.15);border-color:var(--neon);}
+.tsw.on::after{left:21px;background:var(--neon);}
+.btn-gold{background:var(--gold);border:none;color:#050507;padding:1rem 2rem;font-family:'DM Mono',monospace;font-size:0.75rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;width:100%;}
+.btn-gold:hover{background:#f8d060;box-shadow:0 0 24px rgba(240,192,64,0.4);}
+.btn-gold:disabled{background:var(--surface3);color:var(--dim);cursor:not-allowed;}
+.scard{background:var(--surface);border:1px solid var(--border);padding:1.5rem;position:relative;overflow:hidden;margin-bottom:1rem;}
+.scard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.5;}
+.srow{display:flex;justify-content:space-between;align-items:baseline;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+.srow:last-child{border-bottom:none;}
+.skey{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);}
+.sval{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.05em;color:var(--text);}
+.highlight-input{display:flex;gap:0.5rem;margin-bottom:0.5rem;}
+.highlight-tag{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface2);border:1px solid var(--border);padding:0.3rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);margin:0.25rem 0.25rem 0.25rem 0;}
+.highlight-tag button{background:none;border:none;color:var(--dim);cursor:pointer;font-size:0.8rem;padding:0;}
+.highlight-tag button:hover{color:var(--red);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);}
+@media(max-width:1024px){.two-col{grid-template-columns:1fr;}}
+@media(max-width:768px){.wrap{padding:5rem 1.5rem 3rem;}.c2,.c3,.c4{grid-template-columns:1fr 1fr;}.nav{padding:1rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo"><div class="nav-dot"></div>IMC Dealer</a>
+  <div style="display:flex;align-items:center;gap:1.5rem;">
+    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Marketplace</a>
+    <button class="nav-wallet" id="walletBtn" onclick="connectWallet()">
+      <div class="w-dot" id="wDot"></div>
+      <span id="wLabel">Connect Wallet</span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrap" id="formWrap">
+  <div style="margin-bottom:3rem;">
+    <div class="sl">Dealer Portal - IMC Auto Finance</div>
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);line-height:0.92;letter-spacing:0.02em;margin-bottom:1rem;">Submit a<br><span style="color:var(--gold);text-shadow:0 0 20px rgba(240,192,64,0.3);">Vehicle</span></h1>
+    <p style="color:var(--muted);font-size:0.9rem;max-width:520px;line-height:1.75;">Submit your classic vehicle for listing on the IMC marketplace. Our team reviews every submission within 48 hours. Connect your dealer wallet to get started.</p>
+  </div>
+
+  <div class="two-col">
+    <div>
+
+      <!-- SECTION 1: DEALER INFO -->
+      <div class="fsec" id="sec1">
+        <div class="fhdr" onclick="toggleSec(1)">
+          <div style="display:flex;align-items:center;">
+            <div class="fnum">01</div>
+            <div><div class="ftitle">Dealership Information</div><div class="fsub">Contact - Location - Wallet</div></div>
+          </div>
+          <div id="icon1" style="color:var(--gold);font-size:0.8rem;">-</div>
+        </div>
+        <div class="fbody" id="body1">
+          <div style="background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:1rem 1.25rem;margin-bottom:1.5rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--neon);letter-spacing:0.1em;">
+            Connect your wallet above to authenticate as a dealer. Your wallet address is your dealer ID on the IMC network.
+          </div>
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Your Full Name<span class="req">*</span></label><input class="inp" type="text" id="dealerName" placeholder="John Smith" oninput="updatePreview()"></div>
+            <div class="fw"><label class="lbl">Email Address<span class="req">*</span></label><input class="inp" type="email" id="dealerEmail" placeholder="john@dealership.com" oninput="updatePreview()"></div>
+          </div>
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Dealership Name<span class="req">*</span></label><input class="inp" type="text" id="dealershipName" placeholder="Classic Motors of Vegas" oninput="updatePreview()"></div>
+            <div class="fw"><label class="lbl">Phone Number<span class="req">*</span></label><input class="inp" type="tel" id="dealerPhone" placeholder="(702) 555-0100"></div>
+          </div>
+          <div class="frow c3">
+            <div class="fw"><label class="lbl">City<span class="req">*</span></label><input class="inp" type="text" id="dealerCity" placeholder="Las Vegas" oninput="updatePreview()"></div>
+            <div class="fw"><label class="lbl">State<span class="req">*</span></label>
+              <select class="inp" id="dealerState" onchange="updatePreview()">
+                <option value="">State...</option>
+                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option selected>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+              </select>
+            </div>
+            <div class="fw"><label class="lbl">Dealer License #</label><input class="inp" type="text" id="dealerLicense" placeholder="Optional"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: VEHICLE DETAILS -->
+      <div class="fsec" id="sec2">
+        <div class="fhdr" onclick="toggleSec(2)">
+          <div style="display:flex;align-items:center;">
+            <div class="fnum">02</div>
+            <div><div class="ftitle">Vehicle Details</div><div class="fsub">Year - Make - Model - Specs</div></div>
+          </div>
+          <div id="icon2" style="color:var(--dim);font-size:0.8rem;">+</div>
+        </div>
+        <div class="fbody collapsed" id="body2">
+          <div class="frow c4">
+            <div class="fw"><label class="lbl">Year<span class="req">*</span></label><input class="inp" type="number" id="year" placeholder="1969" min="1900" max="2010" oninput="updatePreview()"></div>
+            <div class="fw"><label class="lbl">Make<span class="req">*</span></label><input class="inp" type="text" id="make" placeholder="Dodge" oninput="updatePreview()"></div>
+            <div class="fw"><label class="lbl">Model<span class="req">*</span></label><input class="inp" type="text" id="model" placeholder="Charger" oninput="updatePreview()"></div>
+            <div class="fw"><label class="lbl">Trim</label><input class="inp" type="text" id="trim" placeholder="R/T" oninput="updatePreview()"></div>
+          </div>
+          <div class="frow c3">
+            <div class="fw"><label class="lbl">Exterior Color<span class="req">*</span></label><input class="inp" type="text" id="color" placeholder="Plum Crazy Purple" oninput="updatePreview()"></div>
+            <div class="fw"><label class="lbl">VIN</label><input class="inp" type="text" id="vin" placeholder="Optional but recommended" maxlength="17"></div>
+            <div class="fw"><label class="lbl">Mileage</label><input class="inp" type="number" id="mileage" placeholder="45000" oninput="updatePreview()"></div>
+          </div>
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Condition<span class="req">*</span></label>
+              <select class="inp" id="condition" onchange="updatePreview()">
+                <option value="">Select...</option>
+                <option>Excellent - Show Quality</option>
+                <option>Very Good - Driver Quality</option>
+                <option>Good - Minor Issues</option>
+                <option>Fair - Needs Work</option>
+                <option>Project / Restomod</option>
+              </select>
+            </div>
+            <div class="fw"><label class="lbl">Title Status<span class="req">*</span></label>
+              <select class="inp" id="titleStatus">
+                <option value="">Select...</option>
+                <option>Clean Title</option>
+                <option>Rebuilt Title</option>
+                <option>Lien - Will be cleared at sale</option>
+              </select>
+            </div>
+          </div>
+          <div class="fw" style="margin-bottom:1rem;">
+            <label class="lbl">Vehicle Description</label>
+            <textarea class="inp" id="description" placeholder="Describe the vehicle history, restoration work, notable features, any known issues..."></textarea>
+          </div>
+          <div class="fw">
+            <label class="lbl">Key Highlights</label>
+            <div id="highlightTags" style="display:flex;flex-wrap:wrap;min-height:30px;margin-bottom:0.5rem;"></div>
+            <div class="highlight-input">
+              <input class="inp" type="text" id="highlightInput" placeholder="e.g. Numbers matching, Frame off restoration..." style="flex:1;">
+              <button onclick="addHighlight()" style="background:var(--gold);border:none;color:#050507;padding:0.8rem 1.25rem;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;white-space:nowrap;">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: EV CONVERSION -->
+      <div class="fsec" id="sec3">
+        <div class="fhdr" onclick="toggleSec(3)">
+          <div style="display:flex;align-items:center;">
+            <div class="fnum">03</div>
+            <div><div class="ftitle">EV Conversion</div><div class="fsub">Drivetrain - Range - Specs</div></div>
+          </div>
+          <div id="icon3" style="color:var(--dim);font-size:0.8rem;">+</div>
+        </div>
+        <div class="fbody collapsed" id="body3">
+          <div class="toggle-row" onclick="toggleEV()">
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text);">EV Converted</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.2rem;">EV conversions command premium valuations on IMC</div>
+            </div>
+            <div class="tsw" id="evSwitch"></div>
+          </div>
+          <div id="evFields" style="display:none;">
+            <div class="frow c2">
+              <div class="fw"><label class="lbl">EV Drivetrain<span class="req">*</span></label>
+                <select class="inp" id="evDrivetrain" onchange="updatePreview()">
+                  <option value="">Select...</option>
+                  <option>Tesla Model S drivetrain</option>
+                  <option>Tesla Model 3 drivetrain</option>
+                  <option>Tesla Model X drivetrain</option>
+                  <option>Custom EV build</option>
+                  <option>Chevy Bolt drivetrain</option>
+                  <option>Other OEM drivetrain</option>
+                </select>
+              </div>
+              <div class="fw"><label class="lbl">Estimated Range (miles)<span class="req">*</span></label><input class="inp" type="number" id="evRange" placeholder="250" oninput="updatePreview()"></div>
+            </div>
+            <div class="frow c2">
+              <div class="fw"><label class="lbl">Conversion Cost (USD)</label><input class="inp" type="number" id="evCost" placeholder="35000" oninput="updatePreview()"></div>
+              <div class="fw"><label class="lbl">Conversion Shop / Builder</label><input class="inp" type="text" id="evBuilder" placeholder="EV West, Bloodshed Motors, etc."></div>
+            </div>
+            <div class="fw" style="margin-bottom:0;">
+              <label class="lbl">EV Warranty / Certification</label>
+              <input class="inp" type="text" id="evWarranty" placeholder="e.g. 2 year / 24,000 mile drivetrain warranty">
+            </div>
+          </div>
+          <div id="noEvNote" style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--dim);letter-spacing:0.1em;padding:1rem 0;">
+            Original drivetrain - not EV converted. IMC accepts non-EV classics on a case-by-case basis.
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: VALUATION -->
+      <div class="fsec" id="sec4">
+        <div class="fhdr" onclick="toggleSec(4)">
+          <div style="display:flex;align-items:center;">
+            <div class="fnum">04</div>
+            <div><div class="ftitle">Valuation &amp; Pricing</div><div class="fsub">Asking price - Appraisal - Loan basis</div></div>
+          </div>
+          <div id="icon4" style="color:var(--dim);font-size:0.8rem;">+</div>
+        </div>
+        <div class="fbody collapsed" id="body4">
+          <div style="background:rgba(240,192,64,0.04);border:1px solid rgba(240,192,64,0.15);padding:1rem 1.25rem;margin-bottom:1.5rem;">
+            <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--gold);letter-spacing:0.1em;line-height:1.7;">IMC sets the final appraised value and max loan amount after review. Your asking price is the starting point for our valuation. We finance up to 90% LTV.</div>
+          </div>
+          <div class="frow c3">
+            <div class="fw"><label class="lbl">Asking Price (USD)<span class="req">*</span></label><input class="inp" type="number" id="askingPrice" placeholder="68000" oninput="updatePreview()"></div>
+            <div class="fw"><label class="lbl">Your Appraisal (USD)</label><input class="inp" type="number" id="appraisedValue" placeholder="If you have one" oninput="updatePreview()"></div>
+            <div class="fw"><label class="lbl">Suggested Loan Amount</label><input class="inp" type="number" id="suggestedLoan" placeholder="Optional" oninput="updatePreview()"></div>
+          </div>
+          <div class="frow c2">
+            <div class="fw"><label class="lbl">Preferred APR Range</label>
+              <select class="inp" id="preferredAPR">
+                <option value="">No preference - IMC decides</option>
+                <option>7-9% (Excellent credit expected)</option>
+                <option>10-12% (Good credit expected)</option>
+                <option>13-15% (All credit considered)</option>
+              </select>
+            </div>
+            <div class="fw"><label class="lbl">Preferred Loan Term</label>
+              <select class="inp" id="preferredTerm">
+                <option value="">No preference</option>
+                <option>24 months</option>
+                <option>36 months</option>
+                <option>48 months</option>
+                <option>60 months</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: DOCUMENTATION -->
+      <div class="fsec" id="sec5">
+        <div class="fhdr" onclick="toggleSec(5)">
+          <div style="display:flex;align-items:center;">
+            <div class="fnum">05</div>
+            <div><div class="ftitle">Documentation &amp; Agreement</div><div class="fsub">Confirm and submit</div></div>
+          </div>
+          <div id="icon5" style="color:var(--dim);font-size:0.8rem;">+</div>
+        </div>
+        <div class="fbody collapsed" id="body5">
+          <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;">
+            <div id="d1" onclick="toggleDecl('d1','db1')" style="display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;padding:0.75rem;background:var(--surface2);border:1px solid var(--border);transition:border-color 0.2s;">
+              <div id="db1" style="width:16px;height:16px;border:1px solid var(--border);background:transparent;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#050507;transition:all 0.2s;"></div>
+              <div style="font-size:0.82rem;color:var(--muted);line-height:1.55;">I certify that I am the legal owner or authorized representative of this vehicle and have the right to sell or finance it.</div>
+            </div>
+            <div id="d2" onclick="toggleDecl('d2','db2')" style="display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;padding:0.75rem;background:var(--surface2);border:1px solid var(--border);transition:border-color 0.2s;">
+              <div id="db2" style="width:16px;height:16px;border:1px solid var(--border);background:transparent;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#050507;transition:all 0.2s;"></div>
+              <div style="font-size:0.82rem;color:var(--muted);line-height:1.55;">All information provided is accurate. I understand misrepresentation may result in removal from the IMC platform.</div>
+            </div>
+            <div id="d3" onclick="toggleDecl('d3','db3')" style="display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;padding:0.75rem;background:var(--surface2);border:1px solid var(--border);transition:border-color 0.2s;">
+              <div id="db3" style="width:16px;height:16px;border:1px solid var(--border);background:transparent;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#050507;transition:all 0.2s;"></div>
+              <div style="font-size:0.82rem;color:var(--muted);line-height:1.55;">I agree to IMC dealer terms including a <strong style="color:var(--text);">2% platform fee</strong> on funded loans, title transfer requirements, and insurance verification before loan funding.</div>
+            </div>
+          </div>
+          <button class="btn-gold" id="submitBtn" onclick="submitVehicle()" disabled>Submit Vehicle for Review</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:1rem;">
+      <div class="scard">
+        <div class="sl" style="margin-bottom:1rem;">Dealer Wallet</div>
+        <div id="walletStatus" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;line-height:1.7;">Not connected</div>
+      </div>
+      <div class="scard">
+        <div class="sl" style="margin-bottom:1rem;">Vehicle Preview</div>
+        <div class="srow"><div class="skey">Vehicle</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);text-align:right;max-width:55%;" id="prevVehicle">--</div></div>
+        <div class="srow"><div class="skey">Condition</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);" id="prevCondition">--</div></div>
+        <div class="srow"><div class="skey">Asking Price</div><div class="sval" style="color:var(--gold);" id="prevPrice">--</div></div>
+        <div class="srow"><div class="skey">EV</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;" id="prevEV" style="color:var(--dim);">No</div></div>
+        <div class="srow"><div class="skey">Location</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);" id="prevLocation">--</div></div>
+        <div class="srow"><div class="skey">Est. Max Loan</div><div class="sval" style="color:var(--neon);" id="prevMaxLoan">--</div></div>
+        <div class="srow"><div class="skey">Platform Fee</div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);" id="prevFee">--</div></div>
+      </div>
+      <div class="scard" style="background:rgba(240,192,64,0.03);border-color:rgba(240,192,64,0.15);">
+        <div class="sl" style="margin-bottom:1rem;">Process</div>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.7rem;color:#050507;flex-shrink:0;margin-top:1px;">1</div>
+            <div style="font-size:0.8rem;color:var(--muted);line-height:1.5;">Submit vehicle - reviewed within 48 hours</div>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.7rem;color:var(--dim);flex-shrink:0;margin-top:1px;">2</div>
+            <div style="font-size:0.8rem;color:var(--dim);line-height:1.5;">IMC appraises and sets loan terms</div>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.7rem;color:var(--dim);flex-shrink:0;margin-top:1px;">3</div>
+            <div style="font-size:0.8rem;color:var(--dim);line-height:1.5;">Listed on marketplace for investors</div>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.7rem;color:var(--dim);flex-shrink:0;margin-top:1px;">4</div>
+            <div style="font-size:0.8rem;color:var(--dim);line-height:1.5;">Buyer approved, loan funded in USDC</div>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+            <div style="width:18px;height:18px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.7rem;color:var(--dim);flex-shrink:0;margin-top:1px;">5</div>
+            <div style="font-size:0.8rem;color:var(--dim);line-height:1.5;">Title transfers, dealer paid minus 2% fee</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="successWrap" style="display:none;padding:5.5rem 3rem 4rem;">
+  <div style="max-width:580px;margin:0 auto;text-align:center;">
+    <div style="font-size:3rem;margin-bottom:1.5rem;">&#11042;</div>
+    <div class="sl" style="justify-content:center;">Submission Received</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:4rem;letter-spacing:0.05em;line-height:0.9;margin-bottom:1.5rem;">VEHICLE<br><span style="color:var(--gold);">SUBMITTED</span></h2>
+    <p style="color:var(--muted);font-size:0.9rem;line-height:1.75;margin-bottom:2rem;">Your vehicle is under review. Our team will appraise, set loan terms, and contact you within 48 hours.</p>
+    <div id="successDetails" style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;text-align:left;margin-bottom:2rem;"></div>
+    <a href="index.html"><button style="background:transparent;border:1px solid var(--gold);color:var(--gold);padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;width:100%;">Back to Marketplace</button></a>
+  </div>
+</div>
+
+<script>
+var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
+var WALLET = '';
+var evEnabled = false;
+var highlights = [];
+var decls = { d1: false, d2: false, d3: false };
+
+function connectWallet() {
+  if (!window.ethereum) { alert('Please install MetaMask.'); return; }
+  document.getElementById('wLabel').textContent = 'Connecting...';
+  window.ethereum.request({ method: 'eth_requestAccounts' })
+    .then(function(accounts) {
+      WALLET = accounts[0];
+      var short = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
+      document.getElementById('wDot').style.background = 'var(--gold)';
+      document.getElementById('wDot').style.boxShadow = '0 0 6px var(--gold)';
+      document.getElementById('wLabel').textContent = short;
+      document.getElementById('walletBtn').style.borderColor = 'var(--gold)';
+      document.getElementById('walletBtn').style.color = 'var(--gold)';
+      document.getElementById('walletStatus').innerHTML =
+        '<span style="color:var(--gold);">' + short + '</span>' +
+        '<br><span style="color:var(--green);font-size:0.55rem;">Dealer wallet connected</span>';
+    })
+    .catch(function(e) {
+      document.getElementById('wLabel').textContent = 'Connect Wallet';
+      console.error(e);
+    });
+}
+
+function toggleSec(n) {
+  var body = document.getElementById('body' + n);
+  var icon = document.getElementById('icon' + n);
+  var isOpen = !body.classList.contains('collapsed');
+  body.classList.toggle('collapsed', isOpen);
+  icon.textContent = isOpen ? '+' : '-';
+  icon.style.color = isOpen ? 'var(--dim)' : 'var(--gold)';
+}
+
+function toggleEV() {
+  evEnabled = !evEnabled;
+  document.getElementById('evSwitch').classList.toggle('on', evEnabled);
+  document.getElementById('evFields').style.display = evEnabled ? 'block' : 'none';
+  document.getElementById('noEvNote').style.display = evEnabled ? 'none' : 'block';
+  updatePreview();
+}
+
+function toggleDecl(rowId, boxId) {
+  decls[rowId] = !decls[rowId];
+  var box = document.getElementById(boxId);
+  box.style.background = decls[rowId] ? 'var(--gold)' : 'transparent';
+  box.style.borderColor = decls[rowId] ? 'var(--gold)' : 'var(--border)';
+  box.textContent = decls[rowId] ? 'v' : '';
+  document.getElementById(rowId).style.borderColor = decls[rowId] ? 'rgba(240,192,64,0.3)' : 'var(--border)';
+  document.getElementById('submitBtn').disabled = !(decls.d1 && decls.d2 && decls.d3);
+}
+
+function addHighlight() {
+  var inp = document.getElementById('highlightInput');
+  var val = inp.value.trim();
+  if (!val) return;
+  highlights.push(val);
+  inp.value = '';
+  renderHighlights();
+}
+
+function removeHighlight(i) {
+  highlights.splice(i, 1);
+  renderHighlights();
+}
+
+function renderHighlights() {
+  var container = document.getElementById('highlightTags');
+  container.innerHTML = '';
+  highlights.forEach(function(h, i) {
+    var tag = document.createElement('span');
+    tag.className = 'highlight-tag';
+    tag.textContent = h;
+    var btn = document.createElement('button');
+    btn.textContent = 'x';
+    btn.setAttribute('onclick', 'removeHighlight(' + i + ')');
+    tag.appendChild(btn);
+    container.appendChild(tag);
+  });
+}
+
+document.getElementById('highlightInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); addHighlight(); }
+});
+
+function gv(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function gn(id) { var v = parseFloat(gv(id)); return isNaN(v) ? 0 : v; }
+
+function updatePreview() {
+  var year = gv('year');
+  var make = gv('make');
+  var model = gv('model');
+  var trim = gv('trim');
+  var vehicle = [year, make, model, trim].filter(Boolean).join(' ');
+  document.getElementById('prevVehicle').textContent = vehicle || '--';
+  document.getElementById('prevCondition').textContent = gv('condition') || '--';
+  var price = gn('askingPrice');
+  document.getElementById('prevPrice').textContent = price > 0 ? '$' + price.toLocaleString() : '--';
+  document.getElementById('prevEV').textContent = evEnabled ? 'Yes - ' + (gv('evDrivetrain') || 'EV') : 'No';
+  document.getElementById('prevEV').style.color = evEnabled ? 'var(--neon)' : 'var(--dim)';
+  var city = gv('dealerCity');
+  var state = gv('dealerState');
+  document.getElementById('prevLocation').textContent = [city, state].filter(Boolean).join(', ') || '--';
+  var maxLoan = price > 0 ? Math.floor(price * 0.9) : 0;
+  document.getElementById('prevMaxLoan').textContent = maxLoan > 0 ? '$' + maxLoan.toLocaleString() : '--';
+  var fee = maxLoan > 0 ? Math.floor(maxLoan * 0.02) : 0;
+  document.getElementById('prevFee').textContent = fee > 0 ? '$' + fee.toLocaleString() + ' (2%)' : '--';
+}
+
+function submitVehicle() {
+  var btn = document.getElementById('submitBtn');
+  if (!WALLET) { alert('Please connect your dealer wallet before submitting.'); return; }
+  var email = gv('dealerEmail');
+  if (!email) { alert('Dealer email is required.'); return; }
+  var year = gn('year');
+  if (!year) { alert('Vehicle year is required.'); toggleSec(2); return; }
+  var price = gn('askingPrice');
+  if (!price) { alert('Asking price is required.'); toggleSec(4); return; }
+
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  var payload = {
+    dealer_wallet: WALLET,
+    dealer_name: gv('dealerName'),
+    dealer_email: email,
+    dealership_name: gv('dealershipName'),
+    dealership_city: gv('dealerCity'),
+    dealership_state: gv('dealerState'),
+    dealership_phone: gv('dealerPhone'),
+    year: year,
+    make: gv('make'),
+    model: gv('model'),
+    trim: gv('trim'),
+    color: gv('color'),
+    vin: gv('vin'),
+    mileage: gn('mileage') || null,
+    condition: gv('condition'),
+    ev_converted: evEnabled,
+    ev_drivetrain: evEnabled ? gv('evDrivetrain') : null,
+    ev_range_miles: evEnabled ? gn('evRange') : null,
+    ev_conversion_cost: evEnabled ? gn('evCost') : null,
+    asking_price: price,
+    appraised_value: gn('appraisedValue') || null,
+    max_loan: price > 0 ? Math.floor(price * 0.9) : null,
+    description: gv('description'),
+    highlights: highlights.length > 0 ? highlights : null,
+    status: 'pending'
+  };
+
+  console.log('Submitting vehicle:', JSON.stringify(payload));
+
+  fetch(SB_URL + '/rest/v1/imc_vehicles', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    console.log('Response:', d);
+    if (d && d[0] && d[0].id) {
+      showSuccess(d[0].id, payload);
+    } else if (d && d.message) {
+      alert('Submission error: ' + d.message);
+      btn.disabled = false;
+      btn.textContent = 'Submit Vehicle for Review';
+    } else {
+      showSuccess('pending', payload);
+    }
+  })
+  .catch(function(e) {
+    alert('Error: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Submit Vehicle for Review';
+  });
+}
+
+function showSuccess(id, payload) {
+  document.getElementById('formWrap').style.display = 'none';
+  document.getElementById('successWrap').style.display = 'block';
+  var vehicle = [payload.year, payload.make, payload.model, payload.trim].filter(Boolean).join(' ');
+  var rows = [
+    ['Submission ID', id !== 'pending' ? id.slice(0,8).toUpperCase() : 'PENDING'],
+    ['Vehicle', vehicle],
+    ['Dealer', payload.dealership_name || payload.dealer_name],
+    ['Asking Price', '$' + (payload.asking_price||0).toLocaleString()],
+    ['Est. Max Loan', '$' + (payload.max_loan||0).toLocaleString()],
+    ['EV Converted', payload.ev_converted ? 'Yes' : 'No'],
+    ['Status', 'Under Review - 48hrs'],
+  ];
+  var html = '';
+  rows.forEach(function(r) {
+    html += '<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;">' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);">' + r[0] + '</span>' +
+      '<span style="color:' + (r[0]==='Status'?'var(--gold)':r[0]==='Submission ID'?'var(--gold)':'var(--text)') + ';">' + r[1] + '</span></div>';
+  });
+  document.getElementById('successDetails').innerHTML = html;
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

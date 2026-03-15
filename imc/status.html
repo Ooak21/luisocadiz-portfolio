@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMC — Application Status</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050507;--surface:#0a0a0f;--surface2:#0f0f18;--surface3:#14141f;--border:#1e1e2e;--neon:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff4455;--purple:#8855ff;--text:#e8e8f0;--muted:#8888aa;--dim:#444460;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.008) 0px,rgba(0,212,255,0.008) 1px,transparent 1px,transparent 4px);pointer-events:none;z-index:9000;}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(5,5,7,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.1em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:0.75rem;}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 2s infinite;}
+.nav-wallet{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--muted);padding:0.5rem 1.25rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;transition:all 0.2s;}
+.nav-wallet:hover,.nav-wallet.connected{border-color:var(--neon);color:var(--neon);}
+.w-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);transition:all 0.3s;}
+.w-dot.on{background:var(--neon);box-shadow:0 0 6px var(--neon);}
+.wrap{max-width:800px;margin:0 auto;padding:5.5rem 3rem 4rem;}
+.sl{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--neon);display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;}
+.sl::before{content:'';width:2rem;height:1px;background:var(--neon);}
+.card{background:var(--surface);border:1px solid var(--border);padding:2rem;margin-bottom:1rem;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0.5;}
+.card.neon::before{background:linear-gradient(90deg,transparent,var(--neon),transparent);}
+.card.gold::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.card.green::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.card.red::before{background:linear-gradient(90deg,transparent,var(--red),transparent);}
+.srow{display:flex;justify-content:space-between;align-items:baseline;padding:0.6rem 0;border-bottom:1px solid var(--border);}
+.srow:last-child{border-bottom:none;}
+.skey{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);}
+.sval{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:0.05em;color:var(--text);}
+.status-badge{display:inline-flex;align-items:center;gap:0.5rem;padding:0.4rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;}
+.badge-pending{background:rgba(0,212,255,0.08);color:var(--neon);border:1px solid rgba(0,212,255,0.2);}
+.badge-approved{background:rgba(0,255,136,0.08);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+.badge-denied{background:rgba(255,68,85,0.08);color:var(--red);border:1px solid rgba(255,68,85,0.2);}
+.badge-review{background:rgba(240,192,64,0.08);color:var(--gold);border:1px solid rgba(240,192,64,0.2);}
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-step{display:flex;gap:1.25rem;align-items:flex-start;padding:0 0 1.5rem 0;position:relative;}
+.tl-step:last-child{padding-bottom:0;}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:3px;position:relative;z-index:1;}
+.tl-dot.done{background:var(--green);box-shadow:0 0 8px rgba(0,255,136,0.4);}
+.tl-dot.active{background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 1.5s infinite;}
+.tl-dot.pending{background:var(--surface3);border:1px solid var(--border);}
+.tl-line{position:absolute;left:5px;top:16px;bottom:0;width:2px;background:var(--border);}
+.tl-step.done-step .tl-line{background:var(--green);}
+.tl-label{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;}
+.tl-label.done{color:var(--green);}
+.tl-label.active{color:var(--neon);}
+.tl-label.pending{color:var(--dim);}
+.tl-sub{font-size:0.8rem;color:var(--muted);margin-top:0.25rem;line-height:1.5;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{animation:fadeUp 0.5s ease forwards;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);}
+@media(max-width:768px){.wrap{padding:5rem 1.5rem 3rem;}.nav{padding:1rem 1.5rem;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo"><div class="nav-dot"></div>IMC</a>
+  <div style="display:flex;align-items:center;gap:1.5rem;">
+    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Marketplace</a>
+    <a href="apply.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Apply</a>
+    <button class="nav-wallet" id="walletBtn" onclick="connectAndLoad()">
+      <div class="w-dot" id="wDot"></div>
+      <span id="wLabel">Connect Wallet to View Status</span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- CONNECT PROMPT -->
+  <div id="connectPrompt">
+    <div style="text-align:center;padding:4rem 0;">
+      <div class="sl" style="justify-content:center;">Application Status Portal</div>
+      <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,5rem);line-height:0.9;letter-spacing:0.02em;margin-bottom:1.5rem;">
+        CHECK YOUR<br><span style="color:var(--neon);text-shadow:0 0 20px rgba(0,212,255,0.3);">APPLICATION</span>
+      </h1>
+      <p style="color:var(--muted);font-size:0.9rem;max-width:420px;margin:0 auto 2.5rem;line-height:1.75;">Connect the wallet you used when applying to view your application status, decision, and approved terms.</p>
+      <button onclick="connectAndLoad()" style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:1rem 2.5rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.boxShadow='0 0 20px rgba(0,212,255,0.3)'" onmouseout="this.style.boxShadow='none'">
+        Connect Wallet to View Status
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingState" style="display:none;text-align:center;padding:4rem 0;">
+    <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);">
+      <span style="animation:pulse 1s infinite;display:inline-block;">Checking on-chain records...</span>
+    </div>
+  </div>
+
+  <!-- NO APPLICATION -->
+  <div id="noAppState" style="display:none;text-align:center;padding:4rem 0;">
+    <div style="font-size:3rem;margin-bottom:1.5rem;opacity:0.3;">&#11042;</div>
+    <div class="sl" style="justify-content:center;">No Application Found</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:0.05em;margin-bottom:1rem;color:var(--muted);">No applications found<br>for this wallet</div>
+    <p style="color:var(--dim);font-size:0.85rem;max-width:380px;margin:0 auto 2rem;line-height:1.7;">Make sure you are connected with the same wallet you used when submitting your application.</p>
+    <a href="apply.html"><button style="background:var(--gold);border:none;color:#050507;padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;">Apply Now</button></a>
+  </div>
+
+  <!-- APPLICATION STATUS -->
+  <div id="appStatus" style="display:none;" class="fade-in">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;">
+      <div>
+        <div class="sl">Your Application</div>
+        <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,3.5rem);line-height:0.92;letter-spacing:0.02em;" id="statusHeading">Application Status</h1>
+      </div>
+      <div id="statusBadge"></div>
+    </div>
+
+    <!-- STATUS CARD -->
+    <div class="card neon" id="statusCard" style="margin-bottom:1rem;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;" id="statusDetails"></div>
+    </div>
+
+    <!-- APPROVED TERMS (shown only if approved) -->
+    <div id="approvedTerms" style="display:none;">
+      <div class="card green">
+        <div class="sl" style="margin-bottom:1.25rem;color:var(--green);">
+          <span style="width:2rem;height:1px;background:var(--green);box-shadow:0 0 4px var(--green);"></span>
+          Approved Loan Terms
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;" id="approvedTermsDetails"></div>
+        <div style="margin-top:1.5rem;padding:1rem;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.15);">
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--green);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Next Steps</div>
+          <div style="font-size:0.85rem;color:var(--muted);line-height:1.7;" id="nextSteps">Our team will contact you within 2 business days to complete documentation and initiate funding.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DENIED (shown only if denied) -->
+    <div id="deniedSection" style="display:none;">
+      <div class="card red">
+        <div class="sl" style="margin-bottom:1.25rem;color:var(--red);">
+          <span style="width:2rem;height:1px;background:var(--red);"></span>
+          Decision Details
+        </div>
+        <div id="deniedReasons" style="margin-bottom:1.5rem;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div style="padding:1rem;background:var(--surface2);border:1px solid var(--border);">
+            <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.5rem;">Reapply After</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--neon);" id="reapplyDate">--</div>
+          </div>
+          <div style="padding:1rem;background:var(--surface2);border:1px solid var(--border);">
+            <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.5rem;">Questions / Appeals</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);">appeals@illusivemotorconcepts.com</div>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem;">Resources to Strengthen Your Next Application</div>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <a href="https://www.experian.com/boost" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;background:var(--surface2);border:1px solid var(--border);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--neon)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);letter-spacing:0.1em;">Experian Boost</div><div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">Instantly raise your FICO score - free</div></div>
+              <span style="color:var(--dim);font-size:0.8rem;">-></span>
+            </a>
+            <a href="https://www.self.inc" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;background:var(--surface2);border:1px solid var(--border);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--neon)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);letter-spacing:0.1em;">Self Credit Builder</div><div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">Build credit history with a credit builder loan</div></div>
+              <span style="color:var(--dim);font-size:0.8rem;">-></span>
+            </a>
+            <a href="https://www.creditkarma.com" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;background:var(--surface2);border:1px solid var(--border);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--neon)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);letter-spacing:0.1em;">Credit Karma</div><div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">Free credit monitoring and personalized tips</div></div>
+              <span style="color:var(--dim);font-size:0.8rem;">-></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="card neon" style="margin-top:1rem;">
+      <div class="sl" style="margin-bottom:1.5rem;">Application Timeline</div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <!-- APPLY AGAIN / BROWSE -->
+    <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;">
+      <a href="index.html" style="flex:1;"><button style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;width:100%;transition:all 0.2s;">Browse Marketplace</button></a>
+      <a href="apply.html" id="reapplyBtn" style="flex:1;display:none;"><button style="background:var(--gold);border:none;color:#050507;padding:0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;width:100%;">Apply for Another Vehicle</button></a>
+    </div>
+  </div>
+</div>
+
+<script>
+var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
+var WALLET = '';
+
+function show(id) {
+  ['connectPrompt','loadingState','noAppState','appStatus'].forEach(function(s) {
+    document.getElementById(s).style.display = s === id ? 'block' : 'none';
+  });
+}
+
+function connectAndLoad() {
+  if (!window.ethereum) { alert('Please install MetaMask.'); return; }
+  document.getElementById('wLabel').textContent = 'Connecting...';
+  window.ethereum.request({ method: 'eth_requestAccounts' })
+    .then(function(accounts) {
+      WALLET = accounts[0];
+      var short = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
+      document.getElementById('wDot').classList.add('on');
+      document.getElementById('wLabel').textContent = short;
+      document.getElementById('walletBtn').classList.add('connected');
+      show('loadingState');
+      loadApplications(accounts[0]);
+    })
+    .catch(function(e) {
+      document.getElementById('wLabel').textContent = 'Connect Wallet to View Status';
+      console.error(e);
+    });
+}
+
+function loadApplications(wallet) {
+  fetch(SB_URL + '/rest/v1/imc_applications?wallet_address=eq.' + encodeURIComponent(wallet) + '&order=created_at.desc&limit=1', {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (!data || data.length === 0) {
+      show('noAppState');
+      return;
+    }
+    renderStatus(data[0]);
+  })
+  .catch(function(e) {
+    console.error(e);
+    show('noAppState');
+  });
+}
+
+function renderStatus(app) {
+  show('appStatus');
+  var status = app.status || 'pending';
+  var statusConfig = {
+    pending:  { label: 'Under Review',  badge: 'badge-pending',  heading: 'Under Review',   color: 'var(--neon)',  dot: 'active' },
+    review:   { label: 'In Review',     badge: 'badge-review',   heading: 'In Review',       color: 'var(--gold)', dot: 'active' },
+    approved: { label: 'Approved',      badge: 'badge-approved', heading: 'Approved',        color: 'var(--green)',dot: 'done'   },
+    denied:   { label: 'Not Approved',  badge: 'badge-denied',   heading: 'Not Approved',    color: 'var(--red)',  dot: 'pending'}
+  };
+  var cfg = statusConfig[status] || statusConfig.pending;
+
+  // Heading
+  var name = ((app.first_name || '') + (app.last_name ? ' ' + app.last_name : '')).trim();
+  document.getElementById('statusHeading').textContent = name ? name + ' - ' + cfg.heading : cfg.heading;
+  document.getElementById('statusHeading').style.color = cfg.color;
+
+  // Badge
+  document.getElementById('statusBadge').innerHTML =
+    '<div class="status-badge ' + cfg.badge + '">' +
+    '<div style="width:7px;height:7px;border-radius:50%;background:currentColor;' + (status === 'approved' || status === 'pending' || status === 'review' ? 'animation:pulse 1.5s infinite;' : '') + '"></div>' +
+    cfg.label + '</div>';
+
+  // Card color
+  var cardEl = document.getElementById('statusCard');
+  cardEl.className = 'card ' + (status === 'approved' ? 'green' : status === 'denied' ? 'red' : status === 'review' ? 'gold' : 'neon');
+
+  // Details
+  var appDate = new Date(app.created_at).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  var details = [
+    { key: 'Application ID', val: app.id ? app.id.slice(0,8).toUpperCase() : '--', color: 'var(--gold)' },
+    { key: 'Submitted', val: appDate, color: 'var(--text)' },
+    { key: 'Vehicle', val: app.vehicle_name || '1957 Chevrolet Bel Air', color: 'var(--text)' },
+    { key: 'Loan Requested', val: app.loan_amount ? '$' + app.loan_amount.toLocaleString() + ' USDC' : '--', color: 'var(--text)' },
+    { key: 'Term', val: app.term_months ? app.term_months + ' months' : '--', color: 'var(--text)' },
+    { key: 'Wallet', val: app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--', color: 'var(--neon)' },
+  ];
+  document.getElementById('statusDetails').innerHTML = details.map(function(d) {
+    return '<div><div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">' + d.key + '</div>' +
+      '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.1rem;color:' + d.color + ';letter-spacing:0.05em;">' + d.val + '</div></div>';
+  }).join('');
+
+  // Approved terms
+  if (status === 'approved') {
+    document.getElementById('approvedTerms').style.display = 'block';
+    document.getElementById('reapplyBtn').style.display = 'flex';
+    var terms = [
+      { key: 'Approved APR', val: app.final_apr ? app.final_apr + '%' : '--', color: 'var(--gold)' },
+      { key: 'Approved Amount', val: app.approved_amount ? '$' + app.approved_amount.toLocaleString() : '$' + (app.loan_amount||0).toLocaleString(), color: 'var(--green)' },
+      { key: 'Term', val: (app.approved_term || app.term_months || '--') + ' months', color: 'var(--text)' },
+    ];
+    document.getElementById('approvedTermsDetails').innerHTML = terms.map(function(t) {
+      return '<div><div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">' + t.key + '</div>' +
+        '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.8rem;color:' + t.color + ';letter-spacing:0.02em;">' + t.val + '</div></div>';
+    }).join('');
+    if (app.underwriter_notes) {
+      document.getElementById('nextSteps').textContent = app.underwriter_notes;
+    }
+  }
+
+  // Denied section
+  if (status === 'denied') {
+    document.getElementById('deniedSection').style.display = 'block';
+    document.getElementById('reapplyBtn').style.display = 'flex';
+    var reapply = new Date(Date.now() + 90*24*60*60*1000);
+    document.getElementById('reapplyDate').textContent = reapply.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+    var reasons = [];
+    if (app.underwriter_notes) reasons.push(app.underwriter_notes);
+    else reasons.push('Your application did not meet current lending criteria. Please see the resources below to strengthen your profile.');
+    document.getElementById('deniedReasons').innerHTML = reasons.map(function(r) {
+      return '<div style="font-size:0.85rem;color:var(--muted);line-height:1.7;padding:0.75rem 1rem;background:rgba(255,68,85,0.04);border:1px solid rgba(255,68,85,0.1);margin-bottom:0.5rem;">' + r + '</div>';
+    }).join('');
+  }
+
+  // Timeline
+  var steps = [
+    { label: 'Application Submitted', sub: 'Received ' + appDate, state: 'done' },
+    { label: 'Under Review', sub: status === 'pending' ? 'Our underwriting team is reviewing your application' : 'Completed', state: status === 'pending' ? 'active' : 'done' },
+    { label: 'Decision Made', sub: status === 'pending' || status === 'review' ? 'Expected within 24-48 hours' : (status === 'approved' ? 'Approved - see terms above' : 'See decision details above'), state: (status === 'approved' || status === 'denied') ? 'done' : status === 'review' ? 'active' : 'pending' },
+    { label: 'Documentation', sub: status === 'approved' ? 'Contact our team to complete paperwork' : 'Pending approval', state: status === 'approved' ? 'active' : 'pending' },
+    { label: 'Loan Funded', sub: 'USDC transferred to dealership on Polygon', state: 'pending' },
+  ];
+
+  document.getElementById('timeline').innerHTML = steps.map(function(step, i) {
+    var isLast = i === steps.length - 1;
+    return '<div class="tl-step' + (step.state === 'done' ? ' done-step' : '') + '">' +
+      (!isLast ? '<div class="tl-line"></div>' : '') +
+      '<div class="tl-dot ' + step.state + '"></div>' +
+      '<div>' +
+      '<div class="tl-label ' + step.state + '">' + step.label + '</div>' +
+      '<div class="tl-sub">' + step.sub + '</div>' +
+      '</div></div>';
+  }).join('');
+}
+</script>
+</body>
+</html>
