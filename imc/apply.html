@@ -873,13 +873,13 @@ function connectWallet() {
   walletConnected = !walletConnected;
   document.getElementById('wDot').style.background = walletConnected ? 'var(--neon)' : 'var(--dim)';
   document.getElementById('wDot').style.boxShadow = walletConnected ? '0 0 6px var(--neon)' : 'none';
-  document.getElementById('wLabel').textContent = walletConnected ? '0x4A25...606A' : 'Connect Wallet';
+  document.getElementById('wLabel').textContent = walletConnected ? a[0].slice(0,6)+'...'+a[0].slice(-4) : 'Connect Wallet';
   document.getElementById('walletBtn').style.borderColor = walletConnected ? 'var(--neon)' : 'var(--border2)';
   document.getElementById('walletBtn').style.color = walletConnected ? 'var(--neon)' : 'var(--muted)';
   if (walletConnected && !cryptoEnabled) {
     document.getElementById('cryptoCheck').click();
     var inp = document.getElementById('walletInput');
-    if (inp) inp.value = '0x4A25...606A';
+    if (inp) inp.value = a[0].slice(0,6)+'...'+a[0].slice(-4);
   }
 }
 
@@ -1153,7 +1153,7 @@ function showSuccess() {
   window.scrollTo(0,0);
 }
 
-var APPLY_AUTHORIZED = '0x6c6ad1de674c292c088b29aa1312b991590bbb9f';
+var APPLY_AUTHORIZED = ['0x6c6ad1de674c292c088b29aa1312b991590bbb9f','0x8050d5462309dd334116bb3e949386c3238db9ac'];
 function applyGateConnect() {
   var lbl = document.getElementById('applyGateLabel');
   var dot = document.getElementById('applyGateDot');
@@ -1166,7 +1166,7 @@ function applyGateConnect() {
   window.ethereum.request({ method: 'eth_requestAccounts' })
     .then(function(accounts) {
       var addr = accounts[0].toLowerCase();
-      if (addr === APPLY_AUTHORIZED) {
+      if (APPLY_AUTHORIZED.indexOf(addr) > -1) {
         dot.style.background = '#00d4ff';
         dot.style.boxShadow = '0 0 8px #00d4ff';
         lbl.textContent = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4) + ' - Unlocked';
