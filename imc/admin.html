@@ -147,6 +147,7 @@ textarea.inp{resize:vertical;min-height:70px;}
   <div class="main-tabs">
     <button class="main-tab active" id="tabApps" onclick="switchTab('apps')">Loan Applications</button>
     <button class="main-tab gold" id="tabVehicles" onclick="switchTab('vehicles')">Dealer Submissions</button>
+    <button class="main-tab" id="tabChain" onclick="switchTab('chain')" style="border-color:rgba(138,85,255,0.4);color:#8855ff;">Blockchain Ops</button>
   </div>
 
   <!-- APPLICATIONS PANEL -->
@@ -259,6 +260,166 @@ textarea.inp{resize:vertical;min-height:70px;}
       </div>
     </div>
   </div>
+
+<!-- BLOCKCHAIN OPS PANEL -->
+<div id="panelChain" style="display:none;">
+
+  <!-- CONTRACT ADDRESSES -->
+  <div style="margin-bottom:2rem;">
+    <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:#8855ff;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;"><span style="width:1.5rem;height:1px;background:#8855ff;display:inline-block;"></span>Contract Registry</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;">
+      <div style="background:var(--surface);border:1px solid var(--border);padding:1rem 1.25rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">IMCVehicleNFT</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--neon);">0x28fcC3277E5A77B61785f6CBC99AE0c2f3AE9Af6</div>
+        <a href="https://amoy.polygonscan.com/address/0x28fcC3277E5A77B61785f6CBC99AE0c2f3AE9Af6" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);text-decoration:none;">View on Polygonscan</a>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:1rem 1.25rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">MockUSDC (Testnet)</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--neon);">0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa</div>
+        <a href="https://amoy.polygonscan.com/address/0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);text-decoration:none;">View on Polygonscan</a>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;">
+      <div style="background:var(--surface);border:1px solid var(--border);padding:1rem 1.25rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Vault Bel Air</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--gold);word-break:break-all;">0x4d525e0DE065973b8CB4367c09e9796254d05f5d</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:1rem 1.25rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Vault Charger</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--gold);word-break:break-all;">0x00C18588F028483098c28aC21B89AdbA1F097011</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:1rem 1.25rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Vault Mustang</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--gold);word-break:break-all;">0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:1rem 1.25rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Vault Demo</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:#8855ff;word-break:break-all;">0xF537E0419300Cc91670b6a3A740d3BA047c7b7a9</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+
+    <!-- LEFT: MINT NFT -->
+    <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);margin-bottom:1.25rem;">Mint Vehicle NFT</div>
+      <div style="display:flex;flex-direction:column;gap:0.6rem;">
+        <input id="mint-make" placeholder="Make (e.g. Dodge)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+        <input id="mint-model" placeholder="Model (e.g. Charger R/T)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <input id="mint-year" placeholder="Year" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          <input id="mint-color" placeholder="Color" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+        </div>
+        <input id="mint-vin" placeholder="VIN (e.g. IMC-CHARGER-002)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <input id="mint-appraised" placeholder="Appraised Value (USD cents)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          <select id="mint-ev" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+            <option value="true">EV Converted</option>
+            <option value="false">Original Engine</option>
+          </select>
+        </div>
+        <input id="mint-uri" placeholder="Metadata URI" value="https://ooak21.github.io/luisocadiz-portfolio/imc/" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+        <button onclick="adminMintNFT()" style="background:var(--neon);border:none;color:#050507;padding:0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;margin-top:0.25rem;">Mint Vehicle NFT</button>
+        <div id="mint-status" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);min-height:1rem;"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: VAULT OPS -->
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+
+      <!-- ATTACH VAULT -->
+      <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">Attach Vault to NFT</div>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <input id="attach-tokenid" placeholder="Token ID (e.g. 1)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+            <input id="attach-vault" placeholder="Vault Address 0x..." style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          </div>
+          <button onclick="adminAttachVault()" style="background:var(--gold);border:none;color:#050507;padding:0.75rem;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Attach Vault</button>
+          <div id="attach-status" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);min-height:1rem;"></div>
+        </div>
+      </div>
+
+      <!-- SET BORROWER -->
+      <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#8855ff;margin-bottom:1rem;">Set Borrower on Vault</div>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;">
+          <input id="borrower-vault" placeholder="Vault Address 0x..." style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          <input id="borrower-addr" placeholder="Borrower Wallet 0x..." style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          <button onclick="adminSetBorrower()" style="background:#8855ff;border:none;color:#fff;padding:0.75rem;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Set Borrower</button>
+          <div id="borrower-status" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);min-height:1rem;"></div>
+        </div>
+      </div>
+
+      <!-- APPROVE USDC -->
+      <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--green);margin-bottom:1rem;">Approve USDC for Vault</div>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;">
+          <input id="approve-vault" placeholder="Vault Address 0x..." style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          <input id="approve-amount" placeholder="Amount (USDC units, e.g. 2000000)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          <button onclick="adminApproveUSDC()" style="background:var(--green);border:none;color:#050507;padding:0.75rem;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Approve USDC</button>
+          <div id="approve-status" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);min-height:1rem;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BORROWER PAYMENT PORTAL -->
+  <div style="margin-top:1rem;background:var(--surface);border:1px solid var(--border);padding:1.5rem;">
+    <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:1.25rem;">Borrower Payment Portal</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.25rem;" id="vaultStatusGrid">
+      <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--dim);margin-bottom:0.4rem;">BEL AIR VAULT</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);" id="status-belair">Loading...</div>
+        <button onclick="adminMakePayment('0x4d525e0DE065973b8CB4367c09e9796254d05f5d','belair')" style="margin-top:0.5rem;background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.4rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.55rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;">Make Payment</button>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--dim);margin-bottom:0.4rem;">CHARGER VAULT</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);" id="status-charger">Loading...</div>
+        <button onclick="adminMakePayment('0x00C18588F028483098c28aC21B89AdbA1F097011','charger')" style="margin-top:0.5rem;background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.4rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.55rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;">Make Payment</button>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--dim);margin-bottom:0.4rem;">MUSTANG VAULT</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);" id="status-mustang">Loading...</div>
+        <button onclick="adminMakePayment('0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad','mustang')" style="margin-top:0.5rem;background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.4rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.55rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;">Make Payment</button>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;text-align:center;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--dim);margin-bottom:0.4rem;">DEMO VAULT</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:#8855ff;" id="status-demo">Loading...</div>
+        <button onclick="adminMakePayment('0xF537E0419300Cc91670b6a3A740d3BA047c7b7a9','demo')" style="margin-top:0.5rem;background:transparent;border:1px solid #8855ff;color:#8855ff;padding:0.4rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.55rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;">Make Payment</button>
+      </div>
+    </div>
+    <div id="payment-status" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);min-height:1rem;"></div>
+  </div>
+
+  <!-- FLAG MISSED PAYMENT -->
+  <div style="margin-top:1rem;background:var(--surface);border:1px solid rgba(255,68,85,0.3);padding:1.5rem;">
+    <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:1rem;">Admin Tools</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-bottom:0.5rem;">Flag Missed Payment (owner only)</div>
+        <div style="display:flex;gap:0.5rem;">
+          <input id="flag-vault" placeholder="Vault address 0x..." style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          <button onclick="adminFlagMissed()" style="background:var(--red);border:none;color:#fff;padding:0.65rem 1rem;font-family:'DM Mono',monospace;font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;white-space:nowrap;">Flag</button>
+        </div>
+        <div id="flag-status" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);margin-top:0.4rem;min-height:1rem;"></div>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-bottom:0.5rem;">Mint MockUSDC to Address</div>
+        <div style="display:flex;gap:0.5rem;">
+          <input id="usdc-to" placeholder="Address 0x..." style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          <input id="usdc-amt" placeholder="Amount (raw)" value="5000000" style="width:7rem;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.65rem 0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;outline:none;">
+          <button onclick="adminMintUSDC()" style="background:var(--green);border:none;color:#050507;padding:0.65rem 1rem;font-family:'DM Mono',monospace;font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;white-space:nowrap;">Mint</button>
+        </div>
+        <div id="usdc-status" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);margin-top:0.4rem;min-height:1rem;"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 </div>
 
 <script>
@@ -269,8 +430,8 @@ var allApps = [];
 var allVehicles = [];
 
 // -- SMART CONTRACT CONFIG (Polygon Amoy Testnet) --------------
-var NFT_ADDRESS   = '0x7aa55016Aa503fDACdF8736b2C1774Ea6a46Dbcb';
-var VAULT_ADDRESS = '0xFAc696e1FE842D0E528448C482fa870236c2060b';
+var NFT_ADDRESS   = '0x28fcC3277E5A77B61785f6CBC99AE0c2f3AE9Af6';
+var VAULT_ADDRESS = '0x4d525e0DE065973b8CB4367c09e9796254d05f5d';
 var AMOY_CHAIN_ID = '0x13882'; // 80002 in hex
 
 var NFT_ABI = [
@@ -293,6 +454,20 @@ var currentVehicleId = null;
 
 // -- TAB SWITCHING --
 function switchTab(tab) {
+  if (tab === 'chain') {
+    document.getElementById('panelApps').style.display = 'none';
+    document.getElementById('panelVehicles').style.display = 'none';
+    document.getElementById('panelChain').style.display = 'block';
+    document.getElementById('tabApps').classList.remove('active');
+    document.getElementById('tabVehicles').classList.remove('active');
+    document.getElementById('tabChain').style.background = '#8855ff';
+    document.getElementById('tabChain').style.color = '#fff';
+    loadVaultStatuses();
+    return;
+  }
+  document.getElementById('panelChain').style.display = 'none';
+  document.getElementById('tabChain').style.background = 'transparent';
+  document.getElementById('tabChain').style.color = '#8855ff';
   var isApps = tab === 'apps';
   document.getElementById('panelApps').style.display = isApps ? 'block' : 'none';
   document.getElementById('panelVehicles').style.display = isApps ? 'none' : 'block';
@@ -1137,8 +1312,8 @@ var allApps = [];
 var allVehicles = [];
 
 // -- SMART CONTRACT CONFIG (Polygon Amoy Testnet) --------------
-var NFT_ADDRESS   = '0x7aa55016Aa503fDACdF8736b2C1774Ea6a46Dbcb';
-var VAULT_ADDRESS = '0xFAc696e1FE842D0E528448C482fa870236c2060b';
+var NFT_ADDRESS   = '0x28fcC3277E5A77B61785f6CBC99AE0c2f3AE9Af6';
+var VAULT_ADDRESS = '0x4d525e0DE065973b8CB4367c09e9796254d05f5d';
 var AMOY_CHAIN_ID = '0x13882'; // 80002 in hex
 
 var NFT_ABI = [
@@ -1161,6 +1336,20 @@ var currentVehicleId = null;
 
 // -- TAB SWITCHING --
 function switchTab(tab) {
+  if (tab === 'chain') {
+    document.getElementById('panelApps').style.display = 'none';
+    document.getElementById('panelVehicles').style.display = 'none';
+    document.getElementById('panelChain').style.display = 'block';
+    document.getElementById('tabApps').classList.remove('active');
+    document.getElementById('tabVehicles').classList.remove('active');
+    document.getElementById('tabChain').style.background = '#8855ff';
+    document.getElementById('tabChain').style.color = '#fff';
+    loadVaultStatuses();
+    return;
+  }
+  document.getElementById('panelChain').style.display = 'none';
+  document.getElementById('tabChain').style.background = 'transparent';
+  document.getElementById('tabChain').style.color = '#8855ff';
   var isApps = tab === 'apps';
   document.getElementById('panelApps').style.display = isApps ? 'block' : 'none';
   document.getElementById('panelVehicles').style.display = isApps ? 'none' : 'block';
@@ -1999,6 +2188,155 @@ function sendDecisionEmail(app, decision, update) {
   .then(function(d) { console.log('Email sent:', d); })
   .catch(function(e) { console.error('Email error:', e); });
 }
+}
+
+
+// -- BLOCKCHAIN OPS ------------------------------------------
+var USDC_ADDR = '0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa';
+var CHAIN_NFT = '0x28fcC3277E5A77B61785f6CBC99AE0c2f3AE9Af6';
+
+function setStatus(id, msg, color) {
+  var el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.style.color = color || 'var(--dim)'; }
+}
+
+function padHex(val, len) {
+  return val.toString(16).padStart(len, '0');
+}
+
+function encodeAddress(addr) {
+  return '000000000000000000000000' + addr.slice(2).toLowerCase();
+}
+
+function encodeUint256(val) {
+  return padHex(parseInt(val), 64);
+}
+
+function sendTx(to, data, statusId, label) {
+  if (!window.ethereum || !window.ethereum.selectedAddress) {
+    setStatus(statusId, 'Connect wallet first', 'var(--red)'); return;
+  }
+  setStatus(statusId, 'Awaiting MetaMask...', 'var(--gold)');
+  window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [{ from: window.ethereum.selectedAddress, to: to, data: data }]
+  })
+  .then(function(tx) {
+    setStatus(statusId, label + ' TX: ' + tx.slice(0,12) + '...', 'var(--green)');
+    console.log(label, tx);
+  })
+  .catch(function(e) {
+    setStatus(statusId, 'Error: ' + (e.message || 'rejected'), 'var(--red)');
+  });
+}
+
+function adminMintNFT() {
+  var make    = document.getElementById('mint-make').value.trim();
+  var model   = document.getElementById('mint-model').value.trim();
+  var year    = parseInt(document.getElementById('mint-year').value) || 0;
+  var color   = document.getElementById('mint-color').value.trim();
+  var vin     = document.getElementById('mint-vin').value.trim();
+  var ev      = document.getElementById('mint-ev').value === 'true';
+  var appraised = parseInt(document.getElementById('mint-appraised').value) || 0;
+  var uri     = document.getElementById('mint-uri').value.trim();
+
+  if (!make || !model || !vin) {
+    setStatus('mint-status', 'Fill in make, model and VIN', 'var(--red)'); return;
+  }
+
+  var data = encodeMintVehicle(make, model, year, color, vin, ev, appraised, uri);
+  sendTx(CHAIN_NFT, data, 'mint-status', 'Mint NFT');
+}
+
+function adminAttachVault() {
+  var tokenId = document.getElementById('attach-tokenid').value.trim();
+  var vault   = document.getElementById('attach-vault').value.trim();
+  if (!tokenId || !vault) {
+    setStatus('attach-status', 'Enter token ID and vault address', 'var(--red)'); return;
+  }
+  var data = '0xbc9318c1' + encodeUint256(tokenId) + encodeAddress(vault);
+  sendTx(CHAIN_NFT, data, 'attach-status', 'Attach Vault');
+}
+
+function adminSetBorrower() {
+  var vault    = document.getElementById('borrower-vault').value.trim();
+  var borrower = document.getElementById('borrower-addr').value.trim();
+  if (!vault || !borrower) {
+    setStatus('borrower-status', 'Enter vault and borrower address', 'var(--red)'); return;
+  }
+  var data = '0xc762d5f7' + encodeAddress(borrower);
+  sendTx(vault, data, 'borrower-status', 'Set Borrower');
+}
+
+function adminApproveUSDC() {
+  var vault   = document.getElementById('approve-vault').value.trim();
+  var amount  = document.getElementById('approve-amount').value.trim();
+  if (!vault || !amount) {
+    setStatus('approve-status', 'Enter vault and amount', 'var(--red)'); return;
+  }
+  var data = '0x095ea7b3' + encodeAddress(vault) + encodeUint256(amount);
+  sendTx(USDC_ADDR, data, 'approve-status', 'Approve USDC');
+}
+
+function adminMakePayment(vaultAddr, vaultKey) {
+  setStatus('payment-status', 'Awaiting MetaMask for ' + vaultKey + '...', 'var(--gold)');
+  if (!window.ethereum || !window.ethereum.selectedAddress) {
+    setStatus('payment-status', 'Connect wallet first', 'var(--red)'); return;
+  }
+  window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [{ from: window.ethereum.selectedAddress, to: vaultAddr, data: '0xd8d79700' }]
+  })
+  .then(function(tx) {
+    setStatus('payment-status', vaultKey.toUpperCase() + ' payment TX: ' + tx.slice(0,12) + '...', 'var(--green)');
+    setTimeout(function() { loadVaultStatuses(); }, 4000);
+  })
+  .catch(function(e) {
+    setStatus('payment-status', 'Error: ' + (e.message || 'rejected'), 'var(--red)');
+  });
+}
+
+function adminFlagMissed() {
+  var vault = document.getElementById('flag-vault').value.trim();
+  if (!vault) { setStatus('flag-status', 'Enter vault address', 'var(--red)'); return; }
+  sendTx(vault, '0x2f794709', 'flag-status', 'Flag Missed');
+}
+
+function adminMintUSDC() {
+  var to  = document.getElementById('usdc-to').value.trim();
+  var amt = document.getElementById('usdc-amt').value.trim();
+  if (!to) { setStatus('usdc-status', 'Enter address', 'var(--red)'); return; }
+  // mint(address,uint256) selector: 0x40c10f19
+  var data = '0x40c10f19' + encodeAddress(to) + encodeUint256(amt);
+  sendTx(USDC_ADDR, data, 'usdc-status', 'Mint USDC');
+}
+
+function loadVaultStatuses() {
+  var vaults = [
+    { key: 'belair',  addr: '0x4d525e0DE065973b8CB4367c09e9796254d05f5d' },
+    { key: 'charger', addr: '0x00C18588F028483098c28aC21B89AdbA1F097011' },
+    { key: 'mustang', addr: '0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad' },
+    { key: 'demo',    addr: '0xF537E0419300Cc91670b6a3A740d3BA047c7b7a9' }
+  ];
+  if (!window.ethereum) return;
+  vaults.forEach(function(v) {
+    window.ethereum.request({
+      method: 'eth_call',
+      params: [{ to: v.addr, data: '0x200d2ed2' }, 'latest']
+    })
+    .then(function(result) {
+      var statusMap = ['FUNDING','ACTIVE','PAID OFF','DEFAULTED'];
+      var s = parseInt(result, 16);
+      var label = statusMap[s] || 'UNKNOWN';
+      var color = s === 1 ? 'var(--green)' : s === 2 ? 'var(--gold)' : s === 3 ? 'var(--red)' : 'var(--neon)';
+      var el = document.getElementById('status-' + v.key);
+      if (el) { el.textContent = label; el.style.color = color; }
+    })
+    .catch(function() {
+      var el = document.getElementById('status-' + v.key);
+      if (el) el.textContent = 'N/A';
+    });
+  });
 }
 </script>
 </body>
