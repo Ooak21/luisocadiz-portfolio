@@ -1,19 +1,12 @@
 <!DOCTYPE html>
-<!-- v2 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMC Admin — Underwriting</title>
+<title>IMC Admin - Underwriting Console</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#050507; --surface:#0a0a0f; --surface2:#0f0f18; --surface3:#14141f;
-  --border:#1e1e2e; --border2:#2a2a3e;
-  --neon:#00d4ff; --neon-glow:rgba(0,212,255,0.25);
-  --gold:#f0c040; --green:#00ff88; --red:#ff4455; --purple:#8855ff;
-  --text:#e8e8f0; --muted:#8888aa; --dim:#444460;
-}
+:root{--bg:#050507;--surface:#0a0a0f;--surface2:#0f0f18;--surface3:#14141f;--border:#1e1e2e;--border2:#2a2a3e;--neon:#00d4ff;--neon-glow:rgba(0,212,255,0.25);--gold:#f0c040;--green:#00ff88;--red:#ff4455;--purple:#8855ff;--text:#e8e8f0;--muted:#8888aa;--dim:#444460;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.008) 0px,rgba(0,212,255,0.008) 1px,transparent 1px,transparent 4px);pointer-events:none;z-index:9000;}
@@ -25,167 +18,102 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .nav-wallet.connected{border-color:var(--neon);color:var(--neon);}
 .w-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);transition:all 0.3s;}
 .w-dot.on{background:var(--neon);box-shadow:0 0 6px var(--neon);}
-
-/* GATE */
 #adminGate{position:fixed;inset:0;z-index:9999;background:#050507;display:flex;align-items:center;justify-content:center;padding:2rem;}
-#adminGate::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.01) 0px,rgba(0,212,255,0.01) 1px,transparent 1px,transparent 4px);pointer-events:none;}
-
-/* LAYOUT */
+#adminGate::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(240,192,64,0.015) 0,rgba(240,192,64,0.015) 1px,transparent 1px,transparent 80px),repeating-linear-gradient(0deg,rgba(240,192,64,0.015) 0,rgba(240,192,64,0.015) 1px,transparent 1px,transparent 80px);pointer-events:none;}
 .wrap{max-width:1300px;margin:0 auto;padding:5.5rem 3rem 4rem;}
 .sl{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;}
 .sl::before{content:'';width:2rem;height:1px;background:var(--gold);box-shadow:0 0 4px var(--gold);}
-
-/* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-bottom:2rem;}
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-bottom:1.5rem;}
 .stat-box{background:var(--surface);border:1px solid var(--border);padding:1.25rem 1.5rem;position:relative;overflow:hidden;}
 .stat-box::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.4;}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;letter-spacing:0.05em;}
 .stat-lbl{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-top:0.25rem;}
-
-/* TABLE */
-.app-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);}
-.app-table th{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);text-align:left;padding:0.75rem 1rem;border-bottom:1px solid var(--border);background:var(--surface2);}
-.app-table td{padding:1rem;border-bottom:1px solid var(--border);font-size:0.82rem;color:var(--muted);vertical-align:middle;}
-.app-table tr:hover td{background:var(--surface2);cursor:pointer;}
-.app-table tr:last-child td{border-bottom:none;}
-
-/* BADGES */
+.main-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:2rem;}
+.main-tab{font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;padding:0.85rem 2rem;background:transparent;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;color:var(--dim);cursor:pointer;transition:all 0.2s;}
+.main-tab.active{color:var(--neon);border-bottom-color:var(--neon);}
+.main-tab.gold.active{color:var(--gold);border-bottom-color:var(--gold);}
+.filter-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.5rem;}
+.filter-tab{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.65rem 1.25rem;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);cursor:pointer;transition:all 0.2s;}
+.filter-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.data-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);}
+.data-table th{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);text-align:left;padding:0.75rem 1rem;border-bottom:1px solid var(--border);background:var(--surface2);}
+.data-table td{padding:0.85rem 1rem;border-bottom:1px solid var(--border);font-size:0.82rem;color:var(--muted);vertical-align:middle;}
+.data-table tr:hover td{background:var(--surface2);cursor:pointer;}
+.data-table tr:last-child td{border-bottom:none;}
 .badge{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.6rem;white-space:nowrap;}
 .b-pending{background:rgba(0,212,255,0.08);color:var(--neon);border:1px solid rgba(0,212,255,0.2);}
 .b-approved{background:rgba(0,255,136,0.08);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
 .b-denied{background:rgba(255,68,85,0.08);color:var(--red);border:1px solid rgba(255,68,85,0.2);}
 .b-review{background:rgba(240,192,64,0.08);color:var(--gold);border:1px solid rgba(240,192,64,0.2);}
-
-/* MODAL */
+.b-listed{background:rgba(0,255,136,0.08);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+.b-ev{background:rgba(136,85,255,0.1);color:var(--purple);border:1px solid rgba(136,85,255,0.3);}
 .modal-overlay{position:fixed;inset:0;background:rgba(5,5,7,0.92);backdrop-filter:blur(8px);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:2rem;overflow-y:auto;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border);width:100%;max-width:900px;position:relative;margin:auto;}
+.modal{background:var(--surface);border:1px solid var(--border);width:100%;max-width:920px;position:relative;margin:auto;}
 .modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.6;}
 .modal-header{padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
 .modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.05em;color:var(--text);}
 .modal-close{background:none;border:none;color:var(--dim);font-size:1.5rem;cursor:pointer;transition:color 0.2s;line-height:1;}
 .modal-close:hover{color:var(--red);}
 .modal-body{padding:2rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
-.modal-section{display:flex;flex-direction:column;gap:0.5rem;}
+.modal-section{display:flex;flex-direction:column;gap:0.4rem;}
 .modal-section-title{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem;}
 .detail-row{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;}
 .detail-key{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);}
 .detail-val{color:var(--text);text-align:right;max-width:55%;}
-
-/* UNDERWRITING PANEL */
 .uw-panel{border-top:1px solid var(--border);padding:2rem;background:var(--surface2);}
-.uw-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;color:var(--text);margin-bottom:1.5rem;}
+.uw-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.08em;color:var(--text);margin-bottom:1.25rem;}
 .uw-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;}
 .inp{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0.75rem 1rem;font-family:'DM Mono',monospace;font-size:0.78rem;outline:none;transition:border-color 0.2s;width:100%;}
 .inp:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(240,192,64,0.08);}
 .inp::placeholder{color:var(--dim);}
-select.inp{cursor:pointer;appearance:none;}
+select.inp{cursor:pointer;-webkit-appearance:none;}
+textarea.inp{resize:vertical;min-height:70px;}
 .inp-lbl{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:0.35rem;}
-textarea.inp{resize:vertical;min-height:80px;font-family:'DM Mono',monospace;}
 .btn-approve{background:var(--green);border:none;color:#050507;padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
-.btn-approve:hover{box-shadow:0 0 20px rgba(0,255,136,0.3);transform:translateY(-1px);}
+.btn-approve:hover{box-shadow:0 0 20px rgba(0,255,136,0.3);}
 .btn-deny{background:transparent;border:1px solid var(--red);color:var(--red);padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
 .btn-deny:hover{background:rgba(255,68,85,0.1);}
 .btn-review{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
 .btn-review:hover{background:rgba(240,192,64,0.08);}
 .btn-neon{background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.75rem 1.5rem;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
 .btn-neon:hover{box-shadow:0 0 12px var(--neon-glow);}
-
-/* DTI INDICATOR */
+.btn-push{background:var(--gold);border:none;color:#050507;padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.btn-push:hover{background:#f8d060;box-shadow:0 0 24px rgba(240,192,64,0.4);}
+.approval-indicator{display:flex;align-items:center;gap:0.75rem;padding:0.85rem 1.25rem;margin-bottom:1rem;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;border:1px solid var(--border);background:var(--surface2);}
+.ind-approve{background:rgba(0,255,136,0.06);border-color:rgba(0,255,136,0.3);color:var(--green);}
+.ind-deny{background:rgba(255,68,85,0.06);border-color:rgba(255,68,85,0.3);color:var(--red);}
+.ind-review{background:rgba(240,192,64,0.06);border-color:rgba(240,192,64,0.3);color:var(--gold);}
+.ind-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .dti-bar-wrap{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:0.4rem;}
-.dti-bar{height:100%;border-radius:3px;transition:width 0.5s,background 0.5s;}
-
-/* EMPTY STATE */
+.dti-bar{height:100%;border-radius:3px;transition:width 0.5s;}
 .empty-state{text-align:center;padding:5rem 2rem;color:var(--dim);}
 .empty-state-icon{font-size:3rem;margin-bottom:1rem;opacity:0.3;}
 .empty-state-text{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;}
-
-/* FILTER TABS */
-.filter-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.5rem;}
-.filter-tab{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.65rem 1.25rem;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim);cursor:pointer;transition:all 0.2s;}
-.filter-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
-.filter-tab:hover{color:var(--muted);}
-
-
-/* APPROVAL INDICATOR */
-.approval-indicator {
-  display:flex;
-  align-items:center;
-  gap:0.75rem;
-  padding:0.85rem 1.25rem;
-  margin-bottom:1rem;
-  font-family:'DM Mono',monospace;
-  font-size:0.62rem;
-  letter-spacing:0.15em;
-  text-transform:uppercase;
-  border:1px solid var(--border);
-  background:var(--surface2);
-}
-.approval-indicator.recommend-approve {
-  background:rgba(0,255,136,0.06);
-  border-color:rgba(0,255,136,0.3);
-  color:var(--green);
-}
-.approval-indicator.recommend-deny {
-  background:rgba(255,68,85,0.06);
-  border-color:rgba(255,68,85,0.3);
-  color:var(--red);
-}
-.approval-indicator.recommend-review {
-  background:rgba(240,192,64,0.06);
-  border-color:rgba(240,192,64,0.3);
-  color:var(--gold);
-}
-.approval-dot {
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  flex-shrink:0;
-}
-.recommend-approve .approval-dot {
-  background:var(--green);
-  box-shadow:0 0 8px rgba(0,255,136,0.6);
-  animation:pulse 1.5s infinite;
-}
-.recommend-deny .approval-dot {
-  background:var(--red);
-  box-shadow:0 0 8px rgba(255,68,85,0.4);
-}
-.recommend-review .approval-dot {
-  background:var(--gold);
-  box-shadow:0 0 8px rgba(240,192,64,0.5);
-  animation:pulse 2s infinite;
-}
-
-/* ANIMATIONS */
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border2);}
-@media(max-width:768px){.wrap{padding:5rem 1.5rem 3rem;}.stats-row{grid-template-columns:1fr 1fr;}.modal-body{grid-template-columns:1fr;}.uw-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){.modal-body{grid-template-columns:1fr;}.uw-grid{grid-template-columns:1fr 1fr;}.stats-row{grid-template-columns:repeat(3,1fr);}}
 </style>
 </head>
 <body>
 
-<!-- ADMIN GATE -->
+<!-- GATE -->
 <div id="adminGate">
-  <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(240,192,64,0.02) 0,rgba(240,192,64,0.02) 1px,transparent 1px,transparent 80px),repeating-linear-gradient(0deg,rgba(240,192,64,0.02) 0,rgba(240,192,64,0.02) 1px,transparent 1px,transparent 80px);pointer-events:none;"></div>
   <div style="text-align:center;position:relative;z-index:1;max-width:480px;">
     <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-bottom:2.5rem;">
       <div style="width:10px;height:10px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold);animation:pulse 2s infinite;"></div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.15em;color:var(--text);">IMC ADMIN</div>
     </div>
-    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,5rem);line-height:0.9;letter-spacing:0.02em;margin-bottom:1rem;">
-      UNDERWRITING<br><span style="color:var(--gold);text-shadow:0 0 20px rgba(240,192,64,0.4);">CONSOLE</span>
-    </h1>
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,5rem);line-height:0.9;letter-spacing:0.02em;margin-bottom:1rem;">UNDERWRITING<br><span style="color:var(--gold);text-shadow:0 0 20px rgba(240,192,64,0.4);">CONSOLE</span></h1>
     <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:2.5rem;">Authorized Access Only</p>
     <button id="adminGateBtn" style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;background:transparent;border:1px solid var(--border2);color:var(--muted);padding:1rem 2.5rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.75rem;transition:all 0.2s;margin-bottom:1.5rem;"
       onclick="var AUTH=['0x6c6ad1de674c292c088b29aa1312b991590bbb9f','0x8050d5462309dd334116bb3e949386c3238db9ac'];var b=this,l=document.getElementById('adminGateLabel'),d=document.getElementById('adminGateDot');if(!window.ethereum){l.textContent='Install MetaMask';return;}l.textContent='Connecting...';window.ethereum.request({method:'eth_requestAccounts'}).then(function(a){var addr=a[0].toLowerCase();if(AUTH.indexOf(addr)>-1){d.style.background='var(--gold)';d.style.boxShadow='0 0 8px var(--gold)';l.textContent=a[0].slice(0,6)+'...'+a[0].slice(-4)+' Verified';b.style.borderColor='var(--gold)';b.style.color='var(--gold)';var g=document.getElementById('adminGate');g.style.transition='opacity 0.8s';g.style.opacity='0';setTimeout(function(){g.style.display='none';document.getElementById('wDot').classList.add('on');document.getElementById('wLabel').textContent=a[0].slice(0,6)+'...'+a[0].slice(-4);document.getElementById('walletBtn').classList.add('connected');loadApplications();},800);}else{l.textContent='Access Denied';b.style.color='var(--red)';b.style.borderColor='rgba(255,68,85,0.4)';}}).catch(function(){l.textContent='Connect Wallet';});">
       <span id="adminGateDot" style="width:7px;height:7px;border-radius:50%;background:var(--dim);transition:all 0.3s;flex-shrink:0;"></span>
       <span id="adminGateLabel">Connect Wallet to Enter</span>
     </button>
-    <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;color:#1e1e2e;line-height:1.8;">Underwriting access is restricted to authorized IMC personnel only.</div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;color:#1e1e2e;line-height:1.8;">Underwriting access restricted to authorized IMC personnel only.</div>
   </div>
 </div>
 
@@ -197,7 +125,7 @@ textarea.inp{resize:vertical;min-height:80px;font-family:'DM Mono',monospace;}
     <div class="nav-badge">Underwriting</div>
   </div>
   <div style="display:flex;align-items:center;gap:1rem;">
-    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--neon)'" onmouseout="this.style.color='var(--dim)'">Marketplace</a>
+    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;" onmouseover="this.style.color='var(--neon)'" onmouseout="this.style.color='var(--dim)'">Marketplace</a>
     <button class="nav-wallet" id="walletBtn">
       <div class="w-dot" id="wDot"></div>
       <span id="wLabel">Connect Wallet</span>
@@ -207,48 +135,69 @@ textarea.inp{resize:vertical;min-height:80px;font-family:'DM Mono',monospace;}
 
 <!-- MAIN -->
 <div class="wrap" id="mainWrap">
-
-  <!-- Header -->
   <div style="margin-bottom:2rem;">
-    <div class="sl">IMC · Underwriting Console</div>
+    <div class="sl">IMC - Underwriting Console</div>
     <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);line-height:0.92;letter-spacing:0.02em;">
-      Loan<br><span style="color:var(--gold);text-shadow:0 0 20px rgba(240,192,64,0.3);">Applications</span>
+      Admin<br><span style="color:var(--gold);text-shadow:0 0 20px rgba(240,192,64,0.3);">Dashboard</span>
     </h1>
   </div>
 
-  <!-- Stats -->
-  <div class="stats-row" id="statsRow">
-    <div class="stat-box"><div class="stat-num" style="color:var(--neon);" id="statTotal">--</div><div class="stat-lbl">Total Applications</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:var(--gold);" id="statPending">--</div><div class="stat-lbl">Pending Review</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:var(--green);" id="statApproved">--</div><div class="stat-lbl">Approved</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:var(--red);" id="statDenied">--</div><div class="stat-lbl">Denied</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:var(--text);" id="statVolume">--</div><div class="stat-lbl">Total Volume</div></div>
+  <!-- Main Tab Switcher -->
+  <div class="main-tabs">
+    <button class="main-tab active" id="tabApps" onclick="switchTab('apps')">Loan Applications</button>
+    <button class="main-tab gold" id="tabVehicles" onclick="switchTab('vehicles')">Dealer Submissions</button>
   </div>
 
-  <!-- Filter Tabs -->
-  <div class="filter-tabs">
-    <button class="filter-tab active" onclick="filterApps('all',this)">All</button>
-    <button class="filter-tab" onclick="filterApps('pending',this)">Pending</button>
-    <button class="filter-tab" onclick="filterApps('review',this)">In Review</button>
-    <button class="filter-tab" onclick="filterApps('approved',this)">Approved</button>
-    <button class="filter-tab" onclick="filterApps('denied',this)">Denied</button>
+  <!-- APPLICATIONS PANEL -->
+  <div id="panelApps">
+    <div class="stats-row" id="statsRow">
+      <div class="stat-box"><div class="stat-num" style="color:var(--neon);" id="statTotal">--</div><div class="stat-lbl">Total Applications</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--gold);" id="statPending">--</div><div class="stat-lbl">Pending Review</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--green);" id="statApproved">--</div><div class="stat-lbl">Approved</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--red);" id="statDenied">--</div><div class="stat-lbl">Denied</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--text);" id="statVolume">--</div><div class="stat-lbl">Total Volume</div></div>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterApps('all',this)">All</button>
+      <button class="filter-tab" onclick="filterApps('pending',this)">Pending</button>
+      <button class="filter-tab" onclick="filterApps('review',this)">In Review</button>
+      <button class="filter-tab" onclick="filterApps('approved',this)">Approved</button>
+      <button class="filter-tab" onclick="filterApps('denied',this)">Denied</button>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+      <button class="btn-neon" onclick="loadApplications()" style="padding:0.5rem 1.25rem;font-size:0.6rem;">Refresh</button>
+    </div>
+    <div id="tableWrap">
+      <div class="empty-state"><div class="empty-state-icon">&#11042;</div><div class="empty-state-text">Connect wallet to load applications</div></div>
+    </div>
   </div>
 
-  <!-- Refresh -->
-  <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
-    <button class="btn-neon" onclick="loadApplications()" style="padding:0.5rem 1.25rem;font-size:0.6rem;">Refresh</button>
-  </div>
-
-  <!-- Applications Table -->
-  <div id="tableWrap">
-    <div class="empty-state">
-      <div class="empty-state-icon">⬡</div>
-      <div class="empty-state-text">Connect wallet to load applications</div>
+  <!-- VEHICLES PANEL -->
+  <div id="panelVehicles" style="display:none;">
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num" style="color:var(--neon);" id="vStatTotal">--</div><div class="stat-lbl">Total Submissions</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--gold);" id="vStatPending">--</div><div class="stat-lbl">Pending Review</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--green);" id="vStatListed">--</div><div class="stat-lbl">Listed</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--purple);" id="vStatEV">--</div><div class="stat-lbl">EV Conversions</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--text);" id="vStatValue">--</div><div class="stat-lbl">Total Asking Value</div></div>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterVehicles('all',this)">All</button>
+      <button class="filter-tab" onclick="filterVehicles('pending',this)">Pending</button>
+      <button class="filter-tab" onclick="filterVehicles('approved',this)">Approved</button>
+      <button class="filter-tab" onclick="filterVehicles('listed',this)">Listed</button>
+      <button class="filter-tab" onclick="filterVehicles('rejected',this)">Rejected</button>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+      <button class="btn-neon" onclick="loadVehicles()" style="padding:0.5rem 1.25rem;font-size:0.6rem;">Refresh</button>
+    </div>
+    <div id="vehicleTableWrap">
+      <div class="empty-state"><div class="empty-state-icon">&#11042;</div><div class="empty-state-text">No dealer submissions yet</div></div>
     </div>
   </div>
 </div>
 
-<!-- APPLICATION DETAIL MODAL -->
+<!-- APPLICATION MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal" id="modal">
     <div class="modal-header">
@@ -257,104 +206,118 @@ textarea.inp{resize:vertical;min-height:80px;font-family:'DM Mono',monospace;}
     </div>
     <div class="modal-body" id="modalBody"></div>
     <div class="uw-panel">
-      <div id="approvalIndicator" class="approval-indicator recommend-review">
-        <div class="approval-dot"></div>
+      <div id="approvalIndicator" class="approval-indicator ind-review">
+        <div class="ind-dot" id="approvalDot" style="background:var(--gold);"></div>
         <div id="approvalText">Analyzing application...</div>
       </div>
       <div class="uw-title">Underwriting Decision</div>
       <div class="uw-grid">
-        <div>
-          <label class="inp-lbl">Decision</label>
-          <select class="inp" id="uwDecision">
-            <option value="">Select...</option>
-            <option value="approved">Approve</option>
-            <option value="denied">Deny</option>
-            <option value="review">Request More Info</option>
-          </select>
-        </div>
-        <div>
-          <label class="inp-lbl">Final APR (%)</label>
-          <input class="inp" type="number" id="uwAPR" placeholder="e.g. 11.9" step="0.1" min="0" max="15">
-        </div>
-        <div>
-          <label class="inp-lbl">Approved Amount ($)</label>
-          <input class="inp" type="number" id="uwAmount" placeholder="e.g. 40000">
-        </div>
+        <div><label class="inp-lbl">Decision</label><select class="inp" id="uwDecision"><option value="">Select...</option><option value="approved">Approve</option><option value="denied">Deny</option><option value="review">Request More Info</option></select></div>
+        <div><label class="inp-lbl">Final APR (%)</label><input class="inp" type="number" id="uwAPR" placeholder="e.g. 11.9" step="0.1" min="0" max="15"></div>
+        <div><label class="inp-lbl">Approved Amount ($)</label><input class="inp" type="number" id="uwAmount" placeholder="e.g. 40000"></div>
       </div>
-      <div style="margin-bottom:1rem;">
-        <label class="inp-lbl">Underwriter Notes</label>
-        <textarea class="inp" id="uwNotes" placeholder="Credit analysis, conditions, requirements, denial reason..."></textarea>
-      </div>
+      <div style="margin-bottom:1rem;"><label class="inp-lbl">Underwriter Notes</label><textarea class="inp" id="uwNotes" placeholder="Credit analysis, conditions, denial reason..."></textarea></div>
       <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-        <button class="btn-approve" onclick="submitDecision('approved')">Approve Application</button>
-        <button class="btn-review" onclick="submitDecision('review')">Request Info</button>
-        <button class="btn-deny" onclick="submitDecision('denied')">Deny Application</button>
+        <button class="btn-approve" onclick="submitDecision('approved')" style="flex:2;">Approve Application</button>
+        <button class="btn-review" onclick="submitDecision('review')" style="flex:1;">Request Info</button>
+        <button class="btn-deny" onclick="submitDecision('denied')" style="flex:1;">Deny Application</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VEHICLE MODAL -->
+<div class="modal-overlay" id="vModalOverlay" onclick="if(event.target===this)closeVModal()">
+  <div class="modal" id="vModal">
+    <div class="modal-header">
+      <div class="modal-title" id="vModalTitle">Vehicle Submission</div>
+      <button class="modal-close" onclick="closeVModal()">x</button>
+    </div>
+    <div class="modal-body" id="vModalBody"></div>
+    <div class="uw-panel">
+      <div id="vApprovalIndicator" class="approval-indicator ind-review">
+        <div class="ind-dot" id="vApprovalDot" style="background:var(--gold);"></div>
+        <div id="vApprovalText">Checking submission quality...</div>
+      </div>
+      <div class="uw-title">Review &amp; Listing Terms</div>
+      <div class="uw-grid">
+        <div><label class="inp-lbl">APR (%)</label><input class="inp" type="number" id="vAPR" placeholder="e.g. 11.9" step="0.1" oninput="calcVMonthly()"></div>
+        <div><label class="inp-lbl">Loan Amount ($)</label><input class="inp" type="number" id="vLoanAmount" placeholder="e.g. 52000" oninput="calcVMonthly()"></div>
+        <div><label class="inp-lbl">Appraised Value ($)</label><input class="inp" type="number" id="vAppraised" placeholder="e.g. 68000"></div>
+      </div>
+      <div class="uw-grid">
+        <div><label class="inp-lbl">Loan Term</label><select class="inp" id="vTerm" onchange="calcVMonthly()"><option value="">Select...</option><option value="24">24 months</option><option value="36">36 months</option><option value="48">48 months</option><option value="60">60 months</option></select></div>
+        <div><label class="inp-lbl">Est. Monthly Payment</label><input class="inp" type="text" id="vMonthly" placeholder="Auto-calculated" readonly style="color:var(--gold);"></div>
+        <div><label class="inp-lbl">Platform Fee (2%)</label><input class="inp" type="text" id="vFee" placeholder="Auto-calculated" readonly style="color:var(--muted);"></div>
+      </div>
+      <div style="margin-bottom:1.25rem;"><label class="inp-lbl">Notes to Dealer</label><textarea class="inp" id="vNotes" placeholder="Appraisal rationale, conditions, required documentation..."></textarea></div>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <button class="btn-push" onclick="submitVehicleDecision('listed')" style="flex:2;">Push to Marketplace</button>
+        <button class="btn-review" onclick="submitVehicleDecision('approved')" style="flex:1;">Approve (Hold)</button>
+        <button class="btn-deny" onclick="submitVehicleDecision('rejected')" style="flex:1;">Reject</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+
 var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
 var allApps = [];
-var currentFilter = 'all';
+var allVehicles = [];
 var currentAppId = null;
+var currentVehicleId = null;
+
+// -- TAB SWITCHING --
+function switchTab(tab) {
+  var isApps = tab === 'apps';
+  document.getElementById('panelApps').style.display = isApps ? 'block' : 'none';
+  document.getElementById('panelVehicles').style.display = isApps ? 'none' : 'block';
+  document.getElementById('tabApps').classList.toggle('active', isApps);
+  document.getElementById('tabVehicles').classList.toggle('active', !isApps);
+  if (!isApps && allVehicles.length === 0) loadVehicles();
+}
+
+// --------------------------------
+// APPLICATIONS TAB
+// --------------------------------
 
 function loadApplications() {
-  document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">...</div><div class="empty-state-text">Loading applications</div></div>';
-  console.log('loadApplications called, SB_URL:', SB_URL);
-
+  document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">...</div><div class="empty-state-text">Loading...</div></div>';
   fetch(SB_URL + '/rest/v1/imc_applications?select=*&order=created_at.desc', {
     method: 'GET',
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Accept': 'application/json' }
   })
-  .then(function(r) {
-    console.log('Response status:', r.status);
-    return r.json();
-  })
+  .then(function(r) { return r.json(); })
   .then(function(data) {
-    console.log('Data received:', data);
-    if (data && data.message) {
-      document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><div class="empty-state-text">Error: ' + data.message + '</div></div>';
-      return;
-    }
-    allApps = Array.isArray(data) ? data : [];
+    allApps = data || [];
     updateStats();
     renderTable(allApps);
   })
   .catch(function(err) {
-    console.error('loadApplications error:', err);
-    document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><div class="empty-state-text">Network error - ' + err.message + '</div></div>';
+    document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><div class="empty-state-text">Error loading - check console</div></div>';
+    console.error(err);
   });
 }
 
 function updateStats() {
-  var apps = Array.isArray(allApps) ? allApps : [];
-  var total = apps.length;
-  var pending = apps.filter(function(a) { return a.status === 'pending'; }).length;
-  var approved = apps.filter(function(a) { return a.status === 'approved'; }).length;
-  var denied = apps.filter(function(a) { return a.status === 'denied'; }).length;
-  var volume = apps.reduce(function(sum, a) { return sum + (a.loan_amount || 0); }, 0);
-
+  var total = allApps.length;
+  var pending = allApps.filter(function(a) { return a.status === 'pending'; }).length;
+  var approved = allApps.filter(function(a) { return a.status === 'approved'; }).length;
+  var denied = allApps.filter(function(a) { return a.status === 'denied'; }).length;
+  var volume = allApps.reduce(function(s, a) { return s + (a.loan_amount || 0); }, 0);
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statPending').textContent = pending;
   document.getElementById('statApproved').textContent = approved;
   document.getElementById('statDenied').textContent = denied;
-  document.getElementById('statVolume').textContent = volume > 0 ? '$' + (volume/1000).toFixed(0) + 'K' : '$0';
+  document.getElementById('statVolume').textContent = volume > 0 ? '$' + Math.round(volume/1000) + 'K' : '$0';
 }
 
 function filterApps(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('#panelApps .filter-tab').forEach(function(t) { t.classList.remove('active'); });
   btn.classList.add('active');
-  var apps = Array.isArray(allApps) ? allApps : [];
-  var filtered = filter === 'all' ? apps : apps.filter(function(a) { return a.status === filter; });
+  var filtered = filter === 'all' ? allApps : allApps.filter(function(a) { return a.status === filter; });
   renderTable(filtered);
 }
 
@@ -363,170 +326,384 @@ function renderTable(apps) {
     document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">0</div><div class="empty-state-text">No applications found</div></div>';
     return;
   }
-
   var rows = apps.map(function(app) {
     var name = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Anonymous';
     var date = new Date(app.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
     var statusClass = app.status === 'approved' ? 'b-approved' : app.status === 'denied' ? 'b-denied' : app.status === 'review' ? 'b-review' : 'b-pending';
     var statusLabel = app.status === 'review' ? 'In Review' : app.status || 'Pending';
-    // Flag: denied but system recommends approve
-    var rec = getApprovalRecommendation(app);
-    var showFlag = app.status === 'denied' && rec.status === 'approve';
     var monthly = 0;
     if (app.loan_amount && app.term_months) {
-      var apr = (app.final_apr || 12) / 100 / 12;
-      monthly = (app.loan_amount * apr * Math.pow(1+apr,app.term_months)) / (Math.pow(1+apr,app.term_months)-1);
+      var r = (app.final_apr || 12) / 100 / 12;
+      monthly = (app.loan_amount * r * Math.pow(1+r,app.term_months)) / (Math.pow(1+r,app.term_months)-1);
     }
-    var dti = monthly > 0 && app.gross_monthly_income > 0 ? ((monthly / app.gross_monthly_income) * 100).toFixed(1) : '--';
+    var dti = monthly > 0 && app.gross_monthly_income > 0 ? (monthly / app.gross_monthly_income * 100).toFixed(1) : '--';
     var dtiColor = parseFloat(dti) < 28 ? 'var(--green)' : parseFloat(dti) < 36 ? 'var(--gold)' : 'var(--red)';
-
-    return '<tr onclick="openApp(\'' + app.id + '\')">' +
-      '<td style="font-family:\'DM Mono\',monospace;font-size:0.65rem;color:var(--dim);">' + date + '</td>' +
-      '<td style="color:var(--text);font-weight:400;">' + name + '</td>' +
-      '<td style="font-family:\'DM Mono\',monospace;font-size:0.6rem;color:var(--muted);">' + (app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--') + '</td>' +
-      '<td style="font-family:\'Bebas Neue\',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">$' + (app.loan_amount ? app.loan_amount.toLocaleString() : '--') + '</td>' +
-      '<td style="font-family:\'DM Mono\',monospace;font-size:0.7rem;color:var(--muted);">' + (app.term_months || '--') + ' mo</td>' +
-      '<td style="font-family:\'DM Mono\',monospace;font-size:0.7rem;color:' + dtiColor + ';">' + dti + '%</td>' +
-      '<td>' + (app.credit_score_range ? '<span style="font-family:\'DM Mono\',monospace;font-size:0.62rem;color:var(--muted);">' + app.credit_score_range + '</span>' : '--') + '</td>' +
-      '<td>' + (app.crypto_included ? '<span style="color:var(--purple);font-family:\'DM Mono\',monospace;font-size:0.6rem;">Yes</span>' : '<span style="color:var(--dim);font-family:\'DM Mono\',monospace;font-size:0.6rem;">No</span>') + '</td>' +
+    var rec = getApprovalRecommendation(app);
+    var showFlag = app.status === 'denied' && rec.status === 'approve';
+    return '<tr onclick="openApp(' + "'" + app.id + "'" + ')">' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + date + '</td>' +
+      '<td style="color:var(--text);">' + name + '</td>' +
+      '<td style="font-family:monospace;font-size:0.6rem;color:var(--muted);">' + (app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--') + '</td>' +
+      '<td style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--') + '</td>' +
+      '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + (app.term_months || '--') + ' mo</td>' +
+      '<td style="font-family:monospace;font-size:0.7rem;color:' + dtiColor + ';">' + dti + '%</td>' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (app.credit_score_range || '--') + '</td>' +
+      '<td>' + (app.crypto_included ? '<span style="color:var(--purple);font-family:monospace;font-size:0.6rem;">Yes</span>' : '<span style="color:var(--dim);font-family:monospace;font-size:0.6rem;">No</span>') + '</td>' +
       '<td><span class="badge ' + statusClass + '">' + statusLabel + '</span>' +
-      (showFlag ? '<span title="System recommended approval - review required" style="margin-left:6px;display:inline-flex;align-items:center;gap:4px;font-family:\'DM Mono\',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:#f0c040;background:rgba(240,192,64,0.1);border:1px solid rgba(240,192,64,0.3);padding:0.15rem 0.5rem;"><span style="width:6px;height:6px;border-radius:50%;background:#f0c040;box-shadow:0 0 6px rgba(240,192,64,0.6);animation:pulse 1.5s infinite;flex-shrink:0;"></span>REG B FLAG</span>' : '') +
+      (showFlag ? ' <span style="font-family:monospace;font-size:0.5rem;color:var(--gold);background:rgba(240,192,64,0.1);border:1px solid rgba(240,192,64,0.3);padding:0.15rem 0.4rem;"><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 4px var(--gold);animation:pulse 1.5s infinite;margin-right:3px;vertical-align:middle;"></span>REG B</span>' : '') +
       '</td>' +
-      '<td><button onclick="event.stopPropagation();openApp(\'' + app.id + '\')" style="font-family:\'DM Mono\',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor=\'var(--gold)\';this.style.color=\'var(--gold)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.color=\'var(--dim)\'">Review</button></td>' +
+      '<td><button onclick="event.stopPropagation();openApp(' + "'" + app.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">Review</button></td>' +
     '</tr>';
   }).join('');
-
   document.getElementById('tableWrap').innerHTML =
-    '<table class="app-table">' +
-    '<thead><tr>' +
-    '<th>Date</th><th>Applicant</th><th>Wallet</th><th>Amount</th><th>Term</th><th>DTI</th><th>Credit</th><th>Crypto</th><th>Status</th><th></th>' +
-    '</tr></thead>' +
-    '<tbody>' + rows + '</tbody>' +
-    '</table>';
+    '<table class="data-table"><thead><tr><th>Date</th><th>Applicant</th><th>Wallet</th><th>Amount</th><th>Term</th><th>DTI</th><th>Credit</th><th>Crypto</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
 }
 
 function openApp(id) {
   var app = allApps.find(function(a) { return a.id === id; });
   if (!app) return;
   currentAppId = id;
-
   var name = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Anonymous';
-  document.getElementById('modalTitle').textContent = name + ' -- Application';
-
-  // Calculate payment
+  document.getElementById('modalTitle').textContent = name + ' - Application';
   var apr = app.final_apr || 12;
   var r = apr / 100 / 12;
-  var monthly = app.loan_amount && app.term_months ?
-    (app.loan_amount * r * Math.pow(1+r,app.term_months)) / (Math.pow(1+r,app.term_months)-1) : 0;
-  var dti = monthly > 0 && app.gross_monthly_income > 0 ?
-    (monthly / app.gross_monthly_income * 100).toFixed(1) : '--';
-  var dtiColor = parseFloat(dti) < 28 ? 'var(--green)' : parseFloat(dti) < 36 ? 'var(--gold)' : 'var(--red)';
-
-  var col1 = [
-    {t:'Loan Details', rows:[
-      ['Vehicle', '1957 Chevrolet Bel Air EV'],
-      ['Loan Amount', '$' + (app.loan_amount || 0).toLocaleString()],
-      ['Down Payment', '$' + (app.down_payment || 0).toLocaleString()],
-      ['Term', (app.term_months || '--') + ' months'],
-      ['Intended Use', app.intended_use || '--'],
-      ['Application ID', app.id ? app.id.slice(0,8).toUpperCase() : '--'],
-      ['Submitted', new Date(app.created_at).toLocaleString()],
-    ]},
-    {t:'Contact', rows:[
-      ['Name', name],
-      ['Email', app.email || '--'],
-      ['Phone', app.phone || '--'],
-      ['Wallet', app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--'],
-    ]},
-    {t:'Address', rows:[
-      ['Street', app.street_address || '--'],
-      ['City/State/ZIP', (app.city || '') + ' ' + (app.state || '') + ' ' + (app.zip || '')],
-      ['Time at Address', app.time_at_address || '--'],
-      ['Housing', app.housing_status || '--'],
-      ['Housing Payment', app.monthly_housing_payment ? '$' + app.monthly_housing_payment : '--'],
-    ]},
-  ];
-
-  var col2 = [
-    {t:'Employment & Income', rows:[
-      ['Employment', app.employment_status || '--'],
-      ['Employer', app.employer || '--'],
-      ['Job Title', app.job_title || '--'],
-      ['Time at Employer', app.time_at_employer || '--'],
-      ['Monthly Income', app.gross_monthly_income ? '$' + app.gross_monthly_income.toLocaleString() : '--'],
-      ['Income Type', app.income_type || '--'],
-      ['Other Income', app.other_income ? '$' + app.other_income : '--'],
-    ]},
-    {t:'Credit Profile', rows:[
-      ['Credit Score', app.credit_score_range || '--'],
-      ['Checking/Savings', app.checking_savings ? '$' + app.checking_savings.toLocaleString() : '--'],
-      ['Investments', app.investment_accounts ? '$' + app.investment_accounts.toLocaleString() : '--'],
-      ['Est. Monthly Pmt', monthly > 0 ? '$' + monthly.toFixed(2) : '--'],
-      ['DTI Ratio', dti + '%'],
-      ['Co-Applicant', app.co_app_included ? 'Yes - ' + (app.co_app_name || '') : 'No'],
-    ]},
-    {t:'Crypto Assets', rows:[
-      ['Crypto Included', app.crypto_included ? 'Yes' : 'No'],
-      ['Est. Value', app.crypto_estimated_value ? '$' + app.crypto_estimated_value.toLocaleString() : '--'],
-      ['As Collateral', app.crypto_as_collateral || '--'],
-      ['Wallets', app.crypto_wallets ? app.crypto_wallets.join(', ') : '--'],
-    ]},
-  ];
-
-  function buildCols(sections) {
-    return sections.map(function(sec) {
-      return '<div class="modal-section">' +
-        '<div class="modal-section-title">' + sec.t + '</div>' +
-        sec.rows.map(function(row) {
-          return '<div class="detail-row">' +
-            '<div class="detail-key">' + row[0] + '</div>' +
-            '<div class="detail-val">' + row[1] + '</div>' +
-            '</div>';
-        }).join('') +
-        '</div>';
-    }).join('');
-  }
-
+  var monthly = app.loan_amount && app.term_months ? (app.loan_amount * r * Math.pow(1+r,app.term_months)) / (Math.pow(1+r,app.term_months)-1) : 0;
+  var dti = monthly > 0 && app.gross_monthly_income > 0 ? (monthly / app.gross_monthly_income * 100) : 0;
+  var dtiColor = dti < 28 ? 'var(--green)' : dti < 36 ? 'var(--gold)' : 'var(--red)';
+  var appDate = new Date(app.created_at).toLocaleString();
+  var col1 = buildSection('Loan Details', [
+    ['Vehicle', app.vehicle_name || '1957 Bel Air EV'],
+    ['Loan Amount', app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--'],
+    ['Down Payment', app.down_payment ? '$'+app.down_payment.toLocaleString() : '--'],
+    ['Term', (app.term_months || '--') + ' months'],
+    ['Intended Use', app.intended_use || '--'],
+    ['App ID', app.id ? app.id.slice(0,8).toUpperCase() : '--'],
+    ['Submitted', appDate]
+  ]) + buildSection('Contact', [
+    ['Name', name],
+    ['Email', app.email || '--'],
+    ['Phone', app.phone || '--'],
+    ['Wallet', app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--'],
+    ['Verified', app.wallet_verified ? 'Yes - Signed' : 'Connection only']
+  ]);
+  var col2 = buildSection('Employment & Income', [
+    ['Employment', app.employment_status || '--'],
+    ['Employer', app.employer || '--'],
+    ['Monthly Income', app.gross_monthly_income ? '$'+app.gross_monthly_income.toLocaleString() : '--'],
+    ['Credit Score', app.credit_score_range || '--'],
+    ['Housing', app.housing_status || '--']
+  ]) + buildSection('Crypto Assets', [
+    ['Included', app.crypto_included ? 'Yes' : 'No'],
+    ['Est. Value', app.crypto_estimated_value ? '$'+app.crypto_estimated_value.toLocaleString() : '--'],
+    ['As Collateral', app.crypto_as_collateral || '--']
+  ]) + buildSection('Co-Applicant', [
+    ['Included', app.co_app_included ? 'Yes' : 'No'],
+    ['Name', app.co_app_name || '--'],
+    ['Income', app.co_app_income ? '$'+app.co_app_income.toLocaleString() : '--']
+  ]);
   document.getElementById('modalBody').innerHTML =
-    '<div>' + buildCols(col1) +
-    // DTI visual
+    '<div>' + col1 +
     '<div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;margin-top:1rem;">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;">' +
-    '<span style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">DTI Ratio</span>' +
-    '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:1.2rem;color:' + dtiColor + ';">' + dti + '%</span>' +
-    '</div>' +
-    '<div class="dti-bar-wrap"><div class="dti-bar" style="width:' + Math.min(parseFloat(dti)*1.5||0,100) + '%;background:' + dtiColor + ';"></div></div>' +
-    '<div style="font-family:\'DM Mono\',monospace;font-size:0.55rem;color:var(--dim);margin-top:0.4rem;letter-spacing:0.1em;">' +
-    (parseFloat(dti) < 28 ? 'Excellent DTI' : parseFloat(dti) < 36 ? 'Acceptable DTI' : 'Elevated DTI - review carefully') +
-    '</div></div>' +
-    '</div>' +
-    '<div>' + buildCols(col2) + '</div>';
-
-  // Pre-fill underwriting fields if already reviewed
-  // Show approval recommendation
+    '<div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="font-family:monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">DTI Ratio</span><span style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:' + dtiColor + ';">' + (dti > 0 ? dti.toFixed(1)+'%' : '--') + '</span></div>' +
+    '<div class="dti-bar-wrap"><div class="dti-bar" style="width:' + Math.min(dti*1.5||0,100) + '%;background:' + dtiColor + ';"></div></div>' +
+    '<div style="font-family:monospace;font-size:0.55rem;color:var(--dim);margin-top:0.4rem;">' + (dti < 28 ? 'Excellent DTI' : dti < 36 ? 'Acceptable DTI' : dti > 0 ? 'Elevated - review carefully' : '') + '</div></div>' +
+    '</div><div>' + col2 + '</div>';
   var rec = getApprovalRecommendation(app);
   var ind = document.getElementById('approvalIndicator');
-  var txt = document.getElementById('approvalText');
-  ind.className = 'approval-indicator recommend-' + rec.status;
-  txt.innerHTML = rec.label + ' &nbsp;|&nbsp; ' + rec.reasons.join(' &nbsp;&middot;&nbsp; ');
-  if (rec.dti) {
-    document.getElementById('uwAPR').value = rec.status === 'approve' ?
-      (rec.credit >= 800 ? 7.9 : rec.credit >= 750 ? 9.9 : rec.credit >= 700 ? 11.9 : 12.9) : '';
-    document.getElementById('uwAmount').value = app.loan_amount || '';
-  }
-
+  var dot = document.getElementById('approvalDot');
+  ind.className = 'approval-indicator ind-' + rec.status;
+  dot.style.background = rec.status === 'approve' ? 'var(--green)' : rec.status === 'deny' ? 'var(--red)' : 'var(--gold)';
+  dot.style.boxShadow = rec.status === 'approve' ? '0 0 8px rgba(0,255,136,0.6)' : 'none';
+  dot.style.animation = (rec.status === 'approve' || rec.status === 'review') ? 'pulse 1.5s infinite' : 'none';
+  document.getElementById('approvalText').textContent = rec.label + ' | ' + rec.reasons.join(' - ');
   document.getElementById('uwDecision').value = app.decision || '';
-  document.getElementById('uwAPR').value = app.final_apr || '';
+  document.getElementById('uwAPR').value = app.final_apr || (rec.status === 'approve' ? (app.credit_score_range >= 800 ? 7.9 : app.credit_score_range >= 750 ? 9.9 : app.credit_score_range >= 700 ? 11.9 : 12.9) : '');
   document.getElementById('uwAmount').value = app.approved_amount || app.loan_amount || '';
   document.getElementById('uwNotes').value = app.underwriter_notes || '';
-
   document.getElementById('modalOverlay').classList.add('open');
+}
+
+function buildSection(title, rows) {
+  return '<div class="modal-section" style="margin-bottom:1rem;">' +
+    '<div class="modal-section-title">' + title + '</div>' +
+    rows.map(function(r) {
+      return '<div class="detail-row"><div class="detail-key">' + r[0] + '</div><div class="detail-val">' + r[1] + '</div></div>';
+    }).join('') + '</div>';
 }
 
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   currentAppId = null;
 }
+
+function submitDecision(decision) {
+  if (!currentAppId) return;
+  var app = allApps.find(function(a) { return a.id === currentAppId; });
+  var update = {
+    status: decision,
+    decision: decision,
+    final_apr: parseFloat(document.getElementById('uwAPR').value) || null,
+    approved_amount: parseFloat(document.getElementById('uwAmount').value) || null,
+    underwriter_notes: document.getElementById('uwNotes').value,
+    reviewed_at: new Date().toISOString()
+  };
+  fetch(SB_URL + '/rest/v1/imc_applications?id=eq.' + currentAppId, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'return=representation' },
+    body: JSON.stringify(update)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    if (app && app.email && (decision === 'denied' || decision === 'approved')) {
+      sendDecisionEmail(app, decision, update);
+    }
+    closeModal();
+    loadApplications();
+  })
+  .catch(function(err) { alert('Error saving decision: ' + err); });
+}
+
+// --------------------------------
+// VEHICLES TAB
+// --------------------------------
+
+function loadVehicles() {
+  document.getElementById('vehicleTableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">...</div><div class="empty-state-text">Loading...</div></div>';
+  fetch(SB_URL + '/rest/v1/imc_vehicles?select=*&order=created_at.desc', {
+    method: 'GET',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Accept': 'application/json' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    allVehicles = data || [];
+    updateVehicleStats();
+    renderVehicleTable(allVehicles);
+  })
+  .catch(function(err) {
+    document.getElementById('vehicleTableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><div class="empty-state-text">Error loading</div></div>';
+    console.error(err);
+  });
+}
+
+function updateVehicleStats() {
+  var total = allVehicles.length;
+  var pending = allVehicles.filter(function(v) { return v.status === 'pending'; }).length;
+  var listed = allVehicles.filter(function(v) { return v.status === 'listed'; }).length;
+  var ev = allVehicles.filter(function(v) { return v.ev_converted; }).length;
+  var val = allVehicles.reduce(function(s, v) { return s + (v.asking_price || 0); }, 0);
+  document.getElementById('vStatTotal').textContent = total;
+  document.getElementById('vStatPending').textContent = pending;
+  document.getElementById('vStatListed').textContent = listed;
+  document.getElementById('vStatEV').textContent = ev;
+  document.getElementById('vStatValue').textContent = val > 0 ? '$' + Math.round(val/1000) + 'K' : '$0';
+}
+
+function filterVehicles(filter, btn) {
+  document.querySelectorAll('#panelVehicles .filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  var filtered = filter === 'all' ? allVehicles : allVehicles.filter(function(v) { return v.status === filter; });
+  renderVehicleTable(filtered);
+}
+
+function renderVehicleTable(vehicles) {
+  if (!vehicles || vehicles.length === 0) {
+    document.getElementById('vehicleTableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#11042;</div><div class="empty-state-text">No submissions found</div></div>';
+    return;
+  }
+  var rows = vehicles.map(function(v) {
+    var date = new Date(v.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+    var vehicle = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
+    var dealer = v.dealership_name || v.dealer_name || '--';
+    var loc = [v.dealership_city, v.dealership_state].filter(Boolean).join(', ') || '--';
+    var sc = v.status === 'listed' ? 'b-listed' : v.status === 'approved' ? 'b-approved' : v.status === 'rejected' ? 'b-denied' : 'b-pending';
+    var sl = v.status === 'listed' ? 'Listed' : v.status === 'approved' ? 'Approved' : v.status === 'rejected' ? 'Rejected' : 'Pending';
+    return '<tr onclick="openVehicle(' + "'" + v.id + "'" + ')">' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + date + '</td>' +
+      '<td style="color:var(--text);">' + vehicle + '</td>' +
+      '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + dealer + '</td>' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + loc + '</td>' +
+      '<td style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (v.asking_price ? '$'+v.asking_price.toLocaleString() : '--') + '</td>' +
+      '<td>' + (v.ev_converted ? '<span class="badge b-ev">EV</span>' : '<span style="color:var(--dim);font-size:0.75rem;">No</span>') + '</td>' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (v.condition ? v.condition.split(' ')[0] : '--') + '</td>' +
+      '<td><span class="badge ' + sc + '">' + sl + '</span></td>' +
+      '<td><button onclick="event.stopPropagation();openVehicle(' + "'" + v.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">Review</button></td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('vehicleTableWrap').innerHTML =
+    '<table class="data-table"><thead><tr><th>Date</th><th>Vehicle</th><th>Dealer</th><th>Location</th><th>Asking</th><th>EV</th><th>Condition</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function openVehicle(id) {
+  var v = allVehicles.find(function(x) { return x.id === id; });
+  if (!v) return;
+  currentVehicleId = id;
+  var vehicle = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
+  document.getElementById('vModalTitle').textContent = vehicle || 'Vehicle Submission';
+  var col1 = buildSection('Vehicle Details', [
+    ['Year / Make / Model', vehicle],
+    ['Color', v.color || '--'],
+    ['VIN', v.vin || 'Not provided'],
+    ['Mileage', v.mileage ? v.mileage.toLocaleString() + ' mi' : '--'],
+    ['Condition', v.condition || '--'],
+    ['EV Converted', v.ev_converted ? 'Yes' : 'No'],
+    ['EV Drivetrain', v.ev_drivetrain || '--'],
+    ['EV Range', v.ev_range_miles ? v.ev_range_miles + ' miles' : '--'],
+    ['EV Conv. Cost', v.ev_conversion_cost ? '$' + v.ev_conversion_cost.toLocaleString() : '--']
+  ]);
+  var desc = '<div class="modal-section" style="margin-bottom:1rem;"><div class="modal-section-title">Description</div>' +
+    '<div style="font-size:0.82rem;color:var(--muted);line-height:1.7;padding:0.75rem;background:var(--surface2);border:1px solid var(--border);">' +
+    (v.description || 'No description provided.') + '</div>';
+  if (v.highlights && v.highlights.length > 0) {
+    desc += '<div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.4rem;">' +
+      v.highlights.map(function(h) {
+        return '<span style="font-family:monospace;font-size:0.58rem;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);color:var(--neon);padding:0.2rem 0.6rem;">' + h + '</span>';
+      }).join('') + '</div>';
+  }
+  desc += '</div>';
+  var col2 = buildSection('Dealer Information', [
+    ['Dealer Name', v.dealer_name || '--'],
+    ['Dealership', v.dealership_name || '--'],
+    ['Email', v.dealer_email || '--'],
+    ['Phone', v.dealership_phone || '--'],
+    ['Location', [v.dealership_city, v.dealership_state].filter(Boolean).join(', ') || '--'],
+    ['Wallet', v.dealer_wallet ? v.dealer_wallet.slice(0,6)+'...'+v.dealer_wallet.slice(-4) : '--'],
+    ['Submitted', new Date(v.created_at).toLocaleString()]
+  ]) + buildSection('Valuation', [
+    ['Asking Price', v.asking_price ? '$' + v.asking_price.toLocaleString() : '--'],
+    ['Dealer Appraisal', v.appraised_value ? '$' + v.appraised_value.toLocaleString() : 'Not provided'],
+    ['Est. Max Loan (90%)', v.asking_price ? '$' + Math.floor(v.asking_price * 0.9).toLocaleString() : '--'],
+    ['Platform Fee (2%)', v.asking_price ? '$' + Math.floor(v.asking_price * 0.9 * 0.02).toLocaleString() : '--'],
+    ['Preferred APR', v.loan_apr ? v.loan_apr + '%' : 'No preference'],
+    ['Preferred Term', v.loan_term_months ? v.loan_term_months + ' months' : 'No preference']
+  ]);
+  document.getElementById('vModalBody').innerHTML = '<div>' + col1 + desc + '</div><div>' + col2 + '</div>';
+  var hasEV = v.ev_converted;
+  var hasDesc = v.description && v.description.length > 20;
+  var hasPrice = v.asking_price > 0;
+  var hasDealerInfo = v.dealer_email && v.dealer_name;
+  var score = (hasEV ? 1 : 0) + (hasDesc ? 1 : 0) + (hasPrice ? 1 : 0) + (hasDealerInfo ? 1 : 0);
+  var ind = document.getElementById('vApprovalIndicator');
+  var dot = document.getElementById('vApprovalDot');
+  var txt = document.getElementById('vApprovalText');
+  if (score >= 3) {
+    ind.className = 'approval-indicator ind-approve';
+    dot.style.background = 'var(--green)';
+    dot.style.boxShadow = '0 0 8px rgba(0,255,136,0.5)';
+    dot.style.animation = 'pulse 1.5s infinite';
+    txt.textContent = 'Strong submission - recommended for listing';
+  } else if (score >= 2) {
+    ind.className = 'approval-indicator ind-review';
+    dot.style.background = 'var(--gold)';
+    dot.style.animation = 'pulse 2s infinite';
+    txt.textContent = 'Good submission - review before listing';
+  } else {
+    ind.className = 'approval-indicator ind-deny';
+    dot.style.background = 'var(--red)';
+    dot.style.animation = 'none';
+    txt.textContent = 'Incomplete submission - contact dealer';
+  }
+  document.getElementById('vAPR').value = v.loan_apr || '';
+  document.getElementById('vLoanAmount').value = v.loan_amount || (v.asking_price ? Math.floor(v.asking_price * 0.9) : '');
+  document.getElementById('vAppraised').value = v.appraised_value || v.asking_price || '';
+  document.getElementById('vTerm').value = v.loan_term_months || '';
+  document.getElementById('vNotes').value = v.admin_notes || '';
+  calcVMonthly();
+  document.getElementById('vModalOverlay').classList.add('open');
+}
+
+function calcVMonthly() {
+  var amt = parseFloat(document.getElementById('vLoanAmount').value) || 0;
+  var apr = parseFloat(document.getElementById('vAPR').value) || 0;
+  var term = parseInt(document.getElementById('vTerm').value) || 0;
+  if (amt > 0 && apr > 0 && term > 0) {
+    var r = apr / 100 / 12;
+    var m = (amt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1);
+    document.getElementById('vMonthly').value = '$' + m.toFixed(2);
+    document.getElementById('vFee').value = '$' + (amt * 0.02).toFixed(0);
+  } else {
+    document.getElementById('vMonthly').value = '';
+    document.getElementById('vFee').value = '';
+  }
+}
+
+function closeVModal() {
+  document.getElementById('vModalOverlay').classList.remove('open');
+  currentVehicleId = null;
+}
+
+function submitVehicleDecision(action) {
+  if (!currentVehicleId) return;
+  var v = allVehicles.find(function(x) { return x.id === currentVehicleId; });
+  if (!v) return;
+  var apr = parseFloat(document.getElementById('vAPR').value);
+  var loanAmt = parseFloat(document.getElementById('vLoanAmount').value);
+  var appraised = parseFloat(document.getElementById('vAppraised').value);
+  var term = parseInt(document.getElementById('vTerm').value);
+  var notes = document.getElementById('vNotes').value;
+  var update = {
+    status: action,
+    loan_apr: apr || null,
+    loan_amount: loanAmt || null,
+    appraised_value: appraised || null,
+    loan_term_months: term || null,
+    admin_notes: notes,
+    reviewed_at: new Date().toISOString()
+  };
+  if (action === 'listed') update.listed_at = new Date().toISOString();
+  fetch(SB_URL + '/rest/v1/imc_vehicles?id=eq.' + currentVehicleId, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'return=representation' },
+    body: JSON.stringify(update)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    if (action === 'listed') pushToMarketplace(v, update);
+    closeVModal();
+    loadVehicles();
+  })
+  .catch(function(err) { alert('Error: ' + err); });
+}
+
+function pushToMarketplace(v, terms) {
+  var vehicle = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
+  var apr = terms.loan_apr || 12;
+  var loanAmt = terms.loan_amount || Math.floor((v.asking_price || 0) * 0.9);
+  var term = terms.loan_term_months || 60;
+  var r = apr / 100 / 12;
+  var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+  var listing = {
+    vehicle_id: v.id,
+    vehicle_name: vehicle,
+    vehicle_color: v.color || '',
+    vehicle_year: v.year,
+    vehicle_make: v.make,
+    vehicle_model: v.model,
+    appraised_value: terms.appraised_value || v.asking_price,
+    loan_amount: loanAmt,
+    loan_apr: apr,
+    loan_term_months: term,
+    monthly_payment: parseFloat(monthly.toFixed(2)),
+    status: 'funding',
+    ev_converted: v.ev_converted || false,
+    ev_drivetrain: v.ev_drivetrain || null,
+    dealer_city: v.dealership_city || 'Las Vegas',
+    dealer_state: v.dealership_state || 'NV',
+    description: v.description || '',
+    highlights: v.highlights || null
+  };
+  fetch(SB_URL + '/rest/v1/imc_listings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'return=representation' },
+    body: JSON.stringify(listing)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    var id = d && d[0] ? d[0].id.slice(0,8).toUpperCase() : 'saved';
+    alert(vehicle + ' is now live on the marketplace. Listing ID: ' + id);
+  })
+  .catch(function(e) { console.error('Listing error:', e); alert('Vehicle approved - marketplace listing may need manual update. Check console.'); });
+}
+
 
 
 function getApprovalRecommendation(app) {
@@ -575,7 +752,6 @@ function getApprovalRecommendation(app) {
     return { status: 'deny', label: 'Not Recommended', reasons: reasons, dti: dti.toFixed(1), credit: credit };
   }
 }
-
 
 function buildDeclineEmail(app, reasons, uwNotes) {
   var name = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Applicant';
@@ -689,6 +865,53 @@ function getCreditBand(scoreRange) {
   return 'Below 600';
 }
 
+nction getApprovalRecommendation(app) {
+  var credit = parseFloat(app.credit_score_range) || 0;
+  var income = app.gross_monthly_income || 0;
+  var loanAmt = app.loan_amount || 0;
+  var term = app.term_months || 60;
+  var cryptoVal = app.crypto_estimated_value || 0;
+  var cryptoCollateral = app.crypto_as_collateral;
+  var cryptoIncluded = app.crypto_included;
+
+  // Calculate monthly payment at 12% estimate
+  var r = 12 / 100 / 12;
+  var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+  var dti = income > 0 ? (monthly / income * 100) : 999;
+
+  // Rule 1: FICO 700+ AND DTI < 45%
+  var rule1 = credit >= 700 && dti < 45;
+
+  // Rule 2: Crypto holdings >= 70% of LTV in qualifying assets AND elected collateral
+  var ltv = loanAmt;
+  var rule2 = cryptoIncluded &&
+    (cryptoCollateral === 'Yes' || cryptoCollateral === 'Open to it') &&
+    cryptoVal >= (ltv * 0.70);
+
+  var approved = rule1 || rule2;
+  var reasons = [];
+
+  if (rule1) reasons.push('FICO ' + credit + ' + DTI ' + dti.toFixed(1) + '%');
+  if (rule2) reasons.push('Crypto collateral $' + cryptoVal.toLocaleString() + ' >= 70% LTV');
+
+  if (!rule1 && credit > 0) {
+    if (credit < 700) reasons.push('FICO ' + credit + ' below 700 threshold');
+    if (dti >= 45) reasons.push('DTI ' + dti.toFixed(1) + '% exceeds 45% limit');
+  }
+
+  if (credit === 0 && !cryptoIncluded) {
+    return { status: 'review', label: 'More Info Needed', reasons: ['Incomplete application data'] };
+  }
+
+  if (approved) {
+    return { status: 'approve', label: 'Recommended: Approve', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  } else if (credit >= 650 || (cryptoIncluded && cryptoVal > 0)) {
+    return { status: 'review', label: 'Manual Review Required', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  } else {
+    return { status: 'deny', label: 'Not Recommended', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  }
+}
+
 function getDeclineReasons(app) {
   var reasons = [];
   var credit = parseFloat(app.credit_score_range) || 0;
@@ -740,7 +963,7 @@ function sendDecisionEmail(app, decision, update) {
       '<p style="color:#8888aa;line-height:1.7;">Our team will contact you shortly with next steps including documentation requirements and funding timeline.</p>' +
       '<p style="color:#444460;font-size:11px;margin-top:32px;">Illusive Motor Concepts | Las Vegas, NV | appeals@illusivemotorconcepts.com</p>' +
       '</div></body></html>';
-  }
+}
 
   if (!RESEND_KEY || RESEND_KEY === '') {
     console.log('Resend key not set - email not sent. Would have sent to:', app.email);
@@ -764,47 +987,6 @@ function sendDecisionEmail(app, decision, update) {
   .then(function(r) { return r.json(); })
   .then(function(d) { console.log('Email sent:', d); })
   .catch(function(e) { console.error('Email error:', e); });
-}
-
-function submitDecision(decision) {
-  if (!currentAppId) return;
-  var apr = parseFloat(document.getElementById('uwAPR').value);
-  var amount = parseFloat(document.getElementById('uwAmount').value);
-  var notes = document.getElementById('uwNotes').value;
-
-  var update = {
-    status: decision,
-    decision: decision,
-    final_apr: apr || null,
-    approved_amount: amount || null,
-    underwriter_notes: notes,
-    reviewed_at: new Date().toISOString()
-  };
-
-  var app = allApps.find(function(a) { return a.id === currentAppId; });
-
-  fetch(SB_URL + '/rest/v1/imc_applications?id=eq.' + currentAppId, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
-      'Prefer': 'return=representation'
-    },
-    body: JSON.stringify(update)
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    // Send email on denied or approved decisions
-    if (app && app.email && (decision === 'denied' || decision === 'approved')) {
-      sendDecisionEmail(app, decision, update);
-    }
-    closeModal();
-    loadApplications();
-  })
-  .catch(function(err) {
-    alert('Error saving decision. Try again.');
-  });
 }
 </script>
 </body>
