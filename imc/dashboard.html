@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMC — Investor Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050507;--surface:#0a0a0f;--surface2:#0f0f18;--surface3:#14141f;--border:#1e1e2e;--border2:#2a2a3e;--neon:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff4455;--purple:#8855ff;--text:#e8e8f0;--muted:#8888aa;--dim:#444460;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-weight:300;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.008) 0px,rgba(0,212,255,0.008) 1px,transparent 1px,transparent 4px);pointer-events:none;z-index:9000;}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(5,5,7,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.1em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:0.75rem;}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon);animation:pulse 2s infinite;}
+.nav-wallet{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border2);color:var(--muted);padding:0.5rem 1.25rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem;transition:all 0.2s;}
+.nav-wallet.connected{border-color:var(--neon);color:var(--neon);}
+.w-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);transition:all 0.3s;}
+.w-dot.on{background:var(--neon);box-shadow:0 0 6px var(--neon);}
+.wrap{max-width:1100px;margin:0 auto;padding:5.5rem 3rem 4rem;}
+.sl{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--neon);display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;}
+.sl::before{content:'';width:2rem;height:1px;background:var(--neon);}
+.card{background:var(--surface);border:1px solid var(--border);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0.4;}
+.card.gold::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.card.green::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px;}
+.stat-box{background:var(--surface);border:1px solid var(--border);padding:1.5rem 2rem;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;line-height:1;letter-spacing:0.02em;}
+.stat-lbl{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-top:0.35rem;}
+.position-card{background:var(--surface);border:1px solid var(--border);margin-bottom:2px;position:relative;overflow:hidden;}
+.position-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.position-card.active::before{background:linear-gradient(90deg,transparent,var(--neon),transparent);}
+.position-card.funded::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.pos-header{padding:1.25rem 2rem;display:grid;grid-template-columns:1fr auto;align-items:center;border-bottom:1px solid var(--border);}
+.pos-vehicle{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.05em;color:var(--text);}
+.pos-status{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.2rem 0.75rem;}
+.status-funding{background:rgba(0,212,255,0.08);color:var(--neon);border:1px solid rgba(0,212,255,0.2);}
+.status-active{background:rgba(0,255,136,0.08);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+.pos-body{padding:1.5rem 2rem;display:grid;grid-template-columns:repeat(5,1fr) auto;gap:1.5rem;align-items:center;}
+.pos-metric{}
+.pos-metric-val{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text);line-height:1;}
+.pos-metric-lbl{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-top:0.2rem;}
+.prog-wrap{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:0.5rem;}
+.prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--neon),var(--purple));transition:width 0.8s ease;}
+.btn-claim{background:var(--green);border:none;color:#050507;padding:0.65rem 1.25rem;font-family:'DM Mono',monospace;font-size:0.62rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.btn-claim:hover{box-shadow:0 0 16px rgba(0,255,136,0.3);}
+.btn-claim:disabled{background:var(--surface3);color:var(--dim);cursor:not-allowed;}
+.empty-state{text-align:center;padding:5rem 2rem;}
+.empty-icon{font-size:3rem;opacity:0.2;margin-bottom:1.5rem;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{animation:fadeUp 0.5s ease forwards;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);}
+@media(max-width:768px){.wrap{padding:5rem 1.5rem 3rem;}.nav{padding:1rem 1.5rem;}.stat-grid{grid-template-columns:1fr 1fr;}.pos-body{grid-template-columns:1fr 1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo"><div class="nav-dot"></div>IMC</a>
+  <div style="display:flex;align-items:center;gap:1.5rem;">
+    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Marketplace</a>
+    <a href="apply.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Apply</a>
+    <button class="nav-wallet" id="walletBtn" onclick="connectAndLoad()">
+      <div class="w-dot" id="wDot"></div>
+      <span id="wLabel">Connect Wallet</span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- CONNECT PROMPT -->
+  <div id="connectPrompt">
+    <div style="text-align:center;padding:5rem 0;">
+      <div class="sl" style="justify-content:center;">Investor Dashboard</div>
+      <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,5.5rem);line-height:0.9;letter-spacing:0.02em;margin-bottom:1.5rem;">
+        YOUR<br><span style="color:var(--neon);text-shadow:0 0 20px rgba(0,212,255,0.3);">POSITIONS</span>
+      </h1>
+      <p style="color:var(--muted);font-size:0.9rem;max-width:420px;margin:0 auto 2.5rem;line-height:1.75;">Connect the wallet you used to invest. View your positions, yield earned, and claim your returns.</p>
+      <button onclick="connectAndLoad()" style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:1rem 2.5rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;">Connect Wallet</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingState" style="display:none;text-align:center;padding:5rem 0;">
+    <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);animation:pulse 1s infinite;">Loading positions from blockchain...</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" style="display:none;" class="fade-in">
+
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;">
+      <div>
+        <div class="sl">Investor Dashboard</div>
+        <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,3.5rem);line-height:0.92;letter-spacing:0.02em;">
+          Your<br><span style="color:var(--neon);" id="walletDisplay">Portfolio</span>
+        </h1>
+      </div>
+      <button onclick="refreshAll()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);padding:0.6rem 1.25rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;align-self:flex-end;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--neon)';this.style.color='var(--neon)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--dim)'">Refresh</button>
+    </div>
+
+    <!-- Portfolio Stats -->
+    <div class="stat-grid" style="margin-bottom:2rem;">
+      <div class="stat-box"><div class="stat-val" style="color:var(--neon);" id="totalInvested">$0</div><div class="stat-lbl">Total Invested</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--gold);" id="totalYieldClaimed">$0</div><div class="stat-lbl">Yield Claimed</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--green);" id="totalYieldPending">$0</div><div class="stat-lbl">Claimable Now</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--text);" id="activePositions">0</div><div class="stat-lbl">Active Positions</div></div>
+    </div>
+
+    <!-- Positions -->
+    <div class="sl" style="margin-bottom:1rem;">Your Positions</div>
+    <div id="positionsWrap">
+      <div class="empty-state">
+        <div class="empty-icon">&#11042;</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">No positions found for this wallet</div>
+        <a href="index.html" style="display:inline-block;margin-top:2rem;">
+          <button style="background:var(--gold);border:none;color:#050507;padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;">Browse Marketplace</button>
+        </a>
+      </div>
+    </div>
+
+    <!-- Network Info -->
+    <div style="margin-top:2rem;padding:1rem 1.5rem;background:var(--surface);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);letter-spacing:0.1em;">Polygon Amoy Testnet &nbsp;|&nbsp; USDC Settlements &nbsp;|&nbsp; Smart Contract Verified</div>
+      <div style="display:flex;gap:1.5rem;">
+        <a href="https://amoy.polygonscan.com/address/0x4d525e0DE065973b8CB4367c09e9796254d05f5d" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--neon);text-decoration:none;letter-spacing:0.1em;">Bel Air Vault</a>
+        <a href="https://amoy.polygonscan.com/address/0x00C18588F028483098c28aC21B89AdbA1F097011" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--neon);text-decoration:none;letter-spacing:0.1em;">Charger Vault</a>
+        <a href="https://amoy.polygonscan.com/address/0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--neon);text-decoration:none;letter-spacing:0.1em;">Mustang Vault</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var VAULTS = [
+  { name: '1957 Chevrolet Bel Air',    short: 'Bel Air',  addr: '0x4d525e0DE065973b8CB4367c09e9796254d05f5d', apr: 12,   color: 'var(--neon)' },
+  { name: '1969 Dodge Charger R/T',    short: 'Charger',  addr: '0x00C18588F028483098c28aC21B89AdbA1F097011', apr: 9.9,  color: 'var(--red)' },
+  { name: '1970 Ford Mustang Boss 429', short: 'Mustang',  addr: '0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad', apr: 10.9, color: 'var(--green)' }
+];
+
+var WALLET = '';
+var positions = [];
+
+// Function selectors
+var SEL = {
+  getInvestorPosition: '0x975b59c6',
+  getFundingProgress:  '0xcf1d224b',
+  getLoanSummary:      '0x6ce5891d',
+  claimYield:          '0x406cf229'
+};
+
+function show(id) {
+  ['connectPrompt','loadingState','dashboard'].forEach(function(s) {
+    document.getElementById(s).style.display = s === id ? 'block' : 'none';
+  });
+}
+
+function connectAndLoad() {
+  if (!window.ethereum) { alert('Please install MetaMask.'); return; }
+  document.getElementById('wLabel').textContent = 'Connecting...';
+  window.ethereum.request({ method: 'eth_requestAccounts' })
+    .then(function(accounts) {
+      WALLET = accounts[0];
+      var short = accounts[0].slice(0,6) + '...' + accounts[0].slice(-4);
+      document.getElementById('wDot').classList.add('on');
+      document.getElementById('wLabel').textContent = short;
+      document.getElementById('walletBtn').classList.add('connected');
+      document.getElementById('walletDisplay').textContent = short;
+      show('loadingState');
+      loadAllPositions(accounts[0]);
+    })
+    .catch(function(e) {
+      document.getElementById('wLabel').textContent = 'Connect Wallet';
+      console.error(e);
+    });
+}
+
+function padAddress(addr) {
+  return '000000000000000000000000' + addr.slice(2).toLowerCase();
+}
+
+function loadAllPositions(wallet) {
+  positions = [];
+  var promises = VAULTS.map(function(vault, i) {
+    return loadVaultPosition(wallet, vault, i);
+  });
+  Promise.all(promises).then(function() {
+    renderDashboard();
+  });
+}
+
+function loadVaultPosition(wallet, vault, index) {
+  var callData = SEL.getInvestorPosition + padAddress(wallet);
+  var progressCall = window.ethereum.request({
+    method: 'eth_call',
+    params: [{ to: vault.addr, data: SEL.getFundingProgress }, 'latest']
+  });
+  var positionCall = window.ethereum.request({
+    method: 'eth_call',
+    params: [{ to: vault.addr, data: callData }, 'latest']
+  });
+
+  return Promise.all([positionCall, progressCall]).then(function(results) {
+    var posResult = results[0];
+    var progResult = results[1];
+
+    // Decode position: deposited, sharePercent, yieldClaimed, yieldPending, projectedReturn
+    var deposited       = 0;
+    var sharePercent    = 0;
+    var yieldClaimed    = 0;
+    var yieldPending    = 0;
+    var projectedReturn = 0;
+
+    if (posResult && posResult !== '0x' && posResult.length > 2) {
+      var hex = posResult.slice(2);
+      deposited       = parseInt(hex.slice(0,   64), 16);
+      sharePercent    = parseInt(hex.slice(64,  128), 16);
+      yieldClaimed    = parseInt(hex.slice(128, 192), 16);
+      yieldPending    = parseInt(hex.slice(192, 256), 16);
+      projectedReturn = parseInt(hex.slice(256, 320), 16);
+    }
+
+    // Decode progress: funded, target, remaining, percentFunded
+    var funded = 0; var target = 0; var pct = 0;
+    if (progResult && progResult !== '0x' && progResult.length > 2) {
+      var phex = progResult.slice(2);
+      funded = parseInt(phex.slice(0,  64), 16);
+      target = parseInt(phex.slice(64, 128), 16);
+      pct    = parseInt(phex.slice(192,256), 16);
+    }
+
+    positions[index] = {
+      vault:          vault,
+      deposited:      deposited,
+      sharePercent:   sharePercent,
+      yieldClaimed:   yieldClaimed,
+      yieldPending:   yieldPending,
+      projectedReturn:projectedReturn,
+      funded:         funded,
+      target:         target,
+      pct:            pct,
+      hasPosition:    deposited > 0
+    };
+  }).catch(function(e) {
+    console.error('Position load error for ' + vault.name + ':', e.message);
+    positions[index] = { vault: vault, hasPosition: false, deposited: 0, yieldPending: 0, yieldClaimed: 0, funded: 0, target: 0, pct: 0 };
+  });
+}
+
+function fmt(raw) {
+  if (!raw || raw === 0) return '$0.00';
+  return '$' + (raw / 1e6).toFixed(2);
+}
+
+function renderDashboard() {
+  show('dashboard');
+
+  // Portfolio totals
+  var totalInv = 0, totalClaimed = 0, totalPending = 0, activeCount = 0;
+  positions.forEach(function(p) {
+    if (!p) return;
+    totalInv     += p.deposited || 0;
+    totalClaimed += p.yieldClaimed || 0;
+    totalPending += p.yieldPending || 0;
+    if (p.hasPosition) activeCount++;
+  });
+
+  document.getElementById('totalInvested').textContent    = fmt(totalInv);
+  document.getElementById('totalYieldClaimed').textContent = fmt(totalClaimed);
+  document.getElementById('totalYieldPending').textContent = fmt(totalPending);
+  document.getElementById('activePositions').textContent   = activeCount;
+
+  // Position cards
+  var hasAny = positions.some(function(p) { return p && p.hasPosition; });
+  if (!hasAny) {
+    document.getElementById('positionsWrap').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">&#11042;</div>' +
+      '<div style="font-family:\'DM Mono\',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">No positions found for this wallet</div>' +
+      '<a href="index.html" style="display:inline-block;margin-top:2rem;"><button style="background:var(--gold);border:none;color:#050507;padding:0.85rem 2rem;font-family:\'DM Mono\',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;">Browse Marketplace</button></a></div>';
+    return;
+  }
+
+  var html = '';
+  positions.forEach(function(p, i) {
+    if (!p || !p.hasPosition) return;
+    var v = p.vault;
+    var shareDisplay = (p.sharePercent / 100).toFixed(2) + '%';
+    var canClaim = p.yieldPending > 0;
+    var statusClass = p.pct >= 100 ? 'funded' : 'active';
+    var statusLabel = p.pct >= 100 ? 'Loan Active' : 'Funding';
+    var statusBadge = p.pct >= 100 ? 'status-active' : 'status-funding';
+
+    html +=
+      '<div class="position-card ' + statusClass + '">' +
+      '<div class="pos-header">' +
+      '<div>' +
+      '<div class="pos-vehicle">' + v.name + '</div>' +
+      '<div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.2rem;letter-spacing:0.1em;">' + v.apr + '% APR &nbsp;|&nbsp; Polygon Amoy &nbsp;|&nbsp; USDC</div>' +
+      '</div>' +
+      '<span class="pos-status ' + statusBadge + '">' + statusLabel + '</span>' +
+      '</div>' +
+      '<div class="pos-body">' +
+      '<div class="pos-metric"><div class="pos-metric-val" style="color:var(--neon);">' + fmt(p.deposited) + '</div><div class="pos-metric-lbl">Invested</div></div>' +
+      '<div class="pos-metric"><div class="pos-metric-val" style="color:var(--muted);">' + shareDisplay + '</div><div class="pos-metric-lbl">Pool Share</div>' +
+      '<div class="prog-wrap"><div class="prog-fill" style="width:' + Math.min(p.sharePercent/100, 100) + '%;background:' + v.color + ';"></div></div></div>' +
+      '<div class="pos-metric"><div class="pos-metric-val" style="color:var(--gold);">' + fmt(p.yieldClaimed) + '</div><div class="pos-metric-lbl">Yield Claimed</div></div>' +
+      '<div class="pos-metric"><div class="pos-metric-val" style="color:' + (canClaim ? 'var(--green)' : 'var(--dim)') + ';">' + fmt(p.yieldPending) + '</div><div class="pos-metric-lbl">Claimable</div></div>' +
+      '<div class="pos-metric"><div class="pos-metric-val" style="color:var(--muted);">' + fmt(p.projectedReturn) + '</div><div class="pos-metric-lbl">Projected Total</div></div>' +
+      '<button class="btn-claim" onclick="claimYield(' + i + ',\'' + v.addr + '\')" ' + (canClaim ? '' : 'disabled') + '>' +
+      (canClaim ? 'Claim ' + fmt(p.yieldPending) : 'No Yield Yet') +
+      '</button>' +
+      '</div>' +
+      '<div style="padding:0.75rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">' +
+      '<div style="font-family:\'DM Mono\',monospace;font-size:0.55rem;color:var(--dim);">Pool: ' + fmt(p.funded) + ' / ' + fmt(p.target) + ' USDC &nbsp;|&nbsp; ' + p.pct + '% funded</div>' +
+      '<a href="https://amoy.polygonscan.com/address/' + v.addr + '" target="_blank" style="font-family:\'DM Mono\',monospace;font-size:0.52rem;color:var(--neon);text-decoration:none;letter-spacing:0.1em;">View on Polygonscan</a>' +
+      '</div></div>';
+  });
+
+  document.getElementById('positionsWrap').innerHTML = html;
+}
+
+function claimYield(index, vaultAddr) {
+  if (!window.ethereum || !WALLET) return;
+  var btn = document.querySelectorAll('.btn-claim')[index];
+  if (btn) { btn.disabled = true; btn.textContent = 'Claiming...'; }
+
+  window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [{ from: WALLET, to: vaultAddr, data: SEL.claimYield }]
+  })
+  .then(function(txHash) {
+    console.log('Claim TX:', txHash);
+    if (btn) btn.textContent = 'Claimed! TX: ' + txHash.slice(0,10) + '...';
+    setTimeout(function() { refreshAll(); }, 4000);
+  })
+  .catch(function(e) {
+    console.error('Claim error:', e);
+    if (btn) { btn.disabled = false; btn.textContent = 'Retry Claim'; }
+  });
+}
+
+function refreshAll() {
+  if (!WALLET) return;
+  show('loadingState');
+  loadAllPositions(WALLET);
+}
+</script>
+</body>
+</html>
