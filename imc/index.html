@@ -164,7 +164,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
               <span style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);text-transform:uppercase;"><span data-funded>$18,500 / $45,000 USDC funded</span>
               <span data-pct style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--neon);">41%</span>
             </div>
-            <div class="prog-wrap"><div class="prog-fill" style="width:41%;"></div></div>
+            <div class="prog-wrap"><div class="prog-fill" id="bar-belair" style="width:41%;"></div></div>
             <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.4rem;">$26,500 USDC remaining - 4 investors</div>
           </div>
           <div style="display:flex;gap:0.75rem;">
@@ -202,7 +202,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
               <span style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--green);text-transform:uppercase;"><span data-funded>$0 / $1 USDC funded</span>
               <span data-pct style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--neon);">0%</span>
             </div>
-            <div class="prog-wrap"><div class="prog-fill" style="width:1%;"></div></div>
+            <div class="prog-wrap"><div class="prog-fill" id="bar-charger" style="width:1%;"></div></div>
             <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.4rem;">New listing - Be the first investor</div>
           </div>
           <div style="background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);padding:0.85rem 1rem;margin-bottom:1rem;">
@@ -243,7 +243,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
               <span style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--green);text-transform:uppercase;"><span data-funded>$0 / $1 USDC funded</span>
               <span data-pct style="font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--neon);">0%</span>
             </div>
-            <div class="prog-wrap"><div class="prog-fill" style="width:1%;"></div></div>
+            <div class="prog-wrap"><div class="prog-fill" id="bar-mustang" style="width:1%;"></div></div>
             <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.4rem;">New listing - Be the first investor</div>
           </div>
           <div style="background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);padding:0.85rem 1rem;margin-bottom:1rem;">
@@ -359,8 +359,9 @@ function loadSingleVaultProgress(vaultAddr, cardIndex) {
     var pct     = parseInt(hex.slice(192, 256), 16);
     var fundedUSD = Math.floor(funded / 1e6);
     var targetUSD = Math.floor(target / 1e6);
-    var bars = document.querySelectorAll('.prog-fill');
-    if (bars[cardIndex]) bars[cardIndex].style.width = Math.min(pct, 100) + '%';
+    var barIds = ['bar-belair','bar-charger','bar-mustang'];
+    var bar = document.getElementById(barIds[cardIndex]);
+    if (bar) bar.style.width = Math.min(pct, 100) + '%';
     var fundedEls = document.querySelectorAll('[data-funded]');
     if (fundedEls[cardIndex]) fundedEls[cardIndex].textContent = '$' + fundedUSD.toLocaleString() + ' / $' + targetUSD.toLocaleString() + ' USDC funded';
     var pctEls = document.querySelectorAll('[data-pct]');
