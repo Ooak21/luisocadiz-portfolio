@@ -168,7 +168,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
             <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.4rem;">$26,500 USDC remaining - 4 investors</div>
           </div>
           <div style="display:flex;gap:0.75rem;">
-            <button class="btn-neon" style="flex:1;" onclick="location.href='apply.html?vehicle=1'">View Details</button>
+            <button class="btn-neon" style="flex:1;" onclick="openInvestModal('1','1957 Chevrolet Bel Air',1000000)">Fund This Loan</button>
             <button class="btn-gold" style="padding:0.85rem 1.25rem;" onclick="location.href='apply.html?vehicle=1'">Apply Now</button>
           </div>
         </div>
@@ -384,6 +384,122 @@ function switchToAmoy() {
   .catch(function(e) { console.log('Chain switch:', e.message); });
 }
 
+
+// -- USDC + INVEST CONFIG ---------------------------------
+var USDC_ADDRESS = '0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa'; // MockUSDC testnet
+// USDC approve(address,uint256) selector: 0x095ea7b3
+// USDC balanceOf(address) selector: 0x70a08231
+// vault invest(uint256) selector: 0x2af4b637 -- wait, compute below
+// invest(uint256): keccak first 4 bytes
+
+var currentInvestVehicle = null;
+
+function openInvestModal(vehicleId, vehicleName, loanTarget) {
+  currentInvestVehicle = { id: vehicleId, name: vehicleName, target: loanTarget };
+  document.getElementById('investVehicleName').textContent = vehicleName;
+  document.getElementById('investTarget').textContent = '$' + (loanTarget/1e6).toFixed(2) + ' USDC';
+  document.getElementById('investAmount').value = '';
+  document.getElementById('investStatus').textContent = '';
+  document.getElementById('investStatus').style.color = 'var(--muted)';
+  document.getElementById('investBtn').textContent = 'Approve & Invest';
+  document.getElementById('investBtn').disabled = false;
+  document.getElementById('investModal').style.display = 'flex';
+  // Load current USDC balance
+  loadUSDCBalance();
+}
+
+function closeInvestModal() {
+  document.getElementById('investModal').style.display = 'none';
+  currentInvestVehicle = null;
+}
+
+function loadUSDCBalance() {
+  if (!window.ethereum || !window.ethereum.selectedAddress) return;
+  // balanceOf(address) = 0x70a08231
+  var addr = window.ethereum.selectedAddress;
+  var padded = '000000000000000000000000' + addr.slice(2).toLowerCase();
+  window.ethereum.request({
+    method: 'eth_call',
+    params: [{ to: USDC_ADDRESS, data: '0x70a08231' + padded }, 'latest']
+  })
+  .then(function(result) {
+    if (!result || result === '0x') return;
+    var bal = parseInt(result, 16);
+    var balFormatted = (bal / 1e6).toFixed(2);
+    document.getElementById('usdcBalance').textContent = 'Your balance: $' + balFormatted + ' USDC';
+  })
+  .catch(function(e) { console.log('Balance check:', e.message); });
+}
+
+function doInvest() {
+  if (!window.ethereum) { alert('Connect MetaMask to invest.'); return; }
+  if (!window.ethereum.selectedAddress) { alert('Connect your wallet first.'); return; }
+
+  var amountInput = document.getElementById('investAmount').value;
+  var amountFloat = parseFloat(amountInput);
+  if (!amountFloat || amountFloat <= 0) {
+    setInvestStatus('Enter a valid amount', 'var(--red)'); return;
+  }
+
+  // Convert to 6 decimal USDC units
+  var amountRaw = Math.floor(amountFloat * 1e6);
+  var btn = document.getElementById('investBtn');
+  btn.disabled = true;
+
+  setInvestStatus('Step 1/2 - Approving USDC...', 'var(--gold)');
+
+  // Step 1: approve(vault, amount)
+  // approve(address,uint256) selector: 0x095ea7b3
+  var vaultPadded = '000000000000000000000000' + VAULT_ADDRESS.slice(2).toLowerCase();
+  var amountHex = amountRaw.toString(16).padStart(64, '0');
+  var approveData = '0x095ea7b3' + vaultPadded + amountHex;
+
+  window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [{ from: window.ethereum.selectedAddress, to: USDC_ADDRESS, data: approveData }]
+  })
+  .then(function(approveTx) {
+    console.log('Approve TX:', approveTx);
+    setInvestStatus('Approved! Step 2/2 - Investing...', 'var(--gold)');
+    // Wait a couple seconds for approval to confirm then invest
+    return new Promise(function(resolve) { setTimeout(resolve, 3000); });
+  })
+  .then(function() {
+    // Step 2: invest(uint256)
+    // invest(uint256) selector: compute keccak256("invest(uint256)") = 0x2af4b637... 
+    // let me use the one from the ABI
+    var investAmountHex = amountRaw.toString(16).padStart(64, '0');
+    var investData = '0x2afcf480' + investAmountHex; // invest(uint256)
+    return window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [{ from: window.ethereum.selectedAddress, to: VAULT_ADDRESS, data: investData }]
+    });
+  })
+  .then(function(investTx) {
+    console.log('Invest TX:', investTx);
+    setInvestStatus('Investment confirmed! TX: ' + investTx.slice(0,10) + '...', 'var(--green)');
+    btn.textContent = 'Invested!';
+    // Refresh progress after 3 seconds
+    setTimeout(function() {
+      loadVaultProgress();
+      loadDynamicListings();
+      closeInvestModal();
+    }, 3000);
+  })
+  .catch(function(e) {
+    console.error('Invest error:', e);
+    setInvestStatus('Error: ' + (e.message || 'Transaction rejected'), 'var(--red)');
+    btn.disabled = false;
+    btn.textContent = 'Approve & Invest';
+  });
+}
+
+function setInvestStatus(msg, color) {
+  var el = document.getElementById('investStatus');
+  el.textContent = msg;
+  el.style.color = color || 'var(--muted)';
+}
+
 function loadDynamicListings() {
   fetch(SB_URL + '/rest/v1/imc_listings?select=*&order=created_at.desc', {
     headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
@@ -438,5 +554,36 @@ function loadDynamicListings() {
 
 window.addEventListener('load', function() { if (window.ethereum) { switchToAmoy(); } });
 </script>
+
+<!-- INVEST MODAL -->
+<div id="investModal" style="display:none;position:fixed;inset:0;background:rgba(5,5,7,0.92);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:2rem;">
+  <div style="background:var(--surface);border:1px solid var(--border);width:100%;max-width:480px;position:relative;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0.6;"></div>
+    <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.05em;color:var(--text);">Invest in <span id="investVehicleName" style="color:var(--neon);">Vehicle</span></div>
+      <button onclick="closeInvestModal()" style="background:none;border:none;color:var(--dim);font-size:1.5rem;cursor:pointer;line-height:1;">x</button>
+    </div>
+    <div style="padding:2rem;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:1.5rem;">
+        <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem 1.25rem;flex:1;margin-right:0.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Loan Target</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);" id="investTarget">--</div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem 1.25rem;flex:1;margin-left:0.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Your USDC</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--neon);" id="usdcBalance">Loading...</div>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:0.4rem;">Amount (USDC)</label>
+        <input id="investAmount" type="number" step="0.01" min="0.01" placeholder="e.g. 0.25" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.85rem 1rem;font-family:'DM Mono',monospace;font-size:0.85rem;outline:none;width:100%;" oninput="this.style.borderColor='var(--neon)'">
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;margin-bottom:1.25rem;min-height:1.2rem;" id="investStatus"></div>
+      <button id="investBtn" onclick="doInvest()" style="background:var(--neon);border:none;color:#050507;padding:1rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;width:100%;transition:all 0.2s;">Approve & Invest</button>
+      <div style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);line-height:1.7;text-align:center;">Two transactions required: (1) Approve USDC spending, (2) Deposit into vault. Both require MetaMask confirmation.</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
