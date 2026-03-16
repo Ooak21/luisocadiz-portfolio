@@ -344,7 +344,7 @@ function renderTable(apps) {
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + date + '</td>' +
       '<td style="color:var(--text);">' + name + '</td>' +
       '<td style="font-family:monospace;font-size:0.6rem;color:var(--muted);">' + (app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--') + '</td>' +
-      '<td style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--') + '</td>' +
+      '<td style="font-family:Bebas-Neue,sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--') + '</td>' +
       '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + (app.term_months || '--') + ' mo</td>' +
       '<td style="font-family:monospace;font-size:0.7rem;color:' + dtiColor + ';">' + dti + '%</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (app.credit_score_range || '--') + '</td>' +
@@ -352,7 +352,7 @@ function renderTable(apps) {
       '<td><span class="badge ' + statusClass + '">' + statusLabel + '</span>' +
       (showFlag ? ' <span style="font-family:monospace;font-size:0.5rem;color:var(--gold);background:rgba(240,192,64,0.1);border:1px solid rgba(240,192,64,0.3);padding:0.15rem 0.4rem;"><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 4px var(--gold);animation:pulse 1.5s infinite;margin-right:3px;vertical-align:middle;"></span>REG B</span>' : '') +
       '</td>' +
-      '<td><button onclick="event.stopPropagation();openApp(' + "'" + app.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;">Review</button></td>' +
+      '<td><button onclick="event.stopPropagation();openApp(' + "'" + app.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;"">Review</button></td>' +
     '</tr>';
   }).join('');
   document.getElementById('tableWrap').innerHTML =
@@ -404,7 +404,7 @@ function openApp(id) {
   document.getElementById('modalBody').innerHTML =
     '<div>' + col1 +
     '<div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;margin-top:1rem;">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="font-family:monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">DTI Ratio</span><span style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:' + dtiColor + ';">' + (dti > 0 ? dti.toFixed(1)+'%' : '--') + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="font-family:monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">DTI Ratio</span><span style="font-family:Bebas-Neue,sans-serif;font-size:1.2rem;color:' + dtiColor + ';">' + (dti > 0 ? dti.toFixed(1)+'%' : '--') + '</span></div>' +
     '<div class="dti-bar-wrap"><div class="dti-bar" style="width:' + Math.min(dti*1.5||0,100) + '%;background:' + dtiColor + ';"></div></div>' +
     '<div style="font-family:monospace;font-size:0.55rem;color:var(--dim);margin-top:0.4rem;">' + (dti < 28 ? 'Excellent DTI' : dti < 36 ? 'Acceptable DTI' : dti > 0 ? 'Elevated - review carefully' : '') + '</div></div>' +
     '</div><div>' + col2 + '</div>';
@@ -522,11 +522,11 @@ function renderVehicleTable(vehicles) {
       '<td style="color:var(--text);">' + vehicle + '</td>' +
       '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + dealer + '</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + loc + '</td>' +
-      '<td style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (v.asking_price ? '$'+v.asking_price.toLocaleString() : '--') + '</td>' +
+      '<td style="font-family:Bebas-Neue,sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (v.asking_price ? '$'+v.asking_price.toLocaleString() : '--') + '</td>' +
       '<td>' + (v.ev_converted ? '<span class="badge b-ev">EV</span>' : '<span style="color:var(--dim);font-size:0.75rem;">No</span>') + '</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (v.condition ? v.condition.split(' ')[0] : '--') + '</td>' +
       '<td><span class="badge ' + sc + '">' + sl + '</span></td>' +
-      '<td><button onclick="event.stopPropagation();openVehicle(' + "'" + v.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;">Review</button></td>' +
+      '<td><button onclick="event.stopPropagation();openVehicle(' + "'" + v.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;"">Review</button></td>' +
     '</tr>';
   }).join('');
   document.getElementById('vehicleTableWrap').innerHTML =
@@ -865,7 +865,7 @@ function getCreditBand(scoreRange) {
   return 'Below 600';
 }
 
-nction getApprovalRecommendation(app) {
+function getApprovalRecommendation(app) {
   var credit = parseFloat(app.credit_score_range) || 0;
   var income = app.gross_monthly_income || 0;
   var loanAmt = app.loan_amount || 0;
@@ -987,6 +987,733 @@ function sendDecisionEmail(app, decision, update) {
   .then(function(r) { return r.json(); })
   .then(function(d) { console.log('Email sent:', d); })
   .catch(function(e) { console.error('Email error:', e); });
+
+var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
+var allApps = [];
+var allVehicles = [];
+var currentAppId = null;
+var currentVehicleId = null;
+
+// -- TAB SWITCHING --
+function switchTab(tab) {
+  var isApps = tab === 'apps';
+  document.getElementById('panelApps').style.display = isApps ? 'block' : 'none';
+  document.getElementById('panelVehicles').style.display = isApps ? 'none' : 'block';
+  document.getElementById('tabApps').classList.toggle('active', isApps);
+  document.getElementById('tabVehicles').classList.toggle('active', !isApps);
+  if (!isApps && allVehicles.length === 0) loadVehicles();
+}
+
+// --------------------------------
+// APPLICATIONS TAB
+// --------------------------------
+
+function loadApplications() {
+  document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">...</div><div class="empty-state-text">Loading...</div></div>';
+  fetch(SB_URL + '/rest/v1/imc_applications?select=*&order=created_at.desc', {
+    method: 'GET',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Accept': 'application/json' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    allApps = data || [];
+    updateStats();
+    renderTable(allApps);
+  })
+  .catch(function(err) {
+    document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><div class="empty-state-text">Error loading - check console</div></div>';
+    console.error(err);
+  });
+}
+
+function updateStats() {
+  var total = allApps.length;
+  var pending = allApps.filter(function(a) { return a.status === 'pending'; }).length;
+  var approved = allApps.filter(function(a) { return a.status === 'approved'; }).length;
+  var denied = allApps.filter(function(a) { return a.status === 'denied'; }).length;
+  var volume = allApps.reduce(function(s, a) { return s + (a.loan_amount || 0); }, 0);
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statApproved').textContent = approved;
+  document.getElementById('statDenied').textContent = denied;
+  document.getElementById('statVolume').textContent = volume > 0 ? '$' + Math.round(volume/1000) + 'K' : '$0';
+}
+
+function filterApps(filter, btn) {
+  document.querySelectorAll('#panelApps .filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  var filtered = filter === 'all' ? allApps : allApps.filter(function(a) { return a.status === filter; });
+  renderTable(filtered);
+}
+
+function renderTable(apps) {
+  if (!apps || apps.length === 0) {
+    document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">0</div><div class="empty-state-text">No applications found</div></div>';
+    return;
+  }
+  var rows = apps.map(function(app) {
+    var name = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Anonymous';
+    var date = new Date(app.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+    var statusClass = app.status === 'approved' ? 'b-approved' : app.status === 'denied' ? 'b-denied' : app.status === 'review' ? 'b-review' : 'b-pending';
+    var statusLabel = app.status === 'review' ? 'In Review' : app.status || 'Pending';
+    var monthly = 0;
+    if (app.loan_amount && app.term_months) {
+      var r = (app.final_apr || 12) / 100 / 12;
+      monthly = (app.loan_amount * r * Math.pow(1+r,app.term_months)) / (Math.pow(1+r,app.term_months)-1);
+    }
+    var dti = monthly > 0 && app.gross_monthly_income > 0 ? (monthly / app.gross_monthly_income * 100).toFixed(1) : '--';
+    var dtiColor = parseFloat(dti) < 28 ? 'var(--green)' : parseFloat(dti) < 36 ? 'var(--gold)' : 'var(--red)';
+    var rec = getApprovalRecommendation(app);
+    var showFlag = app.status === 'denied' && rec.status === 'approve';
+    return '<tr onclick="openApp(' + "'" + app.id + "'" + ')">' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + date + '</td>' +
+      '<td style="color:var(--text);">' + name + '</td>' +
+      '<td style="font-family:monospace;font-size:0.6rem;color:var(--muted);">' + (app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--') + '</td>' +
+      '<td style="font-family:Bebas-Neue,sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--') + '</td>' +
+      '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + (app.term_months || '--') + ' mo</td>' +
+      '<td style="font-family:monospace;font-size:0.7rem;color:' + dtiColor + ';">' + dti + '%</td>' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (app.credit_score_range || '--') + '</td>' +
+      '<td>' + (app.crypto_included ? '<span style="color:var(--purple);font-family:monospace;font-size:0.6rem;">Yes</span>' : '<span style="color:var(--dim);font-family:monospace;font-size:0.6rem;">No</span>') + '</td>' +
+      '<td><span class="badge ' + statusClass + '">' + statusLabel + '</span>' +
+      (showFlag ? ' <span style="font-family:monospace;font-size:0.5rem;color:var(--gold);background:rgba(240,192,64,0.1);border:1px solid rgba(240,192,64,0.3);padding:0.15rem 0.4rem;"><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 4px var(--gold);animation:pulse 1.5s infinite;margin-right:3px;vertical-align:middle;"></span>REG B</span>' : '') +
+      '</td>' +
+      '<td><button onclick="event.stopPropagation();openApp(' + "'" + app.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;"">Review</button></td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('tableWrap').innerHTML =
+    '<table class="data-table"><thead><tr><th>Date</th><th>Applicant</th><th>Wallet</th><th>Amount</th><th>Term</th><th>DTI</th><th>Credit</th><th>Crypto</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function openApp(id) {
+  var app = allApps.find(function(a) { return a.id === id; });
+  if (!app) return;
+  currentAppId = id;
+  var name = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Anonymous';
+  document.getElementById('modalTitle').textContent = name + ' - Application';
+  var apr = app.final_apr || 12;
+  var r = apr / 100 / 12;
+  var monthly = app.loan_amount && app.term_months ? (app.loan_amount * r * Math.pow(1+r,app.term_months)) / (Math.pow(1+r,app.term_months)-1) : 0;
+  var dti = monthly > 0 && app.gross_monthly_income > 0 ? (monthly / app.gross_monthly_income * 100) : 0;
+  var dtiColor = dti < 28 ? 'var(--green)' : dti < 36 ? 'var(--gold)' : 'var(--red)';
+  var appDate = new Date(app.created_at).toLocaleString();
+  var col1 = buildSection('Loan Details', [
+    ['Vehicle', app.vehicle_name || '1957 Bel Air EV'],
+    ['Loan Amount', app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--'],
+    ['Down Payment', app.down_payment ? '$'+app.down_payment.toLocaleString() : '--'],
+    ['Term', (app.term_months || '--') + ' months'],
+    ['Intended Use', app.intended_use || '--'],
+    ['App ID', app.id ? app.id.slice(0,8).toUpperCase() : '--'],
+    ['Submitted', appDate]
+  ]) + buildSection('Contact', [
+    ['Name', name],
+    ['Email', app.email || '--'],
+    ['Phone', app.phone || '--'],
+    ['Wallet', app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--'],
+    ['Verified', app.wallet_verified ? 'Yes - Signed' : 'Connection only']
+  ]);
+  var col2 = buildSection('Employment & Income', [
+    ['Employment', app.employment_status || '--'],
+    ['Employer', app.employer || '--'],
+    ['Monthly Income', app.gross_monthly_income ? '$'+app.gross_monthly_income.toLocaleString() : '--'],
+    ['Credit Score', app.credit_score_range || '--'],
+    ['Housing', app.housing_status || '--']
+  ]) + buildSection('Crypto Assets', [
+    ['Included', app.crypto_included ? 'Yes' : 'No'],
+    ['Est. Value', app.crypto_estimated_value ? '$'+app.crypto_estimated_value.toLocaleString() : '--'],
+    ['As Collateral', app.crypto_as_collateral || '--']
+  ]) + buildSection('Co-Applicant', [
+    ['Included', app.co_app_included ? 'Yes' : 'No'],
+    ['Name', app.co_app_name || '--'],
+    ['Income', app.co_app_income ? '$'+app.co_app_income.toLocaleString() : '--']
+  ]);
+  document.getElementById('modalBody').innerHTML =
+    '<div>' + col1 +
+    '<div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;margin-top:1rem;">' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="font-family:monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">DTI Ratio</span><span style="font-family:Bebas-Neue,sans-serif;font-size:1.2rem;color:' + dtiColor + ';">' + (dti > 0 ? dti.toFixed(1)+'%' : '--') + '</span></div>' +
+    '<div class="dti-bar-wrap"><div class="dti-bar" style="width:' + Math.min(dti*1.5||0,100) + '%;background:' + dtiColor + ';"></div></div>' +
+    '<div style="font-family:monospace;font-size:0.55rem;color:var(--dim);margin-top:0.4rem;">' + (dti < 28 ? 'Excellent DTI' : dti < 36 ? 'Acceptable DTI' : dti > 0 ? 'Elevated - review carefully' : '') + '</div></div>' +
+    '</div><div>' + col2 + '</div>';
+  var rec = getApprovalRecommendation(app);
+  var ind = document.getElementById('approvalIndicator');
+  var dot = document.getElementById('approvalDot');
+  ind.className = 'approval-indicator ind-' + rec.status;
+  dot.style.background = rec.status === 'approve' ? 'var(--green)' : rec.status === 'deny' ? 'var(--red)' : 'var(--gold)';
+  dot.style.boxShadow = rec.status === 'approve' ? '0 0 8px rgba(0,255,136,0.6)' : 'none';
+  dot.style.animation = (rec.status === 'approve' || rec.status === 'review') ? 'pulse 1.5s infinite' : 'none';
+  document.getElementById('approvalText').textContent = rec.label + ' | ' + rec.reasons.join(' - ');
+  document.getElementById('uwDecision').value = app.decision || '';
+  document.getElementById('uwAPR').value = app.final_apr || (rec.status === 'approve' ? (app.credit_score_range >= 800 ? 7.9 : app.credit_score_range >= 750 ? 9.9 : app.credit_score_range >= 700 ? 11.9 : 12.9) : '');
+  document.getElementById('uwAmount').value = app.approved_amount || app.loan_amount || '';
+  document.getElementById('uwNotes').value = app.underwriter_notes || '';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function buildSection(title, rows) {
+  return '<div class="modal-section" style="margin-bottom:1rem;">' +
+    '<div class="modal-section-title">' + title + '</div>' +
+    rows.map(function(r) {
+      return '<div class="detail-row"><div class="detail-key">' + r[0] + '</div><div class="detail-val">' + r[1] + '</div></div>';
+    }).join('') + '</div>';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  currentAppId = null;
+}
+
+function submitDecision(decision) {
+  if (!currentAppId) return;
+  var app = allApps.find(function(a) { return a.id === currentAppId; });
+  var update = {
+    status: decision,
+    decision: decision,
+    final_apr: parseFloat(document.getElementById('uwAPR').value) || null,
+    approved_amount: parseFloat(document.getElementById('uwAmount').value) || null,
+    underwriter_notes: document.getElementById('uwNotes').value,
+    reviewed_at: new Date().toISOString()
+  };
+  fetch(SB_URL + '/rest/v1/imc_applications?id=eq.' + currentAppId, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'return=representation' },
+    body: JSON.stringify(update)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    if (app && app.email && (decision === 'denied' || decision === 'approved')) {
+      sendDecisionEmail(app, decision, update);
+    }
+    closeModal();
+    loadApplications();
+  })
+  .catch(function(err) { alert('Error saving decision: ' + err); });
+}
+
+// --------------------------------
+// VEHICLES TAB
+// --------------------------------
+
+function loadVehicles() {
+  document.getElementById('vehicleTableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">...</div><div class="empty-state-text">Loading...</div></div>';
+  fetch(SB_URL + '/rest/v1/imc_vehicles?select=*&order=created_at.desc', {
+    method: 'GET',
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Accept': 'application/json' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    allVehicles = data || [];
+    updateVehicleStats();
+    renderVehicleTable(allVehicles);
+  })
+  .catch(function(err) {
+    document.getElementById('vehicleTableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><div class="empty-state-text">Error loading</div></div>';
+    console.error(err);
+  });
+}
+
+function updateVehicleStats() {
+  var total = allVehicles.length;
+  var pending = allVehicles.filter(function(v) { return v.status === 'pending'; }).length;
+  var listed = allVehicles.filter(function(v) { return v.status === 'listed'; }).length;
+  var ev = allVehicles.filter(function(v) { return v.ev_converted; }).length;
+  var val = allVehicles.reduce(function(s, v) { return s + (v.asking_price || 0); }, 0);
+  document.getElementById('vStatTotal').textContent = total;
+  document.getElementById('vStatPending').textContent = pending;
+  document.getElementById('vStatListed').textContent = listed;
+  document.getElementById('vStatEV').textContent = ev;
+  document.getElementById('vStatValue').textContent = val > 0 ? '$' + Math.round(val/1000) + 'K' : '$0';
+}
+
+function filterVehicles(filter, btn) {
+  document.querySelectorAll('#panelVehicles .filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  var filtered = filter === 'all' ? allVehicles : allVehicles.filter(function(v) { return v.status === filter; });
+  renderVehicleTable(filtered);
+}
+
+function renderVehicleTable(vehicles) {
+  if (!vehicles || vehicles.length === 0) {
+    document.getElementById('vehicleTableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#11042;</div><div class="empty-state-text">No submissions found</div></div>';
+    return;
+  }
+  var rows = vehicles.map(function(v) {
+    var date = new Date(v.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+    var vehicle = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
+    var dealer = v.dealership_name || v.dealer_name || '--';
+    var loc = [v.dealership_city, v.dealership_state].filter(Boolean).join(', ') || '--';
+    var sc = v.status === 'listed' ? 'b-listed' : v.status === 'approved' ? 'b-approved' : v.status === 'rejected' ? 'b-denied' : 'b-pending';
+    var sl = v.status === 'listed' ? 'Listed' : v.status === 'approved' ? 'Approved' : v.status === 'rejected' ? 'Rejected' : 'Pending';
+    return '<tr onclick="openVehicle(' + "'" + v.id + "'" + ')">' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + date + '</td>' +
+      '<td style="color:var(--text);">' + vehicle + '</td>' +
+      '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + dealer + '</td>' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + loc + '</td>' +
+      '<td style="font-family:Bebas-Neue,sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (v.asking_price ? '$'+v.asking_price.toLocaleString() : '--') + '</td>' +
+      '<td>' + (v.ev_converted ? '<span class="badge b-ev">EV</span>' : '<span style="color:var(--dim);font-size:0.75rem;">No</span>') + '</td>' +
+      '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (v.condition ? v.condition.split(' ')[0] : '--') + '</td>' +
+      '<td><span class="badge ' + sc + '">' + sl + '</span></td>' +
+      '<td><button onclick="event.stopPropagation();openVehicle(' + "'" + v.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;"">Review</button></td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('vehicleTableWrap').innerHTML =
+    '<table class="data-table"><thead><tr><th>Date</th><th>Vehicle</th><th>Dealer</th><th>Location</th><th>Asking</th><th>EV</th><th>Condition</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function openVehicle(id) {
+  var v = allVehicles.find(function(x) { return x.id === id; });
+  if (!v) return;
+  currentVehicleId = id;
+  var vehicle = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
+  document.getElementById('vModalTitle').textContent = vehicle || 'Vehicle Submission';
+  var col1 = buildSection('Vehicle Details', [
+    ['Year / Make / Model', vehicle],
+    ['Color', v.color || '--'],
+    ['VIN', v.vin || 'Not provided'],
+    ['Mileage', v.mileage ? v.mileage.toLocaleString() + ' mi' : '--'],
+    ['Condition', v.condition || '--'],
+    ['EV Converted', v.ev_converted ? 'Yes' : 'No'],
+    ['EV Drivetrain', v.ev_drivetrain || '--'],
+    ['EV Range', v.ev_range_miles ? v.ev_range_miles + ' miles' : '--'],
+    ['EV Conv. Cost', v.ev_conversion_cost ? '$' + v.ev_conversion_cost.toLocaleString() : '--']
+  ]);
+  var desc = '<div class="modal-section" style="margin-bottom:1rem;"><div class="modal-section-title">Description</div>' +
+    '<div style="font-size:0.82rem;color:var(--muted);line-height:1.7;padding:0.75rem;background:var(--surface2);border:1px solid var(--border);">' +
+    (v.description || 'No description provided.') + '</div>';
+  if (v.highlights && v.highlights.length > 0) {
+    desc += '<div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.4rem;">' +
+      v.highlights.map(function(h) {
+        return '<span style="font-family:monospace;font-size:0.58rem;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);color:var(--neon);padding:0.2rem 0.6rem;">' + h + '</span>';
+      }).join('') + '</div>';
+  }
+  desc += '</div>';
+  var col2 = buildSection('Dealer Information', [
+    ['Dealer Name', v.dealer_name || '--'],
+    ['Dealership', v.dealership_name || '--'],
+    ['Email', v.dealer_email || '--'],
+    ['Phone', v.dealership_phone || '--'],
+    ['Location', [v.dealership_city, v.dealership_state].filter(Boolean).join(', ') || '--'],
+    ['Wallet', v.dealer_wallet ? v.dealer_wallet.slice(0,6)+'...'+v.dealer_wallet.slice(-4) : '--'],
+    ['Submitted', new Date(v.created_at).toLocaleString()]
+  ]) + buildSection('Valuation', [
+    ['Asking Price', v.asking_price ? '$' + v.asking_price.toLocaleString() : '--'],
+    ['Dealer Appraisal', v.appraised_value ? '$' + v.appraised_value.toLocaleString() : 'Not provided'],
+    ['Est. Max Loan (90%)', v.asking_price ? '$' + Math.floor(v.asking_price * 0.9).toLocaleString() : '--'],
+    ['Platform Fee (2%)', v.asking_price ? '$' + Math.floor(v.asking_price * 0.9 * 0.02).toLocaleString() : '--'],
+    ['Preferred APR', v.loan_apr ? v.loan_apr + '%' : 'No preference'],
+    ['Preferred Term', v.loan_term_months ? v.loan_term_months + ' months' : 'No preference']
+  ]);
+  document.getElementById('vModalBody').innerHTML = '<div>' + col1 + desc + '</div><div>' + col2 + '</div>';
+  var hasEV = v.ev_converted;
+  var hasDesc = v.description && v.description.length > 20;
+  var hasPrice = v.asking_price > 0;
+  var hasDealerInfo = v.dealer_email && v.dealer_name;
+  var score = (hasEV ? 1 : 0) + (hasDesc ? 1 : 0) + (hasPrice ? 1 : 0) + (hasDealerInfo ? 1 : 0);
+  var ind = document.getElementById('vApprovalIndicator');
+  var dot = document.getElementById('vApprovalDot');
+  var txt = document.getElementById('vApprovalText');
+  if (score >= 3) {
+    ind.className = 'approval-indicator ind-approve';
+    dot.style.background = 'var(--green)';
+    dot.style.boxShadow = '0 0 8px rgba(0,255,136,0.5)';
+    dot.style.animation = 'pulse 1.5s infinite';
+    txt.textContent = 'Strong submission - recommended for listing';
+  } else if (score >= 2) {
+    ind.className = 'approval-indicator ind-review';
+    dot.style.background = 'var(--gold)';
+    dot.style.animation = 'pulse 2s infinite';
+    txt.textContent = 'Good submission - review before listing';
+  } else {
+    ind.className = 'approval-indicator ind-deny';
+    dot.style.background = 'var(--red)';
+    dot.style.animation = 'none';
+    txt.textContent = 'Incomplete submission - contact dealer';
+  }
+  document.getElementById('vAPR').value = v.loan_apr || '';
+  document.getElementById('vLoanAmount').value = v.loan_amount || (v.asking_price ? Math.floor(v.asking_price * 0.9) : '');
+  document.getElementById('vAppraised').value = v.appraised_value || v.asking_price || '';
+  document.getElementById('vTerm').value = v.loan_term_months || '';
+  document.getElementById('vNotes').value = v.admin_notes || '';
+  calcVMonthly();
+  document.getElementById('vModalOverlay').classList.add('open');
+}
+
+function calcVMonthly() {
+  var amt = parseFloat(document.getElementById('vLoanAmount').value) || 0;
+  var apr = parseFloat(document.getElementById('vAPR').value) || 0;
+  var term = parseInt(document.getElementById('vTerm').value) || 0;
+  if (amt > 0 && apr > 0 && term > 0) {
+    var r = apr / 100 / 12;
+    var m = (amt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1);
+    document.getElementById('vMonthly').value = '$' + m.toFixed(2);
+    document.getElementById('vFee').value = '$' + (amt * 0.02).toFixed(0);
+  } else {
+    document.getElementById('vMonthly').value = '';
+    document.getElementById('vFee').value = '';
+  }
+}
+
+function closeVModal() {
+  document.getElementById('vModalOverlay').classList.remove('open');
+  currentVehicleId = null;
+}
+
+function submitVehicleDecision(action) {
+  if (!currentVehicleId) return;
+  var v = allVehicles.find(function(x) { return x.id === currentVehicleId; });
+  if (!v) return;
+  var apr = parseFloat(document.getElementById('vAPR').value);
+  var loanAmt = parseFloat(document.getElementById('vLoanAmount').value);
+  var appraised = parseFloat(document.getElementById('vAppraised').value);
+  var term = parseInt(document.getElementById('vTerm').value);
+  var notes = document.getElementById('vNotes').value;
+  var update = {
+    status: action,
+    loan_apr: apr || null,
+    loan_amount: loanAmt || null,
+    appraised_value: appraised || null,
+    loan_term_months: term || null,
+    admin_notes: notes,
+    reviewed_at: new Date().toISOString()
+  };
+  if (action === 'listed') update.listed_at = new Date().toISOString();
+  fetch(SB_URL + '/rest/v1/imc_vehicles?id=eq.' + currentVehicleId, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'return=representation' },
+    body: JSON.stringify(update)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    if (action === 'listed') pushToMarketplace(v, update);
+    closeVModal();
+    loadVehicles();
+  })
+  .catch(function(err) { alert('Error: ' + err); });
+}
+
+function pushToMarketplace(v, terms) {
+  var vehicle = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
+  var apr = terms.loan_apr || 12;
+  var loanAmt = terms.loan_amount || Math.floor((v.asking_price || 0) * 0.9);
+  var term = terms.loan_term_months || 60;
+  var r = apr / 100 / 12;
+  var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+  var listing = {
+    vehicle_id: v.id,
+    vehicle_name: vehicle,
+    vehicle_color: v.color || '',
+    vehicle_year: v.year,
+    vehicle_make: v.make,
+    vehicle_model: v.model,
+    appraised_value: terms.appraised_value || v.asking_price,
+    loan_amount: loanAmt,
+    loan_apr: apr,
+    loan_term_months: term,
+    monthly_payment: parseFloat(monthly.toFixed(2)),
+    status: 'funding',
+    ev_converted: v.ev_converted || false,
+    ev_drivetrain: v.ev_drivetrain || null,
+    dealer_city: v.dealership_city || 'Las Vegas',
+    dealer_state: v.dealership_state || 'NV',
+    description: v.description || '',
+    highlights: v.highlights || null
+  };
+  fetch(SB_URL + '/rest/v1/imc_listings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'return=representation' },
+    body: JSON.stringify(listing)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    var id = d && d[0] ? d[0].id.slice(0,8).toUpperCase() : 'saved';
+    alert(vehicle + ' is now live on the marketplace. Listing ID: ' + id);
+  })
+  .catch(function(e) { console.error('Listing error:', e); alert('Vehicle approved - marketplace listing may need manual update. Check console.'); });
+}
+
+
+
+function getApprovalRecommendation(app) {
+  var credit = parseFloat(app.credit_score_range) || 0;
+  var income = app.gross_monthly_income || 0;
+  var loanAmt = app.loan_amount || 0;
+  var term = app.term_months || 60;
+  var cryptoVal = app.crypto_estimated_value || 0;
+  var cryptoCollateral = app.crypto_as_collateral;
+  var cryptoIncluded = app.crypto_included;
+
+  // Calculate monthly payment at 12% estimate
+  var r = 12 / 100 / 12;
+  var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+  var dti = income > 0 ? (monthly / income * 100) : 999;
+
+  // Rule 1: FICO 700+ AND DTI < 45%
+  var rule1 = credit >= 700 && dti < 45;
+
+  // Rule 2: Crypto holdings >= 70% of LTV in qualifying assets AND elected collateral
+  var ltv = loanAmt;
+  var rule2 = cryptoIncluded &&
+    (cryptoCollateral === 'Yes' || cryptoCollateral === 'Open to it') &&
+    cryptoVal >= (ltv * 0.70);
+
+  var approved = rule1 || rule2;
+  var reasons = [];
+
+  if (rule1) reasons.push('FICO ' + credit + ' + DTI ' + dti.toFixed(1) + '%');
+  if (rule2) reasons.push('Crypto collateral $' + cryptoVal.toLocaleString() + ' >= 70% LTV');
+
+  if (!rule1 && credit > 0) {
+    if (credit < 700) reasons.push('FICO ' + credit + ' below 700 threshold');
+    if (dti >= 45) reasons.push('DTI ' + dti.toFixed(1) + '% exceeds 45% limit');
+  }
+
+  if (credit === 0 && !cryptoIncluded) {
+    return { status: 'review', label: 'More Info Needed', reasons: ['Incomplete application data'] };
+  }
+
+  if (approved) {
+    return { status: 'approve', label: 'Recommended: Approve', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  } else if (credit >= 650 || (cryptoIncluded && cryptoVal > 0)) {
+    return { status: 'review', label: 'Manual Review Required', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  } else {
+    return { status: 'deny', label: 'Not Recommended', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  }
+}
+
+function buildDeclineEmail(app, reasons, uwNotes) {
+  var name = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Applicant';
+  var appId = app.id ? app.id.slice(0,8).toUpperCase() : 'N/A';
+  var vehicle = app.vehicle_name || '1957 Chevrolet Bel Air - Aquamarine EV';
+  var appDate = new Date(app.created_at).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  var reapplyDate = new Date(Date.now() + 90*24*60*60*1000).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  var creditBand = getCreditBand(app.credit_score_range);
+  var isCreditFactor = reasons.some(function(r) { return r.includes('credit') || r.includes('Credit'); });
+
+  var reasonsHtml = reasons.map(function(r) {
+    return '<tr><td style="padding:8px 0;border-bottom:1px solid #1e1e2e;font-family:monospace;font-size:13px;color:#8888aa;">' + r + '</td></tr>';
+  }).join('');
+
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>IMC Application Decision</title></head>' +
+  '<body style="margin:0;padding:0;background:#050507;font-family:Inter,Arial,sans-serif;">' +
+  '<div style="max-width:600px;margin:0 auto;background:#050507;">' +
+
+  // Header
+  '<div style="background:#0a0a0f;border-bottom:2px solid #00d4ff;padding:32px 40px;text-align:center;">' +
+  '<div style="display:inline-flex;align-items:center;gap:12px;margin-bottom:8px;">' +
+  '<div style="width:10px;height:10px;border-radius:50%;background:#00d4ff;box-shadow:0 0 12px #00d4ff;"></div>' +
+  '<div style="font-family:Georgia,serif;font-size:22px;letter-spacing:4px;color:#e8e8f0;text-transform:uppercase;">ILLUSIVE MOTOR CONCEPTS</div>' +
+  '</div>' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#444460;margin-top:4px;">Web3 Auto Finance - Las Vegas, NV</div>' +
+  '</div>' +
+
+  // Decision banner
+  '<div style="background:#0f0f18;border-left:3px solid #ff4455;padding:24px 40px;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#ff4455;margin-bottom:8px;">Application Decision</div>' +
+  '<div style="font-family:Georgia,serif;font-size:28px;color:#e8e8f0;letter-spacing:1px;">Unable to Approve</div>' +
+  '<div style="font-family:monospace;font-size:11px;color:#444460;margin-top:8px;letter-spacing:1px;">Application ID: ' + appId + ' | Date: ' + appDate + '</div>' +
+  '</div>' +
+
+  // Applicant + vehicle
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:16px;">Application Details</div>' +
+  '<table style="width:100%;border-collapse:collapse;">' +
+  '<tr><td style="padding:6px 0;font-family:monospace;font-size:11px;color:#444460;text-transform:uppercase;letter-spacing:1px;width:140px;">Applicant</td><td style="font-family:monospace;font-size:13px;color:#e8e8f0;">' + name + '</td></tr>' +
+  '<tr><td style="padding:6px 0;font-family:monospace;font-size:11px;color:#444460;text-transform:uppercase;letter-spacing:1px;">Vehicle</td><td style="font-family:monospace;font-size:13px;color:#e8e8f0;">' + vehicle + '</td></tr>' +
+  '<tr><td style="padding:6px 0;font-family:monospace;font-size:11px;color:#444460;text-transform:uppercase;letter-spacing:1px;">Loan Requested</td><td style="font-family:monospace;font-size:13px;color:#e8e8f0;">$' + (app.loan_amount||0).toLocaleString() + ' USDC</td></tr>' +
+  '</table>' +
+  '</div>' +
+
+  // Required ECOA notice
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;background:#0a0a0f;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:16px;">Reason(s) for Decision</div>' +
+  '<p style="font-family:monospace;font-size:12px;color:#8888aa;line-height:1.6;margin:0 0 16px;">After careful review of your application, we are unable to extend credit at this time for the following reason(s):</p>' +
+  '<table style="width:100%;border-collapse:collapse;">' + reasonsHtml + '</table>' +
+  (isCreditFactor && creditBand ? '<div style="margin-top:16px;padding:12px 16px;background:#14141f;border:1px solid #2a2a3e;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:4px;">Credit Score Range Considered</div>' +
+  '<div style="font-family:monospace;font-size:14px;color:#f0c040;">' + creditBand + '</div>' +
+  '<div style="font-family:monospace;font-size:10px;color:#444460;margin-top:4px;">IMC minimum threshold: 700+</div>' +
+  '</div>' : '') +
+  '</div>' +
+
+  // Reapplication
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:12px;">Reapplication</div>' +
+  '<p style="font-family:monospace;font-size:12px;color:#8888aa;line-height:1.6;margin:0;">You may reapply after <span style="color:#00d4ff;">' + reapplyDate + '</span> (90 days from this decision). We encourage you to review the resources below to strengthen your application before reapplying.</p>' +
+  '</div>' +
+
+  // Credit referral resources
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;background:#0a0a0f;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#00d4ff;margin-bottom:16px;">Resources to Strengthen Your Application</div>' +
+  '<p style="font-family:monospace;font-size:11px;color:#444460;margin:0 0 16px;line-height:1.6;">These free resources may help improve your credit profile before your next application:</p>' +
+  '<table style="width:100%;border-collapse:collapse;">' +
+  '<tr><td style="padding:10px 0;border-bottom:1px solid #1e1e2e;">' +
+  '<a href="https://www.experian.com/boost" style="color:#00d4ff;font-family:monospace;font-size:12px;text-decoration:none;">Experian Boost</a>' +
+  '<div style="font-family:monospace;font-size:10px;color:#444460;margin-top:2px;">Instantly raise your FICO score by adding utility and phone payments</div>' +
+  '</td></tr>' +
+  '<tr><td style="padding:10px 0;border-bottom:1px solid #1e1e2e;">' +
+  '<a href="https://www.self.inc" style="color:#00d4ff;font-family:monospace;font-size:12px;text-decoration:none;">Self Credit Builder</a>' +
+  '<div style="font-family:monospace;font-size:10px;color:#444460;margin-top:2px;">Build credit history with a secured credit builder loan</div>' +
+  '</td></tr>' +
+  '<tr><td style="padding:10px 0;">' +
+  '<a href="https://www.creditkarma.com" style="color:#00d4ff;font-family:monospace;font-size:12px;text-decoration:none;">Credit Karma</a>' +
+  '<div style="font-family:monospace;font-size:10px;color:#444460;margin-top:2px;">Free credit monitoring, score tracking, and personalized improvement tips</div>' +
+  '</td></tr>' +
+  '</table>' +
+  '</div>' +
+
+  // Appeals
+  '<div style="padding:32px 40px;border-bottom:1px solid #1e1e2e;">' +
+  '<div style="font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444460;margin-bottom:12px;">Questions or Appeals</div>' +
+  '<p style="font-family:monospace;font-size:12px;color:#8888aa;line-height:1.6;margin:0 0 8px;">If you believe this decision was made in error or would like to discuss your application, please contact us:</p>' +
+  '<div style="font-family:monospace;font-size:12px;color:#00d4ff;">appeals@illusivemotorconcepts.com</div>' +
+  '<div style="font-family:monospace;font-size:11px;color:#444460;margin-top:4px;">Response within 3-5 business days</div>' +
+  '</div>' +
+
+  // ECOA footer
+  '<div style="padding:24px 40px;background:#0a0a0f;">' +
+  '<p style="font-family:monospace;font-size:10px;color:#2a2a3e;line-height:1.7;margin:0;">' +
+  'NOTICE: The Federal Equal Credit Opportunity Act prohibits creditors from discriminating against credit applicants on the basis of race, color, religion, national origin, sex, marital status, age (provided the applicant has the capacity to enter into a binding contract), because all or part of the applicant income derives from any public assistance program, or because the applicant has in good faith exercised any right under the Consumer Credit Protection Act.' +
+  '<br><br>Illusive Motor Concepts | Las Vegas, NV | ' +
+  '<a href="https://ooak21.github.io/luisocadiz-portfolio/imc/" style="color:#2a2a3e;">illusivemotorconcepts.com</a>' +
+  '</p>' +
+  '</div>' +
+
+  '</div></body></html>';
+}
+
+function getCreditBand(scoreRange) {
+  if (!scoreRange) return null;
+  var score = parseFloat(scoreRange);
+  if (score >= 800) return '800+ (Exceptional)';
+  if (score >= 750) return '750-799 (Very Good)';
+  if (score >= 700) return '700-749 (Good)';
+  if (score >= 650) return '650-699 (Fair)';
+  if (score >= 600) return '600-649 (Poor)';
+  return 'Below 600';
+}
+
+function getApprovalRecommendation(app) {
+  var credit = parseFloat(app.credit_score_range) || 0;
+  var income = app.gross_monthly_income || 0;
+  var loanAmt = app.loan_amount || 0;
+  var term = app.term_months || 60;
+  var cryptoVal = app.crypto_estimated_value || 0;
+  var cryptoCollateral = app.crypto_as_collateral;
+  var cryptoIncluded = app.crypto_included;
+
+  // Calculate monthly payment at 12% estimate
+  var r = 12 / 100 / 12;
+  var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+  var dti = income > 0 ? (monthly / income * 100) : 999;
+
+  // Rule 1: FICO 700+ AND DTI < 45%
+  var rule1 = credit >= 700 && dti < 45;
+
+  // Rule 2: Crypto holdings >= 70% of LTV in qualifying assets AND elected collateral
+  var ltv = loanAmt;
+  var rule2 = cryptoIncluded &&
+    (cryptoCollateral === 'Yes' || cryptoCollateral === 'Open to it') &&
+    cryptoVal >= (ltv * 0.70);
+
+  var approved = rule1 || rule2;
+  var reasons = [];
+
+  if (rule1) reasons.push('FICO ' + credit + ' + DTI ' + dti.toFixed(1) + '%');
+  if (rule2) reasons.push('Crypto collateral $' + cryptoVal.toLocaleString() + ' >= 70% LTV');
+
+  if (!rule1 && credit > 0) {
+    if (credit < 700) reasons.push('FICO ' + credit + ' below 700 threshold');
+    if (dti >= 45) reasons.push('DTI ' + dti.toFixed(1) + '% exceeds 45% limit');
+  }
+
+  if (credit === 0 && !cryptoIncluded) {
+    return { status: 'review', label: 'More Info Needed', reasons: ['Incomplete application data'] };
+  }
+
+  if (approved) {
+    return { status: 'approve', label: 'Recommended: Approve', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  } else if (credit >= 650 || (cryptoIncluded && cryptoVal > 0)) {
+    return { status: 'review', label: 'Manual Review Required', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  } else {
+    return { status: 'deny', label: 'Not Recommended', reasons: reasons, dti: dti.toFixed(1), credit: credit };
+  }
+}
+
+function getDeclineReasons(app) {
+  var reasons = [];
+  var credit = parseFloat(app.credit_score_range) || 0;
+  var income = app.gross_monthly_income || 0;
+  var loanAmt = app.loan_amount || 0;
+  var term = app.term_months || 60;
+  var r = 12/100/12;
+  var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+  var dti = income > 0 ? (monthly / income * 100) : 0;
+
+  if (credit > 0 && credit < 700) reasons.push('Credit score below minimum threshold');
+  if (dti > 45) reasons.push('Debt-to-income ratio exceeds maximum limit (' + dti.toFixed(1) + '% vs 45% max)');
+  if (income < 2000 && income > 0) reasons.push('Insufficient verifiable income');
+  if (!app.employment_status) reasons.push('Insufficient employment information provided');
+  if (!app.email) reasons.push('Application information incomplete - email required');
+  if (reasons.length === 0) reasons.push('Application did not meet current lending criteria');
+  return reasons;
+}
+
+function sendDecisionEmail(app, decision, update) {
+  var RESEND_KEY = 're_cKYozSSD_FY3oWRdcEWh2FyGVfmJobUDR';
+  var name = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Applicant';
+
+  var subject, htmlBody;
+
+  if (decision === 'denied') {
+    var reasons = getDeclineReasons(app);
+    if (update.underwriter_notes) reasons.push('Underwriter notes: ' + update.underwriter_notes);
+    htmlBody = buildDeclineEmail(app, reasons, update.underwriter_notes);
+    subject = 'Your IMC Auto Finance Application - Decision Notice';
+  } else {
+    // Approval email - simple for now
+    var appId = app.id ? app.id.slice(0,8).toUpperCase() : 'N/A';
+    subject = 'Your IMC Application Has Been Approved!';
+    htmlBody = '<!DOCTYPE html><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;">' +
+      '<div style="max-width:600px;margin:0 auto;">' +
+      '<div style="border-bottom:2px solid #00d4ff;padding-bottom:24px;margin-bottom:32px;">' +
+      '<div style="font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div>' +
+      '</div>' +
+      '<div style="font-size:28px;color:#00ff88;margin-bottom:24px;">Application Approved</div>' +
+      '<p style="color:#8888aa;line-height:1.7;">Dear ' + name + ',</p>' +
+      '<p style="color:#8888aa;line-height:1.7;margin-top:12px;">Congratulations! Your loan application (ID: ' + appId + ') for the <strong style="color:#e8e8f0;">' + (app.vehicle_name||'vehicle') + '</strong> has been approved.</p>' +
+      '<div style="margin:24px 0;padding:20px;background:#0a0a0f;border:1px solid #1e1e2e;">' +
+      '<div style="color:#444460;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Approved Terms</div>' +
+      '<div style="color:#f0c040;font-size:14px;">APR: ' + (update.final_apr||'TBD') + '%</div>' +
+      '<div style="color:#e8e8f0;font-size:14px;margin-top:6px;">Amount: $' + (update.approved_amount||app.loan_amount||0).toLocaleString() + ' USDC</div>' +
+      '<div style="color:#e8e8f0;font-size:14px;margin-top:6px;">Term: ' + (app.term_months||60) + ' months</div>' +
+      '</div>' +
+      '<p style="color:#8888aa;line-height:1.7;">Our team will contact you shortly with next steps including documentation requirements and funding timeline.</p>' +
+      '<p style="color:#444460;font-size:11px;margin-top:32px;">Illusive Motor Concepts | Las Vegas, NV | appeals@illusivemotorconcepts.com</p>' +
+      '</div></body></html>';
+}
+
+  if (!RESEND_KEY || RESEND_KEY === '') {
+    console.log('Resend key not set - email not sent. Would have sent to:', app.email);
+    console.log('Subject:', subject);
+    return;
+  }
+
+  fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + RESEND_KEY
+    },
+    body: JSON.stringify({
+      from: 'IMC Auto Finance <yourimcapplication@luisocadiz.online>',
+      to: [app.email],
+      subject: subject,
+      html: htmlBody
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) { console.log('Email sent:', d); })
+  .catch(function(e) { console.error('Email error:', e); });
+}
 }
 </script>
 </body>
