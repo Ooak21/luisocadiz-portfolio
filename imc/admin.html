@@ -2320,6 +2320,19 @@ function loadVaultStatuses() {
     });
   });
 }
+
+// Tab wiring via addEventListener (bypasses SES inline handler restrictions)
+document.addEventListener('DOMContentLoaded', function() {
+  var tabMap = ['tabApps','tabVehicles','tabChain'];
+  tabMap.forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      var tab = id === 'tabApps' ? 'apps' : id === 'tabVehicles' ? 'vehicles' : 'chain';
+      switchTab(tab);
+    });
+  });
+});
 </script>
 </body>
 </html>
