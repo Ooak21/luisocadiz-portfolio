@@ -1337,28 +1337,7 @@ var currentAppId = null;
 var currentVehicleId = null;
 
 // -- TAB SWITCHING --
-function switchTab(tab) {
-  if (tab === 'chain') {
-    document.getElementById('panelApps').style.display = 'none';
-    document.getElementById('panelVehicles').style.display = 'none';
-    document.getElementById('panelChain').style.display = 'block';
-    document.getElementById('tabApps').classList.remove('active');
-    document.getElementById('tabVehicles').classList.remove('active');
-    document.getElementById('tabChain').style.background = '#8855ff';
-    document.getElementById('tabChain').style.color = '#fff';
-    loadVaultStatuses();
-    return;
-  }
-  document.getElementById('panelChain').style.display = 'none';
-  document.getElementById('tabChain').style.background = 'transparent';
-  document.getElementById('tabChain').style.color = '#8855ff';
-  var isApps = tab === 'apps';
-  document.getElementById('panelApps').style.display = isApps ? 'block' : 'none';
-  document.getElementById('panelVehicles').style.display = isApps ? 'none' : 'block';
-  document.getElementById('tabApps').classList.toggle('active', isApps);
-  document.getElementById('tabVehicles').classList.toggle('active', !isApps);
-  if (!isApps && allVehicles.length === 0) loadVehicles();
-}
+
 
 // --------------------------------
 // APPLICATIONS TAB
