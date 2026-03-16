@@ -456,10 +456,11 @@ var currentVehicleId = null;
 
 // -- TAB SWITCHING --
 function switchTab(tab) {
+  console.log('switchTab called with:', tab);
   if (tab === 'chain') {
     document.getElementById('panelApps').style.display = 'none';
     document.getElementById('panelVehicles').style.display = 'none';
-    document.getElementById('panelChain').style.display = 'block';
+    console.log('showing panelChain'); document.getElementById('panelChain').style.display = 'block';
     document.getElementById('tabApps').classList.remove('active');
     document.getElementById('tabVehicles').classList.remove('active');
     document.getElementById('tabChain').style.background = '#8855ff';
