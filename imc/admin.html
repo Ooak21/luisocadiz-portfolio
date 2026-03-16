@@ -267,6 +267,27 @@ var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
 var allApps = [];
 var allVehicles = [];
+
+// -- SMART CONTRACT CONFIG (Polygon Amoy Testnet) --------------
+var NFT_ADDRESS   = '0x7aa55016Aa503fDACdF8736b2C1774Ea6a46Dbcb';
+var VAULT_ADDRESS = '0xFAc696e1FE842D0E528448C482fa870236c2060b';
+var AMOY_CHAIN_ID = '0x13882'; // 80002 in hex
+
+var NFT_ABI = [
+  'function mintVehicle(string,string,uint16,string,string,bool,uint256,string) returns (uint256)',
+  'function attachLoanVault(uint256,address)',
+  'function totalVehicles() view returns (uint256)',
+  'function getVehicle(uint256) view returns (tuple(string,string,uint16,string,string,bool,uint256,string,address,bool))'
+];
+
+var VAULT_ABI = [
+  'function getFundingProgress() view returns (uint256,uint256,uint256,uint256)',
+  'function getLoanSummary() view returns (uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256)',
+  'function invest(uint256)',
+  'function getInvestorPosition(address) view returns (uint256,uint256,uint256,uint256,uint256)'
+];
+
+
 var currentAppId = null;
 var currentVehicleId = null;
 
@@ -666,15 +687,17 @@ function submitVehicleDecision(action) {
 }
 
 function pushToMarketplace(v, terms) {
-  var vehicle = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
+  var vehicleName = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
   var apr = terms.loan_apr || 12;
   var loanAmt = terms.loan_amount || Math.floor((v.asking_price || 0) * 0.9);
   var term = terms.loan_term_months || 60;
   var r = apr / 100 / 12;
   var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+
+  // Step 1: Save to Supabase
   var listing = {
     vehicle_id: v.id,
-    vehicle_name: vehicle,
+    vehicle_name: vehicleName,
     vehicle_color: v.color || '',
     vehicle_year: v.year,
     vehicle_make: v.make,
@@ -690,8 +713,13 @@ function pushToMarketplace(v, terms) {
     dealer_city: v.dealership_city || 'Las Vegas',
     dealer_state: v.dealership_state || 'NV',
     description: v.description || '',
-    highlights: v.highlights || null
+    highlights: v.highlights || null,
+    nft_contract: NFT_ADDRESS,
+    vault_contract: VAULT_ADDRESS,
+    chain_id: '80002',
+    chain_name: 'Polygon Amoy'
   };
+
   fetch(SB_URL + '/rest/v1/imc_listings', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'return=representation' },
@@ -699,10 +727,124 @@ function pushToMarketplace(v, terms) {
   })
   .then(function(r) { return r.json(); })
   .then(function(d) {
-    var id = d && d[0] ? d[0].id.slice(0,8).toUpperCase() : 'saved';
-    alert(vehicle + ' is now live on the marketplace. Listing ID: ' + id);
+    var listingId = d && d[0] ? d[0].id.slice(0,8).toUpperCase() : 'saved';
+    // Step 2: Mint on-chain if MetaMask available
+    if (window.ethereum) {
+      mintVehicleOnChain(v, terms, vehicleName, listingId);
+    } else {
+      alert(vehicleName + ' listed! ID: ' + listingId + ' - Connect MetaMask to mint on-chain.');
+    }
   })
-  .catch(function(e) { console.error('Listing error:', e); alert('Vehicle approved - marketplace listing may need manual update. Check console.'); });
+  .catch(function(e) {
+    console.error('Listing error:', e);
+    alert('Error saving listing. Check console.');
+  });
+}
+
+function mintVehicleOnChain(v, terms, vehicleName, listingId) {
+  // Check we are on Amoy
+  window.ethereum.request({ method: 'eth_chainId' })
+  .then(function(chainId) {
+    if (chainId !== AMOY_CHAIN_ID) {
+      // Prompt switch to Amoy
+      return window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: AMOY_CHAIN_ID }]
+      });
+    }
+  })
+  .then(function() {
+    // Build mintVehicle calldata using ethers-style encoding
+    // Since we don't have ethers loaded, use raw eth_sendTransaction
+    var appraisedCents = Math.round((terms.appraised_value || v.asking_price || 0) * 100);
+    var metaURI = 'https://ooak21.github.io/luisocadiz-portfolio/imc/?vehicle=' + encodeURIComponent(v.id);
+
+    // Use eth_call approach - encode via Remix-style manual ABI
+    // mintVehicle(string,string,uint16,string,string,bool,uint256,string)
+    // selector: 0x9a9d3876
+    var params = {
+      from: window.ethereum.selectedAddress,
+      to: NFT_ADDRESS,
+      data: encodeMintVehicle(
+        v.make || '',
+        v.model || '',
+        parseInt(v.year) || 0,
+        v.color || '',
+        v.vin || ('IMC-' + (v.id || 'VIN').slice(0,8).toUpperCase()),
+        v.ev_converted || false,
+        appraisedCents,
+        metaURI
+      )
+    };
+
+    return window.ethereum.request({ method: 'eth_sendTransaction', params: [params] });
+  })
+  .then(function(txHash) {
+    console.log('On-chain mint tx:', txHash);
+    alert(vehicleName + ' is LIVE! Listing ID: ' + listingId + ' Blockchain TX: ' + txHash + ' View on Polygonscan: https://amoy.polygonscan.com/tx/' + txHash);
+  })
+  .catch(function(e) {
+    console.error('On-chain mint error:', e);
+      alert(vehicleName + ' listed! ID: ' + listingId + ' - Connect MetaMask to mint on-chain.');
+  });
+}
+
+function encodeMintVehicle(make, model, year, color, vin, evConverted, appraisedValue, metadataURI) {
+  // Manual ABI encoding for mintVehicle
+  // Function selector for mintVehicle(string,string,uint16,string,string,bool,uint256,string)
+  var selector = '0x9a9d3876';
+
+  function padLeft(val, len) {
+    var s = val.toString(16);
+    while (s.length < len) s = '0' + s;
+    return s;
+  }
+
+  function encodeString(str) {
+    var bytes = [];
+    for (var i = 0; i < str.length; i++) bytes.push(str.charCodeAt(i));
+    var lenHex = padLeft(bytes.length, 64);
+    var dataHex = '';
+    for (var j = 0; j < bytes.length; j++) dataHex += padLeft(bytes[j], 2);
+    while (dataHex.length % 64 !== 0) dataHex += '00';
+    return lenHex + dataHex;
+  }
+
+  // Offsets for 8 params (dynamic types: string,string,uint16,string,string,bool,uint256,string)
+  // Static params: uint16 (year), bool (evConverted), uint256 (appraisedValue)
+  // Dynamic params: string x5
+  // Head section: 8 x 32 bytes = 256 bytes = 0x100
+  var strings = [make, model, color, vin, metadataURI];
+  var encodedStrings = strings.map(encodeString);
+
+  // Calculate offsets
+  // param order: make(dyn), model(dyn), year(static), color(dyn), vin(dyn), evConverted(static), appraisedValue(static), metadataURI(dyn)
+  var HEAD = 256; // 8 params * 32 bytes
+  var offsets = [];
+  var dynOffset = HEAD;
+  var dynParams = [0, 1, null, 2, 3, null, null, 4]; // index into strings array or null for static
+
+  for (var i = 0; i < dynParams.length; i++) {
+    if (dynParams[i] !== null) {
+      offsets.push(dynOffset);
+      dynOffset += 32 + encodedStrings[dynParams[i]].length / 2;
+    } else {
+      offsets.push(null);
+    }
+  }
+
+  var head = '';
+  var oi = 0;
+  for (var i = 0; i < dynParams.length; i++) {
+    if (i === 2) { head += padLeft(year, 64); }
+    else if (i === 5) { head += padLeft(evConverted ? 1 : 0, 64); }
+    else if (i === 6) { head += padLeft(appraisedValue, 64); }
+    else { head += padLeft(offsets[i], 64); oi++; }
+  }
+
+  var body = encodedStrings[0] + encodedStrings[1] + encodedStrings[2] + encodedStrings[3] + encodedStrings[4];
+
+  return selector + head + body;
 }
 
 
@@ -993,6 +1135,27 @@ var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
 var allApps = [];
 var allVehicles = [];
+
+// -- SMART CONTRACT CONFIG (Polygon Amoy Testnet) --------------
+var NFT_ADDRESS   = '0x7aa55016Aa503fDACdF8736b2C1774Ea6a46Dbcb';
+var VAULT_ADDRESS = '0xFAc696e1FE842D0E528448C482fa870236c2060b';
+var AMOY_CHAIN_ID = '0x13882'; // 80002 in hex
+
+var NFT_ABI = [
+  'function mintVehicle(string,string,uint16,string,string,bool,uint256,string) returns (uint256)',
+  'function attachLoanVault(uint256,address)',
+  'function totalVehicles() view returns (uint256)',
+  'function getVehicle(uint256) view returns (tuple(string,string,uint16,string,string,bool,uint256,string,address,bool))'
+];
+
+var VAULT_ABI = [
+  'function getFundingProgress() view returns (uint256,uint256,uint256,uint256)',
+  'function getLoanSummary() view returns (uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256)',
+  'function invest(uint256)',
+  'function getInvestorPosition(address) view returns (uint256,uint256,uint256,uint256,uint256)'
+];
+
+
 var currentAppId = null;
 var currentVehicleId = null;
 
@@ -1392,15 +1555,17 @@ function submitVehicleDecision(action) {
 }
 
 function pushToMarketplace(v, terms) {
-  var vehicle = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
+  var vehicleName = [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ');
   var apr = terms.loan_apr || 12;
   var loanAmt = terms.loan_amount || Math.floor((v.asking_price || 0) * 0.9);
   var term = terms.loan_term_months || 60;
   var r = apr / 100 / 12;
   var monthly = loanAmt > 0 ? (loanAmt * r * Math.pow(1+r,term)) / (Math.pow(1+r,term)-1) : 0;
+
+  // Step 1: Save to Supabase
   var listing = {
     vehicle_id: v.id,
-    vehicle_name: vehicle,
+    vehicle_name: vehicleName,
     vehicle_color: v.color || '',
     vehicle_year: v.year,
     vehicle_make: v.make,
@@ -1416,8 +1581,13 @@ function pushToMarketplace(v, terms) {
     dealer_city: v.dealership_city || 'Las Vegas',
     dealer_state: v.dealership_state || 'NV',
     description: v.description || '',
-    highlights: v.highlights || null
+    highlights: v.highlights || null,
+    nft_contract: NFT_ADDRESS,
+    vault_contract: VAULT_ADDRESS,
+    chain_id: '80002',
+    chain_name: 'Polygon Amoy'
   };
+
   fetch(SB_URL + '/rest/v1/imc_listings', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'return=representation' },
@@ -1425,10 +1595,124 @@ function pushToMarketplace(v, terms) {
   })
   .then(function(r) { return r.json(); })
   .then(function(d) {
-    var id = d && d[0] ? d[0].id.slice(0,8).toUpperCase() : 'saved';
-    alert(vehicle + ' is now live on the marketplace. Listing ID: ' + id);
+    var listingId = d && d[0] ? d[0].id.slice(0,8).toUpperCase() : 'saved';
+    // Step 2: Mint on-chain if MetaMask available
+    if (window.ethereum) {
+      mintVehicleOnChain(v, terms, vehicleName, listingId);
+    } else {
+      alert(vehicleName + ' listed! ID: ' + listingId + ' - Connect MetaMask to mint on-chain.');
+    }
   })
-  .catch(function(e) { console.error('Listing error:', e); alert('Vehicle approved - marketplace listing may need manual update. Check console.'); });
+  .catch(function(e) {
+    console.error('Listing error:', e);
+    alert('Error saving listing. Check console.');
+  });
+}
+
+function mintVehicleOnChain(v, terms, vehicleName, listingId) {
+  // Check we are on Amoy
+  window.ethereum.request({ method: 'eth_chainId' })
+  .then(function(chainId) {
+    if (chainId !== AMOY_CHAIN_ID) {
+      // Prompt switch to Amoy
+      return window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: AMOY_CHAIN_ID }]
+      });
+    }
+  })
+  .then(function() {
+    // Build mintVehicle calldata using ethers-style encoding
+    // Since we don't have ethers loaded, use raw eth_sendTransaction
+    var appraisedCents = Math.round((terms.appraised_value || v.asking_price || 0) * 100);
+    var metaURI = 'https://ooak21.github.io/luisocadiz-portfolio/imc/?vehicle=' + encodeURIComponent(v.id);
+
+    // Use eth_call approach - encode via Remix-style manual ABI
+    // mintVehicle(string,string,uint16,string,string,bool,uint256,string)
+    // selector: 0x9a9d3876
+    var params = {
+      from: window.ethereum.selectedAddress,
+      to: NFT_ADDRESS,
+      data: encodeMintVehicle(
+        v.make || '',
+        v.model || '',
+        parseInt(v.year) || 0,
+        v.color || '',
+        v.vin || ('IMC-' + (v.id || 'VIN').slice(0,8).toUpperCase()),
+        v.ev_converted || false,
+        appraisedCents,
+        metaURI
+      )
+    };
+
+    return window.ethereum.request({ method: 'eth_sendTransaction', params: [params] });
+  })
+  .then(function(txHash) {
+    console.log('On-chain mint tx:', txHash);
+    alert(vehicleName + ' is LIVE! Listing ID: ' + listingId + ' Blockchain TX: ' + txHash + ' View on Polygonscan: https://amoy.polygonscan.com/tx/' + txHash);
+  })
+  .catch(function(e) {
+    console.error('On-chain mint error:', e);
+      alert(vehicleName + ' listed! ID: ' + listingId + ' - Connect MetaMask to mint on-chain.');
+  });
+}
+
+function encodeMintVehicle(make, model, year, color, vin, evConverted, appraisedValue, metadataURI) {
+  // Manual ABI encoding for mintVehicle
+  // Function selector for mintVehicle(string,string,uint16,string,string,bool,uint256,string)
+  var selector = '0x9a9d3876';
+
+  function padLeft(val, len) {
+    var s = val.toString(16);
+    while (s.length < len) s = '0' + s;
+    return s;
+  }
+
+  function encodeString(str) {
+    var bytes = [];
+    for (var i = 0; i < str.length; i++) bytes.push(str.charCodeAt(i));
+    var lenHex = padLeft(bytes.length, 64);
+    var dataHex = '';
+    for (var j = 0; j < bytes.length; j++) dataHex += padLeft(bytes[j], 2);
+    while (dataHex.length % 64 !== 0) dataHex += '00';
+    return lenHex + dataHex;
+  }
+
+  // Offsets for 8 params (dynamic types: string,string,uint16,string,string,bool,uint256,string)
+  // Static params: uint16 (year), bool (evConverted), uint256 (appraisedValue)
+  // Dynamic params: string x5
+  // Head section: 8 x 32 bytes = 256 bytes = 0x100
+  var strings = [make, model, color, vin, metadataURI];
+  var encodedStrings = strings.map(encodeString);
+
+  // Calculate offsets
+  // param order: make(dyn), model(dyn), year(static), color(dyn), vin(dyn), evConverted(static), appraisedValue(static), metadataURI(dyn)
+  var HEAD = 256; // 8 params * 32 bytes
+  var offsets = [];
+  var dynOffset = HEAD;
+  var dynParams = [0, 1, null, 2, 3, null, null, 4]; // index into strings array or null for static
+
+  for (var i = 0; i < dynParams.length; i++) {
+    if (dynParams[i] !== null) {
+      offsets.push(dynOffset);
+      dynOffset += 32 + encodedStrings[dynParams[i]].length / 2;
+    } else {
+      offsets.push(null);
+    }
+  }
+
+  var head = '';
+  var oi = 0;
+  for (var i = 0; i < dynParams.length; i++) {
+    if (i === 2) { head += padLeft(year, 64); }
+    else if (i === 5) { head += padLeft(evConverted ? 1 : 0, 64); }
+    else if (i === 6) { head += padLeft(appraisedValue, 64); }
+    else { head += padLeft(offsets[i], 64); oi++; }
+  }
+
+  var body = encodedStrings[0] + encodedStrings[1] + encodedStrings[2] + encodedStrings[3] + encodedStrings[4];
+
+  return selector + head + body;
 }
 
 
