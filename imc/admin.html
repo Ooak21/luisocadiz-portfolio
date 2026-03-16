@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v4 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -344,7 +345,7 @@ function renderTable(apps) {
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + date + '</td>' +
       '<td style="color:var(--text);">' + name + '</td>' +
       '<td style="font-family:monospace;font-size:0.6rem;color:var(--muted);">' + (app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--') + '</td>' +
-      '<td style="font-family:Bebas-Neue,sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--') + '</td>' +
+      '<td style="font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--') + '</td>' +
       '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + (app.term_months || '--') + ' mo</td>' +
       '<td style="font-family:monospace;font-size:0.7rem;color:' + dtiColor + ';">' + dti + '%</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (app.credit_score_range || '--') + '</td>' +
@@ -404,7 +405,7 @@ function openApp(id) {
   document.getElementById('modalBody').innerHTML =
     '<div>' + col1 +
     '<div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;margin-top:1rem;">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="font-family:monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">DTI Ratio</span><span style="font-family:Bebas-Neue,sans-serif;font-size:1.2rem;color:' + dtiColor + ';">' + (dti > 0 ? dti.toFixed(1)+'%' : '--') + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">DTI Ratio</span><span style="font-size:1.2rem;color:' + dtiColor + ';">' + (dti > 0 ? dti.toFixed(1)+'%' : '--') + '</span></div>' +
     '<div class="dti-bar-wrap"><div class="dti-bar" style="width:' + Math.min(dti*1.5||0,100) + '%;background:' + dtiColor + ';"></div></div>' +
     '<div style="font-family:monospace;font-size:0.55rem;color:var(--dim);margin-top:0.4rem;">' + (dti < 28 ? 'Excellent DTI' : dti < 36 ? 'Acceptable DTI' : dti > 0 ? 'Elevated - review carefully' : '') + '</div></div>' +
     '</div><div>' + col2 + '</div>';
@@ -522,7 +523,7 @@ function renderVehicleTable(vehicles) {
       '<td style="color:var(--text);">' + vehicle + '</td>' +
       '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + dealer + '</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + loc + '</td>' +
-      '<td style="font-family:Bebas-Neue,sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (v.asking_price ? '$'+v.asking_price.toLocaleString() : '--') + '</td>' +
+      '<td style="font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (v.asking_price ? '$'+v.asking_price.toLocaleString() : '--') + '</td>' +
       '<td>' + (v.ev_converted ? '<span class="badge b-ev">EV</span>' : '<span style="color:var(--dim);font-size:0.75rem;">No</span>') + '</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (v.condition ? v.condition.split(' ')[0] : '--') + '</td>' +
       '<td><span class="badge ' + sc + '">' + sl + '</span></td>' +
@@ -766,7 +767,8 @@ function buildDeclineEmail(app, reasons, uwNotes) {
     return '<tr><td style="padding:8px 0;border-bottom:1px solid #1e1e2e;font-family:monospace;font-size:13px;color:#8888aa;">' + r + '</td></tr>';
   }).join('');
 
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>IMC Application Decision</title></head>' +
+  return '<!DOCTYPE html>
+<!-- v4 --><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>IMC Application Decision</title></head>' +
   '<body style="margin:0;padding:0;background:#050507;font-family:Inter,Arial,sans-serif;">' +
   '<div style="max-width:600px;margin:0 auto;background:#050507;">' +
 
@@ -946,7 +948,8 @@ function sendDecisionEmail(app, decision, update) {
     // Approval email - simple for now
     var appId = app.id ? app.id.slice(0,8).toUpperCase() : 'N/A';
     subject = 'Your IMC Application Has Been Approved!';
-    htmlBody = '<!DOCTYPE html><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;">' +
+    htmlBody = '<!DOCTYPE html>
+<!-- v4 --><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;">' +
       '<div style="max-width:600px;margin:0 auto;">' +
       '<div style="border-bottom:2px solid #00d4ff;padding-bottom:24px;margin-bottom:32px;">' +
       '<div style="font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div>' +
@@ -1070,7 +1073,7 @@ function renderTable(apps) {
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + date + '</td>' +
       '<td style="color:var(--text);">' + name + '</td>' +
       '<td style="font-family:monospace;font-size:0.6rem;color:var(--muted);">' + (app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--') + '</td>' +
-      '<td style="font-family:Bebas-Neue,sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--') + '</td>' +
+      '<td style="font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (app.loan_amount ? '$'+app.loan_amount.toLocaleString() : '--') + '</td>' +
       '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + (app.term_months || '--') + ' mo</td>' +
       '<td style="font-family:monospace;font-size:0.7rem;color:' + dtiColor + ';">' + dti + '%</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (app.credit_score_range || '--') + '</td>' +
@@ -1130,7 +1133,7 @@ function openApp(id) {
   document.getElementById('modalBody').innerHTML =
     '<div>' + col1 +
     '<div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;margin-top:1rem;">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="font-family:monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">DTI Ratio</span><span style="font-family:Bebas-Neue,sans-serif;font-size:1.2rem;color:' + dtiColor + ';">' + (dti > 0 ? dti.toFixed(1)+'%' : '--') + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">DTI Ratio</span><span style="font-size:1.2rem;color:' + dtiColor + ';">' + (dti > 0 ? dti.toFixed(1)+'%' : '--') + '</span></div>' +
     '<div class="dti-bar-wrap"><div class="dti-bar" style="width:' + Math.min(dti*1.5||0,100) + '%;background:' + dtiColor + ';"></div></div>' +
     '<div style="font-family:monospace;font-size:0.55rem;color:var(--dim);margin-top:0.4rem;">' + (dti < 28 ? 'Excellent DTI' : dti < 36 ? 'Acceptable DTI' : dti > 0 ? 'Elevated - review carefully' : '') + '</div></div>' +
     '</div><div>' + col2 + '</div>';
@@ -1248,7 +1251,7 @@ function renderVehicleTable(vehicles) {
       '<td style="color:var(--text);">' + vehicle + '</td>' +
       '<td style="font-family:monospace;font-size:0.7rem;color:var(--muted);">' + dealer + '</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">' + loc + '</td>' +
-      '<td style="font-family:Bebas-Neue,sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (v.asking_price ? '$'+v.asking_price.toLocaleString() : '--') + '</td>' +
+      '<td style="font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;">' + (v.asking_price ? '$'+v.asking_price.toLocaleString() : '--') + '</td>' +
       '<td>' + (v.ev_converted ? '<span class="badge b-ev">EV</span>' : '<span style="color:var(--dim);font-size:0.75rem;">No</span>') + '</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (v.condition ? v.condition.split(' ')[0] : '--') + '</td>' +
       '<td><span class="badge ' + sc + '">' + sl + '</span></td>' +
@@ -1492,7 +1495,8 @@ function buildDeclineEmail(app, reasons, uwNotes) {
     return '<tr><td style="padding:8px 0;border-bottom:1px solid #1e1e2e;font-family:monospace;font-size:13px;color:#8888aa;">' + r + '</td></tr>';
   }).join('');
 
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>IMC Application Decision</title></head>' +
+  return '<!DOCTYPE html>
+<!-- v4 --><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>IMC Application Decision</title></head>' +
   '<body style="margin:0;padding:0;background:#050507;font-family:Inter,Arial,sans-serif;">' +
   '<div style="max-width:600px;margin:0 auto;background:#050507;">' +
 
@@ -1672,7 +1676,8 @@ function sendDecisionEmail(app, decision, update) {
     // Approval email - simple for now
     var appId = app.id ? app.id.slice(0,8).toUpperCase() : 'N/A';
     subject = 'Your IMC Application Has Been Approved!';
-    htmlBody = '<!DOCTYPE html><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;">' +
+    htmlBody = '<!DOCTYPE html>
+<!-- v4 --><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;">' +
       '<div style="max-width:600px;margin:0 auto;">' +
       '<div style="border-bottom:2px solid #00d4ff;padding-bottom:24px;margin-bottom:32px;">' +
       '<div style="font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div>' +
