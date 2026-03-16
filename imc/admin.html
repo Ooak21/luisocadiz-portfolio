@@ -908,7 +908,7 @@ function sendDecisionEmail(app, decision, update) {
       '<p style="color:#8888aa;">Our team will contact you shortly. Questions: <a href="mailto:appeals@illusivemotorconcepts.com" style="color:#00d4ff;">appeals@illusivemotorconcepts.com</a></p>'+
       '</div></body></html>';
   }
-  fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/send-email', {
+  fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/smart-action', {
     method:'POST',
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_KEY},
     body:JSON.stringify({to:app.email,subject:subject,html:html})
