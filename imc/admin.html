@@ -303,6 +303,7 @@ var currentAppId = null;
 
 function loadApplications() {
   document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">...</div><div class="empty-state-text">Loading applications</div></div>';
+  console.log('loadApplications called, SB_URL:', SB_URL);
 
   fetch(SB_URL + '/rest/v1/imc_applications?select=*&order=created_at.desc', {
     method: 'GET',
@@ -313,23 +314,33 @@ function loadApplications() {
       'Accept': 'application/json'
     }
   })
-  .then(function(r) { return r.json(); })
+  .then(function(r) {
+    console.log('Response status:', r.status);
+    return r.json();
+  })
   .then(function(data) {
-    allApps = data || [];
+    console.log('Data received:', data);
+    if (data && data.message) {
+      document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><div class="empty-state-text">Error: ' + data.message + '</div></div>';
+      return;
+    }
+    allApps = Array.isArray(data) ? data : [];
     updateStats();
     renderTable(allApps);
   })
   .catch(function(err) {
-    document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><div class="empty-state-text">Error loading applications</div></div>';
+    console.error('loadApplications error:', err);
+    document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="empty-state-icon">!</div><div class="empty-state-text">Network error - ' + err.message + '</div></div>';
   });
 }
 
 function updateStats() {
-  var total = allApps.length;
-  var pending = allApps.filter(function(a) { return a.status === 'pending'; }).length;
-  var approved = allApps.filter(function(a) { return a.status === 'approved'; }).length;
-  var denied = allApps.filter(function(a) { return a.status === 'denied'; }).length;
-  var volume = allApps.reduce(function(sum, a) { return sum + (a.loan_amount || 0); }, 0);
+  var apps = Array.isArray(allApps) ? allApps : [];
+  var total = apps.length;
+  var pending = apps.filter(function(a) { return a.status === 'pending'; }).length;
+  var approved = apps.filter(function(a) { return a.status === 'approved'; }).length;
+  var denied = apps.filter(function(a) { return a.status === 'denied'; }).length;
+  var volume = apps.reduce(function(sum, a) { return sum + (a.loan_amount || 0); }, 0);
 
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statPending').textContent = pending;
@@ -342,7 +353,8 @@ function filterApps(filter, btn) {
   currentFilter = filter;
   document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
   btn.classList.add('active');
-  var filtered = filter === 'all' ? allApps : allApps.filter(function(a) { return a.status === filter; });
+  var apps = Array.isArray(allApps) ? allApps : [];
+  var filtered = filter === 'all' ? apps : apps.filter(function(a) { return a.status === filter; });
   renderTable(filtered);
 }
 
