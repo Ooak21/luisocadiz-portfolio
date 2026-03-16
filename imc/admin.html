@@ -352,7 +352,7 @@ function renderTable(apps) {
       '<td><span class="badge ' + statusClass + '">' + statusLabel + '</span>' +
       (showFlag ? ' <span style="font-family:monospace;font-size:0.5rem;color:var(--gold);background:rgba(240,192,64,0.1);border:1px solid rgba(240,192,64,0.3);padding:0.15rem 0.4rem;"><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 4px var(--gold);animation:pulse 1.5s infinite;margin-right:3px;vertical-align:middle;"></span>REG B</span>' : '') +
       '</td>' +
-      '<td><button onclick="event.stopPropagation();openApp(' + "'" + app.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">Review</button></td>' +
+      '<td><button onclick="event.stopPropagation();openApp(' + "'" + app.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;">Review</button></td>' +
     '</tr>';
   }).join('');
   document.getElementById('tableWrap').innerHTML =
@@ -526,7 +526,7 @@ function renderVehicleTable(vehicles) {
       '<td>' + (v.ev_converted ? '<span class="badge b-ev">EV</span>' : '<span style="color:var(--dim);font-size:0.75rem;">No</span>') + '</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">' + (v.condition ? v.condition.split(' ')[0] : '--') + '</td>' +
       '<td><span class="badge ' + sc + '">' + sl + '</span></td>' +
-      '<td><button onclick="event.stopPropagation();openVehicle(' + "'" + v.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">Review</button></td>' +
+      '<td><button onclick="event.stopPropagation();openVehicle(' + "'" + v.id + "'" + ')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;">Review</button></td>' +
     '</tr>';
   }).join('');
   document.getElementById('vehicleTableWrap').innerHTML =
