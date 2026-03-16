@@ -128,7 +128,7 @@ textarea.inp{resize:vertical;min-height:80px;}
 </nav>
 
 <!-- MAIN -->
-<div class="wrap" id="mainWrap">
+<div class="wrap" id="mainWrap" style="overflow:visible;">
   <div style="margin-bottom:2rem;">
     <div class="sl">IMC - Underwriting Console</div>
     <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,3.5rem);line-height:0.92;letter-spacing:0.02em;">
@@ -193,7 +193,7 @@ textarea.inp{resize:vertical;min-height:80px;}
 
   </div>
   <!-- BLOCKCHAIN OPS PANEL -->
-  <div id="panelChain" style="display:none;">
+  <div id="panelChain" style="display:none;visibility:visible;opacity:1;overflow:visible;position:relative;z-index:1;">
 
     <!-- Contract Registry -->
     <div style="margin-bottom:1.5rem;">
@@ -908,10 +908,10 @@ function sendDecisionEmail(app, decision, update) {
       '<p style="color:#8888aa;">Our team will contact you shortly. Questions: <a href="mailto:appeals@illusivemotorconcepts.com" style="color:#00d4ff;">appeals@illusivemotorconcepts.com</a></p>'+
       '</div></body></html>';
   }
-  fetch('https://api.resend.com/emails', {
+  fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/send-email', {
     method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer re_cKYozSSD_FY3oWRdcEWh2FyGVfmJobUDR'},
-    body:JSON.stringify({from:'IMC Auto Finance <yourimcapplication@luisocadiz.online>',to:[app.email],subject:subject,html:html})
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_KEY},
+    body:JSON.stringify({to:app.email,subject:subject,html:html})
   }).then(function(r){return r.json();}).then(function(d){console.log('Email sent:',d);}).catch(function(e){console.error('Email error:',e);});
 }
 
