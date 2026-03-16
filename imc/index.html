@@ -336,33 +336,29 @@ var AMOY_CHAIN_ID = '0x13882';
 
 function loadVaultProgress() {
   if (!window.ethereum) return;
-  var data = '0x' + 'd3ce6067'; // getFundingProgress() selector
+  // getFundingProgress() selector: 0xcf1d224b
   window.ethereum.request({
     method: 'eth_call',
-    params: [{ to: VAULT_ADDRESS, data: data }, 'latest']
+    params: [{ to: VAULT_ADDRESS, data: '0xcf1d224b' }, 'latest']
   })
   .then(function(result) {
     if (!result || result === '0x') return;
-    // Decode: funded(uint256), target(uint256), remaining(uint256), percentFunded(uint256)
-    var funded  = parseInt(result.slice(2, 66), 16);
-    var target  = parseInt(result.slice(66, 130), 16);
-    var pct     = parseInt(result.slice(194, 258), 16);
-    // USDC has 6 decimals
-    var fundedUSD  = (funded / 1e6).toFixed(0);
-    var targetUSD  = (target / 1e6).toFixed(0);
-    // Update Bel Air card progress bar
+    // Returns: funded, target, remaining, percentFunded (each 32 bytes)
+    var hex = result.slice(2);
+    var funded  = parseInt(hex.slice(0,   64), 16);
+    var target  = parseInt(hex.slice(64,  128), 16);
+    var pct     = parseInt(hex.slice(192, 256), 16);
+    var fundedUSD = Math.floor(funded / 1e6);
+    var targetUSD = Math.floor(target / 1e6);
     var bars = document.querySelectorAll('.prog-fill');
-    if (bars[0]) {
-      bars[0].style.width = Math.min(pct, 100) + '%';
-    }
-    // Update funded text
+    if (bars[0]) bars[0].style.width = Math.min(pct, 100) + '%';
     var fundedEls = document.querySelectorAll('[data-funded]');
     fundedEls.forEach(function(el) {
-      el.textContent = '$' + parseInt(fundedUSD).toLocaleString() + ' / $' + parseInt(targetUSD).toLocaleString() + ' USDC funded';
+      el.textContent = '$' + fundedUSD.toLocaleString() + ' / $' + targetUSD.toLocaleString() + ' USDC funded';
     });
     var pctEls = document.querySelectorAll('[data-pct]');
     pctEls.forEach(function(el) { el.textContent = pct + '%'; });
-    console.log('Vault: $' + fundedUSD + ' / $' + targetUSD + ' funded (' + pct + '%)');
+    console.log('Vault: $' + fundedUSD + ' / $' + targetUSD + ' (' + pct + '%)');
   })
   .catch(function(e) { console.log('Vault read:', e.message); });
 }
