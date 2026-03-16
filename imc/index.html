@@ -257,7 +257,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div>
 
       <!-- Dynamic listings from imc_listings -->
-      <div id="dynamicListings"></div>
+      <div id="dynamicListings" style="display:contents;"></div>
 
       <!-- Coming Soon -->
       <div style="background:var(--surface);border:1px dashed var(--border);padding:3rem 2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;min-height:420px;">
@@ -384,20 +384,21 @@ function switchToAmoy() {
       });
     }
   })
-  .then(function() { loadVaultProgress(); })
+  .then(function() { loadVaultProgress(); loadDynamicListings(); })
   .catch(function(e) { console.log('Chain switch:', e.message); });
 }
 
 function loadDynamicListings() {
-  fetch(SB_URL + '/rest/v1/imc_listings?select=*&status=eq.funding&order=created_at.desc', {
+  fetch(SB_URL + '/rest/v1/imc_listings?select=*&order=created_at.desc', {
     headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
   })
   .then(function(r) { return r.json(); })
   .then(function(listings) {
     if (!listings || listings.length === 0) return;
     var container = document.getElementById('dynamicListings');
+    console.log('Listings loaded:', listings.length);
     if (!container) return;
-    container.style.display = 'contents';
+    container.style.cssText = 'display:contents;';
     var html = listings.map(function(v) {
       var evBadge = v.ev_converted ? '<span class="badge badge-ev" style="margin-left:0.4rem;">EV</span>' : '';
       var loc = [v.dealer_city, v.dealer_state].filter(Boolean).join(', ') || 'Las Vegas, NV';
@@ -439,7 +440,7 @@ function loadDynamicListings() {
   .catch(function(e) { console.error('Listings error:', e); });
 }
 
-window.addEventListener('load', function() { loadDynamicListings(); if (window.ethereum) { switchToAmoy(); } });
+window.addEventListener('load', function() { if (window.ethereum) { switchToAmoy(); } });
 </script>
 </body>
 </html>
