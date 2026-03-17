@@ -1117,7 +1117,14 @@ function resizeHero(){
   });
 }
 resizeHero();
-window.addEventListener('resize', resizeHero);
+window.addEventListener('resize', function(){
+  resizeHero();
+  // Redistribute any particles outside new bounds
+  particles.forEach(function(p){
+    if(p.x > W) p.x = Math.random()*W;
+    if(p.y > H) p.y = Math.random()*H;
+  });
+});
 
 var PARTICLE_COUNT = 180;
 for(var i=0;i<PARTICLE_COUNT;i++){
@@ -1164,8 +1171,8 @@ function drawHero(){
       var p2=particles[j];
       var dx=p.x-p2.x, dy=p.y-p2.y;
       var dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<120){
-        var a=(1-dist/120)*0.12*ao;
+      if(dist<150){
+        var a=(1-dist/150)*0.14*ao;
         hctx.beginPath();
         hctx.moveTo(p.x,p.y);
         hctx.lineTo(p2.x,p2.y);
@@ -1178,8 +1185,8 @@ function drawHero(){
     // Mouse influence
     var mdx=p.x-mouseX, mdy=p.y-mouseY;
     var mdist=Math.sqrt(mdx*mdx+mdy*mdy);
-    if(mdist<150){
-      var ma=(1-mdist/150)*0.3;
+    if(mdist<200){
+      var ma=(1-mdist/200)*0.35;
       hctx.beginPath();
       hctx.moveTo(p.x,p.y);
       hctx.lineTo(mouseX,mouseY);
