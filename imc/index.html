@@ -83,13 +83,14 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <!-- NAV -->
 <nav class="nav">
   <a href="#" class="nav-logo"><div class="nav-dot"></div>IMC</a>
-  <ul class="nav-links">
-    <li><a onclick="document.getElementById('marketplace').scrollIntoView({behavior:'smooth'})">Marketplace</a></li>
-    <li><a href="dashboard.html" style="color:var(--neon)!important;">Dashboard</a>
-    <a href="status.html">My Status</a></li>
-    <li><a href="apply.html">Apply</a></li>
-    <li><a href="dealer.html" class="dealer">Dealer</a></li>
-  </ul>
+  <div style="display:flex;align-items:center;gap:1.5rem;">
+    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--neon);text-decoration:none;">Marketplace</a>
+    <a href="dashboard.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--neon);text-decoration:none;">Dashboard</a>
+    <a href="status.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">My Status</a>
+    <a href="apply.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Apply</a>
+    <a href="dealer.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Dealer</a>
+    <a href="admin.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);text-decoration:none;">Admin</a>
+  </div>
   <button class="nav-wallet" id="walletBtn" onclick="connectWallet()">
     <div class="w-dot" id="wDot"></div>
     <span id="wLabel">Connect Wallet</span>
