@@ -15,8 +15,8 @@
   --cyan2: #00fff7;
   --purple: #6030ff;
   --red: #ff2050;
-  --text: #e8eeff;
-  --muted: #4a5580;
+  --text: #f2f4ff;
+  --muted: #8090b8;
   --dim: #1a1a2e;
   --glow: rgba(0,210,255,0.15);
 }
@@ -819,6 +819,55 @@ footer {
   90%  { opacity:0.4; }
   100% { left:110%; opacity:0; }
 }
+
+/* ── MOBILE ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 0 1.5rem; }
+  .nav-center { display: none; }
+  .nav-right .nav-status { display: none; }
+
+  .hero { padding: 6rem 1.5rem 3rem; }
+  .hero-title { font-size: 2.2rem; }
+  .hero-metrics { display: none; }
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+
+  .data-strip-inner { grid-template-columns: 1fr 1fr; }
+  .ds-item:nth-child(2) { border-right: none; }
+  .ds-item { padding: 0 1rem; }
+
+  section { padding: 4rem 1.5rem; }
+
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .about-visual { height: 300px; margin-top: 0; }
+
+  .products-grid { grid-template-columns: 1fr; }
+  .product-side { grid-template-rows: auto auto; }
+  .product-number { font-size: 3rem; }
+
+  .tech-grid { grid-template-columns: 1fr 1fr; }
+
+  .manifesto { padding: 5rem 1.5rem; }
+  .manifesto-quote { font-size: 1.1rem; }
+
+  footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 2rem 1.5rem; }
+  .footer-links { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+
+  /* CTA section */
+  section .btn-primary, section .btn-ghost { width: 100%; text-align: center; }
+  section [style*="grid-template-columns:repeat(3"] { grid-template-columns: 1fr !important; }
+  section [style*="display:flex;gap:1rem;justify-content:center"] { flex-direction: column; align-items: center; }
+
+  .hud-tl, .hud-tr, .hud-bl, .hud-br { width: 24px; height: 24px; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 1.8rem; }
+  .data-strip-inner { grid-template-columns: 1fr; }
+  .ds-item { border-right: none; border-bottom: 1px solid var(--border); padding: 0.75rem 0; }
+  .tech-grid { grid-template-columns: 1fr; }
+  .products-header { flex-direction: column; gap: 1.5rem; }
+  .spec-list { overflow-x: auto; }
+}
 </style>
 </head>
 <body>
@@ -1047,7 +1096,7 @@ footer {
     <div class="tech-card">
       <div class="tech-card-num">// 06</div>
       <div class="tech-card-name">Supabase Backend</div>
-      <div class="tech-card-desc">PostgreSQL database with real-time subscriptions. Application data, dealer submissions, and underwriting decisions stored with row-level security.</div>
+      <div class="tech-card-desc">Military-grade PostgreSQL with row-level security. Every record encrypted at rest. Wallet-based authentication replaces passwords entirely — more secure than DocuSign, more transparent than any bank.</div>
     </div>
   </div>
 </section>
@@ -1293,7 +1342,7 @@ resizeAbout();
 var nodes3d=[];
 var NODE_COUNT=12;
 var NODE_LABELS=['NFT','USDC','VAULT','P2P','LOAN','APR','YIELD','BLOCK','TX','NODE','DEFI','POLY'];
-var NODE_COLORS=['0,210,255','160,112,255','0,210,255','0,210,255','0,210,255','0,210,255','0,255,136','0,210,255','0,210,255','0,255,136','160,112,255','0,210,255'];
+var NODE_COLORS=['0,210,255','180,80,255','0,210,255','0,210,255','0,210,255','0,210,255','0,255,120','0,210,255','0,210,255','0,255,120','180,80,255','0,210,255'];
 for(var i=0;i<NODE_COUNT;i++){
   var theta=Math.random()*Math.PI*2;
   var phi=Math.random()*Math.PI;
@@ -1362,17 +1411,17 @@ function drawAbout(){
     // Glow
     actx.beginPath();
     actx.arc(n.x,n.y,n.size*3*n.scale,0,Math.PI*2);
-    actx.fillStyle='rgba('+nc+','+(0.05*n.scale*n.scale)+')';
+    actx.fillStyle='rgba('+nc+','+(0.12*n.scale*n.scale)+')';
     actx.fill();
     // Core
     actx.beginPath();
     actx.arc(n.x,n.y,n.size*n.scale,0,Math.PI*2);
-    actx.fillStyle='rgba('+nc+','+(0.7*n.scale/3)+')';
+    actx.fillStyle='rgba('+nc+','+(1.0*n.scale/3)+')';
     actx.fill();
     // Label
     if(n.scale>0.7){
       actx.font=(9*n.scale)+'px "Share Tech Mono"';
-      actx.fillStyle='rgba('+nc+','+(0.5*n.scale)+')';
+      actx.fillStyle='rgba('+nc+','+(0.9*n.scale)+')';
       actx.textAlign='center';
       actx.fillText(n.label,n.x,n.y-n.size*n.scale-5);
     }
