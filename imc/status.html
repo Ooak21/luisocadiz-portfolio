@@ -366,7 +366,7 @@ function initPaymentPortal(wallet) {
   var promises = VAULTS.map(function(v) {
     return window.ethereum.request({
       method: 'eth_call',
-      params: [{ to: v.addr, data: '0xe3e48ce3' }, 'latest']
+      params: [{ to: v.addr, data: '0xeaf8ef7a' }, 'latest']
     }).then(function(result) {
       return { vault: v, borrower: '0x' + result.slice(-40) };
     }).catch(function() {
