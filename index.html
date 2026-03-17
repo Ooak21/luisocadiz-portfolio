@@ -1,1 +1,1333 @@
-<meta http-equiv="refresh" content="0; url=/luisocadiz-portfolio/imc/">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Innovative Blockchain Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #000005;
+  --surface: #03030d;
+  --border: rgba(0,210,255,0.08);
+  --border2: rgba(0,210,255,0.15);
+  --cyan: #00d2ff;
+  --cyan2: #00fff7;
+  --purple: #6030ff;
+  --red: #ff2050;
+  --text: #e8eeff;
+  --muted: #4a5580;
+  --dim: #1a1a2e;
+  --glow: rgba(0,210,255,0.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 400;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CURSOR */
+#cur { width:4px; height:4px; background:var(--cyan); position:fixed; pointer-events:none; z-index:9999; border-radius:50%; box-shadow:0 0 8px var(--cyan); }
+#cur-ring { width:28px; height:28px; border:1px solid rgba(0,210,255,0.5); position:fixed; pointer-events:none; z-index:9998; border-radius:50%; }
+#cur-cross-h { position:fixed; height:1px; width:100vw; background:rgba(0,210,255,0.03); pointer-events:none; z-index:9990; top:50%; transform:translateY(-50%); }
+#cur-cross-v { position:fixed; width:1px; height:100vh; background:rgba(0,210,255,0.03); pointer-events:none; z-index:9990; left:50%; transform:translateX(-50%); }
+
+/* SCANLINES */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,20,0.03) 2px, rgba(0,0,20,0.03) 4px);
+  pointer-events:none; z-index:1000; animation: scanline 8s linear infinite;
+}
+@keyframes scanline {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100vh; }
+}
+
+/* HUD CORNERS */
+.hud-tl, .hud-tr, .hud-bl, .hud-br {
+  position:fixed; width:40px; height:40px; pointer-events:none; z-index:900;
+}
+.hud-tl { top:16px; left:16px; border-top:1px solid rgba(0,210,255,0.4); border-left:1px solid rgba(0,210,255,0.4); }
+.hud-tr { top:16px; right:16px; border-top:1px solid rgba(0,210,255,0.4); border-right:1px solid rgba(0,210,255,0.4); }
+.hud-bl { bottom:16px; left:16px; border-bottom:1px solid rgba(0,210,255,0.4); border-left:1px solid rgba(0,210,255,0.4); }
+.hud-br { bottom:16px; right:16px; border-bottom:1px solid rgba(0,210,255,0.4); border-right:1px solid rgba(0,210,255,0.4); }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:800;
+  padding:0 4rem;
+  height:60px;
+  display:flex; justify-content:space-between; align-items:center;
+  background: rgba(0,0,5,0.85);
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--border);
+}
+
+nav::after {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity:0.3;
+}
+
+.nav-logo {
+  font-family:'Orbitron', sans-serif;
+  font-size:0.7rem;
+  font-weight:700;
+  letter-spacing:0.3em;
+  color:var(--cyan);
+  text-decoration:none;
+  display:flex; align-items:center; gap:0.85rem;
+}
+
+.nav-logo-icon {
+  width:22px; height:22px;
+  border:1px solid var(--cyan);
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+.nav-logo-icon::before {
+  content:'';
+  width:8px; height:8px;
+  background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan), 0 0 20px var(--cyan);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { transform:scale(1); opacity:1; }
+  50% { transform:scale(0.6); opacity:0.5; }
+}
+
+.nav-center {
+  display:flex; gap:3rem;
+}
+.nav-center a {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.6rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-decoration:none;
+  transition:color 0.2s;
+  position:relative;
+}
+.nav-center a::after {
+  content:'';
+  position:absolute; bottom:-4px; left:0; right:100%;
+  height:1px; background:var(--cyan);
+  transition:right 0.3s;
+}
+.nav-center a:hover { color:var(--cyan); }
+.nav-center a:hover::after { right:0; }
+
+.nav-right {
+  display:flex; align-items:center; gap:1.5rem;
+}
+
+.nav-status {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.52rem;
+  letter-spacing:0.15em;
+  color:var(--muted);
+  display:flex; align-items:center; gap:0.5rem;
+}
+.nav-status-dot {
+  width:5px; height:5px;
+  border-radius:50%;
+  background:#00ff88;
+  box-shadow:0 0 6px #00ff88;
+  animation:pulse-dot 2s infinite;
+}
+
+.nav-btn {
+  font-family:'Orbitron', monospace;
+  font-size:0.52rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--bg);
+  background:var(--cyan);
+  border:none;
+  padding:0.6rem 1.5rem;
+  cursor:none;
+  text-decoration:none;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition:all 0.2s;
+  display:inline-block;
+}
+.nav-btn:hover { background:var(--cyan2); box-shadow:0 0 20px rgba(0,210,255,0.5); }
+
+/* HERO */
+.hero {
+  min-height:100vh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:7rem 4rem 4rem;
+  position:relative; overflow:hidden;
+  z-index:2;
+}
+
+/* Full-width ladder grid that fades into the title */
+.hero::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  background-image:
+    linear-gradient(rgba(0,210,255,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,210,255,0.07) 1px, transparent 1px);
+  background-size:40px 40px;
+  mask-image: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0) 90%);
+  -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.1) 75%, rgba(0,0,0,0) 90%);
+  pointer-events:none;
+  z-index:1;
+  animation: grid-drift 20s linear infinite;
+}
+
+@keyframes grid-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
+}
+
+/* Top edge accent line - full width */
+.hero::after {
+  content:'';
+  position:absolute;
+  top:60px; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, 
+    rgba(0,210,255,0.0) 0%,
+    rgba(0,210,255,0.6) 8%,
+    rgba(0,210,255,0.8) 20%,
+    rgba(0,210,255,0.4) 50%,
+    rgba(0,210,255,0.15) 75%,
+    rgba(0,210,255,0.0) 100%);
+  pointer-events:none;
+  z-index:3;
+}
+
+/* HERO CANVAS BACKGROUND */
+#hero-canvas {
+  position:absolute; inset:0;
+  z-index:0;
+}
+
+.hero-content { position:relative; z-index:5; max-width:700px; }
+
+.hero-eyebrow {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.58rem;
+  letter-spacing:0.35em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  margin-bottom:2rem;
+  display:flex; align-items:center; gap:1rem;
+  opacity:0; animation: fadeUp 0.8s 0.3s forwards;
+}
+.hero-eyebrow-line { width:2rem; height:1px; background:var(--cyan); }
+.hero-eyebrow-bracket { color:rgba(0,210,255,0.4); }
+
+.hero-title {
+  font-family:'Orbitron', sans-serif;
+  font-weight:900;
+  font-size:clamp(2.8rem, 6vw, 5.5rem);
+  line-height:1.0;
+  letter-spacing:0.02em;
+  text-transform:uppercase;
+  margin-bottom:1.5rem;
+}
+
+.hero-title .t1 { display:block; color:var(--text); opacity:0; animation:fadeUp 0.8s 0.5s forwards; }
+.hero-title .t2 { display:block; color:var(--text); opacity:0; animation:fadeUp 0.8s 0.65s forwards; }
+.hero-title .t3 {
+  display:block;
+  color:transparent;
+  -webkit-text-stroke:1px var(--cyan);
+  opacity:0; animation:fadeUp 0.8s 0.8s forwards;
+  text-shadow: 0 0 40px rgba(0,210,255,0.3);
+}
+
+.hero-sub {
+  font-family:'Rajdhani', sans-serif;
+  font-size:1.15rem;
+  font-weight:300;
+  color:var(--muted);
+  line-height:1.8;
+  max-width:520px;
+  margin-bottom:3rem;
+  letter-spacing:0.02em;
+  opacity:0; animation:fadeUp 0.8s 1s forwards;
+}
+
+.hero-actions {
+  display:flex; gap:1rem; align-items:center;
+  opacity:0; animation:fadeUp 0.8s 1.2s forwards;
+}
+
+.btn-primary {
+  font-family:'Orbitron', sans-serif;
+  font-size:0.55rem;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--bg);
+  background:var(--cyan);
+  border:none;
+  padding:1rem 2.5rem;
+  cursor:none;
+  text-decoration:none;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  transition:all 0.2s;
+  display:inline-block;
+  position:relative;
+  overflow:hidden;
+}
+.btn-primary::before {
+  content:'';
+  position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition:left 0.4s;
+}
+.btn-primary:hover { box-shadow:0 0 30px rgba(0,210,255,0.5), 0 0 60px rgba(0,210,255,0.2); }
+.btn-primary:hover::before { left:100%; }
+
+.btn-ghost {
+  font-family:'Orbitron', sans-serif;
+  font-size:0.55rem;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  background:transparent;
+  border:1px solid rgba(0,210,255,0.3);
+  padding:1rem 2.5rem;
+  cursor:none;
+  text-decoration:none;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  transition:all 0.2s;
+  display:inline-block;
+}
+.btn-ghost:hover {
+  background:rgba(0,210,255,0.06);
+  border-color:rgba(0,210,255,0.6);
+  box-shadow:0 0 20px rgba(0,210,255,0.1);
+}
+
+/* HERO METRICS */
+.hero-metrics {
+  position:absolute;
+  right:4rem; top:50%; transform:translateY(-50%);
+  display:flex; flex-direction:column; gap:1px;
+  z-index:5;
+  opacity:0; animation:fadeIn 1s 1.5s forwards;
+}
+.metric-item {
+  background:rgba(0,0,15,0.8);
+  border:1px solid var(--border2);
+  padding:1rem 1.5rem;
+  width:220px;
+  position:relative;
+  overflow:hidden;
+}
+.metric-item::before {
+  content:'';
+  position:absolute; left:0; top:0; bottom:0; width:2px;
+  background:var(--cyan);
+}
+.metric-label {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.48rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:0.4rem;
+}
+.metric-val {
+  font-family:'Orbitron', sans-serif;
+  font-weight:700;
+  font-size:1.3rem;
+  color:var(--cyan);
+  letter-spacing:0.05em;
+  text-shadow:0 0 15px rgba(0,210,255,0.4);
+}
+.metric-sub {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.45rem;
+  color:var(--muted);
+  letter-spacing:0.1em;
+  margin-top:0.2rem;
+}
+.metric-item.purple::before { background:var(--purple); }
+.metric-item.purple .metric-val { color:#a070ff; text-shadow:0 0 15px rgba(96,48,255,0.4); }
+.metric-item.red::before { background:var(--red); }
+.metric-item.red .metric-val { color:#ff6080; text-shadow:0 0 15px rgba(255,32,80,0.4); }
+
+/* DATA STRIP */
+.data-strip {
+  position:relative; z-index:2;
+  border-top:1px solid var(--border2);
+  border-bottom:1px solid var(--border2);
+  padding:1.5rem 4rem;
+  background:rgba(0,5,20,0.7);
+  backdrop-filter:blur(10px);
+  overflow:hidden;
+}
+.data-strip::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--cyan), var(--purple), var(--cyan), transparent);
+  animation:scan 4s linear infinite;
+}
+@keyframes scan {
+  0% { transform:translateX(-100%); }
+  100% { transform:translateX(100%); }
+}
+
+.data-strip-inner {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+}
+.ds-item {
+  padding:0 2.5rem;
+  border-right:1px solid var(--border);
+  display:flex; align-items:center; gap:1.5rem;
+}
+.ds-item:first-child { padding-left:0; }
+.ds-item:last-child { border-right:none; }
+.ds-num {
+  font-family:'Orbitron', sans-serif;
+  font-weight:700;
+  font-size:1.8rem;
+  color:var(--cyan);
+  letter-spacing:0.02em;
+  text-shadow:0 0 20px rgba(0,210,255,0.4);
+  line-height:1;
+}
+.ds-text {}
+.ds-label {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.52rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.ds-desc {
+  font-family:'Rajdhani', sans-serif;
+  font-size:0.82rem;
+  color:rgba(74,85,128,0.7);
+  margin-top:0.2rem;
+}
+
+/* SECTIONS */
+section {
+  position:relative; z-index:2;
+  padding:8rem 4rem;
+}
+
+.sec-tag {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.52rem;
+  letter-spacing:0.35em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  margin-bottom:1.5rem;
+  display:flex; align-items:center; gap:1rem;
+}
+.sec-tag::before { content:'//'; color:rgba(0,210,255,0.4); margin-right:0.25rem; }
+
+.sec-title {
+  font-family:'Orbitron', sans-serif;
+  font-weight:800;
+  font-size:clamp(2rem, 4vw, 3.5rem);
+  line-height:1.05;
+  letter-spacing:0.02em;
+  text-transform:uppercase;
+  margin-bottom:1.5rem;
+}
+
+/* ABOUT */
+#about { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+
+.about-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6rem;
+  align-items:center;
+  margin-top:4rem;
+}
+
+.about-text p {
+  font-size:1.05rem;
+  font-weight:300;
+  color:var(--muted);
+  line-height:1.85;
+  margin-bottom:1.5rem;
+  letter-spacing:0.02em;
+}
+.about-text p strong { color:var(--text); font-weight:600; }
+.about-text p em { color:var(--cyan); font-style:normal; }
+
+.spec-list {
+  margin-top:2.5rem;
+  border:1px solid var(--border);
+}
+.spec-row {
+  display:flex;
+  border-bottom:1px solid var(--border);
+  font-family:'Share Tech Mono', monospace;
+}
+.spec-row:last-child { border-bottom:none; }
+.spec-key {
+  font-size:0.52rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:0.85rem 1.25rem;
+  border-right:1px solid var(--border);
+  min-width:160px;
+  background:rgba(0,210,255,0.02);
+}
+.spec-val {
+  font-size:0.6rem;
+  letter-spacing:0.1em;
+  color:var(--cyan);
+  padding:0.85rem 1.25rem;
+}
+
+/* ABOUT VISUAL */
+.about-visual {
+  position:relative;
+  height:420px;
+}
+#about-canvas {
+  width:100%; height:100%;
+}
+
+/* PRODUCTS */
+#products { background:var(--bg); }
+
+.products-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-bottom:3rem;
+  padding-bottom:2rem;
+  border-bottom:1px solid var(--border);
+}
+
+.products-grid {
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:1px;
+  background:var(--border2);
+  border:1px solid var(--border2);
+}
+
+.product-card {
+  background:var(--bg);
+  padding:3rem;
+  position:relative;
+  overflow:hidden;
+  text-decoration:none;
+  color:inherit;
+  display:block;
+  cursor:none;
+  transition:background 0.3s;
+}
+
+.product-card::after {
+  content:'';
+  position:absolute;
+  bottom:0; left:0; right:100%; height:2px;
+  background:var(--cyan);
+  transition:right 0.4s;
+}
+.product-card:hover::after { right:0; }
+.product-card:hover { background:rgba(0,210,255,0.02); }
+
+.product-card.disabled { cursor:not-allowed; }
+.product-card.disabled:hover { background:var(--bg); }
+.product-card.disabled::after { display:none; }
+
+.product-number {
+  position:absolute; top:2rem; right:2rem;
+  font-family:'Orbitron', sans-serif;
+  font-weight:900;
+  font-size:6rem;
+  color:rgba(0,210,255,0.04);
+  letter-spacing:-0.05em;
+  line-height:1;
+}
+
+.product-badge {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.5rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  padding:0.2rem 0.75rem;
+  border:1px solid;
+  display:inline-flex;
+  align-items:center;
+  gap:0.4rem;
+  margin-bottom:2rem;
+}
+.badge-live { color:#00ff88; border-color:rgba(0,255,136,0.3); background:rgba(0,255,136,0.05); }
+.badge-soon { color:var(--muted); border-color:var(--border); }
+.badge-dev { color:#a070ff; border-color:rgba(160,112,255,0.3); background:rgba(160,112,255,0.05); }
+.badge-dot { width:4px; height:4px; border-radius:50%; background:currentColor; animation:pulse-dot 2s infinite; }
+
+.product-name {
+  font-family:'Orbitron', sans-serif;
+  font-weight:900;
+  font-size:3rem;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  color:var(--text);
+  line-height:1;
+  margin-bottom:0.35rem;
+}
+
+.product-full {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.55rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:1.5rem;
+}
+
+.product-desc {
+  font-size:1rem;
+  font-weight:300;
+  color:var(--muted);
+  line-height:1.75;
+  margin-bottom:2rem;
+  max-width:480px;
+  letter-spacing:0.02em;
+}
+
+.product-tags {
+  display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:2.5rem;
+}
+.ptag {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.45rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:rgba(0,210,255,0.5);
+  border:1px solid rgba(0,210,255,0.15);
+  padding:0.2rem 0.6rem;
+  background:rgba(0,210,255,0.03);
+}
+
+.product-cta {
+  font-family:'Orbitron', sans-serif;
+  font-size:0.52rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--cyan);
+  display:flex; align-items:center; gap:0.75rem;
+}
+.cta-arrow {
+  width:24px; height:1px; background:var(--cyan);
+  position:relative; transition:width 0.3s;
+}
+.cta-arrow::after {
+  content:'';
+  position:absolute; right:0; top:-3px;
+  width:7px; height:7px;
+  border-right:1px solid var(--cyan);
+  border-top:1px solid var(--cyan);
+  transform:rotate(45deg);
+}
+.product-card:hover .cta-arrow { width:48px; }
+
+/* SIDE STACK */
+.product-side {
+  display:grid; grid-template-rows:1fr 1fr;
+  gap:1px; background:var(--border2);
+}
+.product-side-card {
+  background:var(--bg);
+  padding:2.5rem;
+  position:relative; overflow:hidden;
+}
+.product-side-card .product-name { font-size:1.8rem; }
+
+/* TECH */
+#tech { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+
+.tech-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  margin-top:4rem;
+}
+
+.tech-card {
+  background:var(--surface);
+  padding:2.5rem 2rem;
+  position:relative; overflow:hidden;
+  transition:background 0.2s;
+}
+.tech-card:hover { background:rgba(0,210,255,0.02); }
+.tech-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity:0; transition:opacity 0.3s;
+}
+.tech-card:hover::before { opacity:1; }
+
+.tech-card-num {
+  font-family:'Orbitron', monospace;
+  font-size:0.5rem;
+  letter-spacing:0.2em;
+  color:rgba(0,210,255,0.2);
+  margin-bottom:1.5rem;
+}
+.tech-card-name {
+  font-family:'Orbitron', sans-serif;
+  font-weight:700;
+  font-size:1.1rem;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  color:var(--text);
+  margin-bottom:0.5rem;
+}
+.tech-card-desc {
+  font-size:0.9rem;
+  font-weight:300;
+  color:var(--muted);
+  line-height:1.7;
+  letter-spacing:0.02em;
+}
+
+/* MANIFESTO */
+.manifesto {
+  position:relative; z-index:2;
+  padding:10rem 4rem;
+  border-top:1px solid var(--border);
+  text-align:center;
+  overflow:hidden;
+}
+.manifesto::before {
+  content:'';
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse at center, rgba(0,210,255,0.04) 0%, transparent 70%);
+}
+.manifesto-quote {
+  font-family:'Orbitron', sans-serif;
+  font-weight:700;
+  font-size:clamp(1.2rem, 2.5vw, 2rem);
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  line-height:1.4;
+  max-width:800px;
+  margin:0 auto 2rem;
+  position:relative; z-index:1;
+}
+.manifesto-quote em {
+  font-style:normal;
+  color:var(--cyan);
+  text-shadow:0 0 20px rgba(0,210,255,0.4);
+}
+.manifesto-attr {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.55rem;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--muted);
+  position:relative; z-index:1;
+}
+
+/* FOOTER */
+footer {
+  position:relative; z-index:2;
+  border-top:1px solid var(--border2);
+  padding:2.5rem 4rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:var(--surface);
+}
+.footer-logo {
+  font-family:'Orbitron', sans-serif;
+  font-size:0.55rem;
+  font-weight:700;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--cyan);
+}
+.footer-links { display:flex; gap:2rem; }
+.footer-links a {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.5rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-decoration:none;
+  transition:color 0.2s;
+}
+.footer-links a:hover { color:var(--cyan); }
+.footer-copy {
+  font-family:'Share Tech Mono', monospace;
+  font-size:0.5rem;
+  letter-spacing:0.1em;
+  color:var(--dim);
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0}to{opacity:1} }
+
+.reveal { opacity:0; transform:translateY(32px); transition:all 0.9s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* TOP EDGE STREAKS */
+.hero-top-streaks {
+  position:absolute;
+  top:58px; left:0; right:0;
+  height:80px;
+  pointer-events:none;
+  z-index:4;
+  overflow:hidden;
+}
+.streak {
+  position:absolute;
+  top:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--cyan), transparent);
+  animation: streak-move 3s linear infinite;
+  opacity:0;
+}
+.streak.s1 { width:30%; animation-delay:0s; animation-duration:2.8s; top:0px; }
+.streak.s2 { width:20%; animation-delay:0.6s; animation-duration:3.2s; top:8px; opacity:0; }
+.streak.s3 { width:40%; animation-delay:1.2s; animation-duration:2.5s; top:2px; }
+.streak.s4 { width:15%; animation-delay:1.8s; animation-duration:3.8s; top:5px; }
+.streak.s5 { width:25%; animation-delay:2.4s; animation-duration:2.2s; top:1px; }
+
+@keyframes streak-move {
+  0%   { left:-40%; opacity:0; }
+  5%   { opacity:0.8; }
+  90%  { opacity:0.4; }
+  100% { left:110%; opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div id="cur-cross-h"></div>
+<div id="cur-cross-v"></div>
+<div class="hud-tl"></div>
+<div class="hud-tr"></div>
+<div class="hud-bl"></div>
+<div class="hud-br"></div>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon"></div>
+    IBS
+  </a>
+  <div class="nav-center">
+    <a href="#about">About</a>
+    <a href="#products">Products</a>
+    <a href="#tech">Technology</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-status">
+      <div class="nav-status-dot"></div>
+      TESTNET LIVE
+    </div>
+    <a href="#products" class="nav-btn">Launch App</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="hero-canvas"></canvas>
+
+  <!-- TOP EDGE STREAKS -->
+  <div class="hero-top-streaks">
+    <div class="streak s1"></div>
+    <div class="streak s2"></div>
+    <div class="streak s3"></div>
+    <div class="streak s4"></div>
+    <div class="streak s5"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <span class="hero-eyebrow-bracket">[</span>
+      Innovative Blockchain Solutions
+      <span class="hero-eyebrow-bracket">]</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="t1">Decentralized</span>
+      <span class="t2">Financial</span>
+      <span class="t3">Infrastructure</span>
+    </h1>
+    <p class="hero-sub">We design and deploy on-chain financial protocols for real-world assets. No intermediaries. No hidden fees. Smart contracts that execute exactly as written.</p>
+    <div class="hero-actions">
+      <a href="#products" class="btn-primary">Explore Products</a>
+      <a href="#about" class="btn-ghost">Our Mission</a>
+    </div>
+  </div>
+
+  <div class="hero-metrics">
+    <div class="metric-item">
+      <div class="metric-label">// Settlement Layer</div>
+      <div class="metric-val">Polygon PoS</div>
+      <div class="metric-sub">Chain ID: 137 &nbsp;·&nbsp; ~2s finality</div>
+    </div>
+    <div class="metric-item purple">
+      <div class="metric-label">// Currency</div>
+      <div class="metric-val">USDC</div>
+      <div class="metric-sub">Circle · USD-pegged stablecoin</div>
+    </div>
+    <div class="metric-item">
+      <div class="metric-label">// Collateral Protocol</div>
+      <div class="metric-val">ERC-721</div>
+      <div class="metric-sub">NFT-backed asset verification</div>
+    </div>
+    <div class="metric-item red">
+      <div class="metric-label">// Intermediary Fees</div>
+      <div class="metric-val">$0.00</div>
+      <div class="metric-sub">Pure peer-to-peer settlement</div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA STRIP -->
+<div class="data-strip">
+  <div class="data-strip-inner">
+    <div class="ds-item">
+      <div class="ds-num">P2P</div>
+      <div class="ds-text">
+        <div class="ds-label">Architecture</div>
+        <div class="ds-desc">Direct investor-to-borrower</div>
+      </div>
+    </div>
+    <div class="ds-item">
+      <div class="ds-num">100%</div>
+      <div class="ds-text">
+        <div class="ds-label">On-Chain Verified</div>
+        <div class="ds-desc">Every transaction immutable</div>
+      </div>
+    </div>
+    <div class="ds-item">
+      <div class="ds-num">24/7</div>
+      <div class="ds-text">
+        <div class="ds-label">Availability</div>
+        <div class="ds-desc">Smart contracts never sleep</div>
+      </div>
+    </div>
+    <div class="ds-item">
+      <div class="ds-num">2%</div>
+      <div class="ds-text">
+        <div class="ds-label">Platform Fee</div>
+        <div class="ds-desc">Industry lowest overhead</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-tag">Who We Are</div>
+  <h2 class="sec-title reveal">We Build Protocols.<br><span style="color:var(--cyan)">Not Promises.</span></h2>
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p><strong>Innovative Blockchain Solutions</strong> is a Las Vegas-based Web3 development firm building decentralized financial infrastructure for real-world assets.</p>
+      <p>We believe the future of finance is <em>programmable, transparent, and accessible</em> to everyone. Every product we build runs on-chain — auditable by anyone, controlled by no one.</p>
+      <p>Our first protocol, <strong>IMC (Illusive Motor Concepts)</strong>, brings peer-to-peer auto financing to the blockchain. Vehicle loans funded by real investors, settled in USDC, secured by NFT-backed collateral on Polygon.</p>
+      <div class="spec-list">
+        <div class="spec-row"><div class="spec-key">Network</div><div class="spec-val">Polygon PoS · Chain ID 137</div></div>
+        <div class="spec-row"><div class="spec-key">Settlement</div><div class="spec-val">USDC · Circle · USD-pegged</div></div>
+        <div class="spec-row"><div class="spec-key">Collateral</div><div class="spec-val">ERC-721 NFT · Vehicle-backed</div></div>
+        <div class="spec-row"><div class="spec-key">Architecture</div><div class="spec-val">Custom Vault Contracts · Solidity</div></div>
+        <div class="spec-row"><div class="spec-key">Status</div><div class="spec-val">Live on Testnet · Mainnet Q2 2026</div></div>
+      </div>
+    </div>
+    <div class="about-visual">
+      <canvas id="about-canvas"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="products-header reveal">
+    <div>
+      <div class="sec-tag">Our Products</div>
+      <h2 class="sec-title">What We're<br>Deploying</h2>
+    </div>
+    <p style="max-width:280px;color:var(--muted);font-size:0.95rem;line-height:1.7;font-weight:300;letter-spacing:0.02em;">Each protocol is a standalone smart contract system deployed on-chain. Real contracts. Real assets. Real yield.</p>
+  </div>
+
+  <div class="products-grid reveal">
+    <a href="luisocadiz-portfolio/imc/" class="product-card">
+      <div class="product-number">01</div>
+      <div class="product-badge badge-live"><span class="badge-dot"></span>Live on Testnet</div>
+      <div class="product-name">IMC</div>
+      <div class="product-full">Illusive Motor Concepts &nbsp;·&nbsp; Auto Finance Protocol</div>
+      <p class="product-desc">Peer-to-peer auto financing on the blockchain. Classic EV owners borrow directly from investors. No banks. No brokers. Yield paid in USDC every 30 days.</p>
+      <div class="product-tags">
+        <span class="ptag">Auto Finance</span>
+        <span class="ptag">P2P Lending</span>
+        <span class="ptag">NFT Collateral</span>
+        <span class="ptag">USDC Yield</span>
+        <span class="ptag">Polygon</span>
+        <span class="ptag">ERC-721</span>
+      </div>
+      <div class="product-cta">
+        Enter Platform
+        <div class="cta-arrow"></div>
+      </div>
+    </a>
+
+    <div class="product-side">
+      <div class="product-side-card disabled">
+        <div class="product-number" style="font-size:4rem;">02</div>
+        <div class="product-badge badge-soon">Coming Soon</div>
+        <div class="product-name">IBS RE</div>
+        <div class="product-full">Real Estate Protocol</div>
+        <p class="product-desc" style="font-size:0.88rem;margin-bottom:0;">Tokenized property financing. Fractional investment in real estate loans. Rental yield distributed on-chain.</p>
+      </div>
+      <div class="product-side-card disabled">
+        <div class="product-number" style="font-size:4rem;">03</div>
+        <div class="product-badge badge-dev"><span class="badge-dot"></span>In Development</div>
+        <div class="product-name">IBS CO</div>
+        <div class="product-full">Commerce Protocol</div>
+        <p class="product-desc" style="font-size:0.88rem;margin-bottom:0;">SMB invoice factoring on-chain. Businesses receive instant liquidity. Investors earn yield on short-term receivables.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH -->
+<section id="tech">
+  <div class="sec-tag">Technology</div>
+  <h2 class="sec-title reveal">Battle-Tested<br><span style="color:var(--cyan)">Infrastructure</span></h2>
+  <div class="tech-grid reveal">
+    <div class="tech-card">
+      <div class="tech-card-num">// 01</div>
+      <div class="tech-card-name">Polygon PoS</div>
+      <div class="tech-card-desc">EVM-compatible Layer 2 with ~2 second finality and sub-cent transaction costs. MATIC secured proof-of-stake consensus.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-card-num">// 02</div>
+      <div class="tech-card-name">Solidity Vaults</div>
+      <div class="tech-card-desc">Custom smart contract vault architecture. Each loan is its own isolated contract — investor funds, yield distribution, and payment logic fully automated.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-card-num">// 03</div>
+      <div class="tech-card-name">USDC Settlement</div>
+      <div class="tech-card-desc">Circle's regulated USD-pegged stablecoin. Zero volatility exposure for investors. Payments settle on-chain within seconds.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-card-num">// 04</div>
+      <div class="tech-card-name">ERC-721 NFTs</div>
+      <div class="tech-card-desc">Vehicle assets are minted as NFTs on-chain. Each token stores make, model, VIN, appraisal value, and vault address permanently on Polygon.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-card-num">// 05</div>
+      <div class="tech-card-name">MetaMask + WalletConnect</div>
+      <div class="tech-card-desc">Wallet-native authentication. No passwords. No accounts. Connect your wallet, sign a message, access your position instantly from any device.</div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-card-num">// 06</div>
+      <div class="tech-card-name">Supabase Backend</div>
+      <div class="tech-card-desc">PostgreSQL database with real-time subscriptions. Application data, dealer submissions, and underwriting decisions stored with row-level security.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<div class="manifesto">
+  <p class="manifesto-quote reveal">"Finance should be a <em>protocol</em>, not a privilege.<br>We're building the infrastructure that makes that real."</p>
+  <div class="manifesto-attr reveal">— Innovative Blockchain Solutions &nbsp;·&nbsp; Las Vegas, NV &nbsp;·&nbsp; 2026</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Innovative Blockchain Solutions</div>
+  <div class="footer-links">
+    <a href="luisocadiz-portfolio/imc/">IMC Platform</a>
+    <a href="luisocadiz-portfolio/imc/apply.html">Apply</a>
+    <a href="luisocadiz-portfolio/imc/dashboard.html">Invest</a>
+    <a href="luisocadiz-portfolio/imc/dealer.html">Dealers</a>
+    <a href="luisocadiz-portfolio/imc/admin.html">Admin</a>
+  </div>
+  <div class="footer-copy">&#169; 2026 IBS. All rights reserved.</div>
+</footer>
+
+<script>
+// CURSOR
+var cur = document.getElementById('cur');
+var ring = document.getElementById('cur-ring');
+var ch = document.getElementById('cur-cross-h');
+var cv = document.getElementById('cur-cross-v');
+var mx=0,my=0,rx=0,ry=0;
+
+document.addEventListener('mousemove', function(e) {
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=(mx-2)+'px'; cur.style.top=(my-2)+'px';
+  ch.style.top=my+'px';
+  cv.style.left=mx+'px';
+});
+
+(function animRing(){
+  rx+=(mx-rx-14)*0.1; ry+=(my-ry-14)*0.1;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+
+document.querySelectorAll('a,button').forEach(function(el){
+  el.addEventListener('mouseenter',function(){
+    cur.style.transform='scale(3)';
+    ring.style.transform='scale(1.6)';
+    ring.style.borderColor='rgba(0,210,255,0.8)';
+  });
+  el.addEventListener('mouseleave',function(){
+    cur.style.transform='scale(1)';
+    ring.style.transform='scale(1)';
+    ring.style.borderColor='rgba(0,210,255,0.5)';
+  });
+});
+
+// HERO CANVAS - particle network
+var hc = document.getElementById('hero-canvas');
+var hctx = hc.getContext('2d');
+var particles=[], W, H;
+
+function resizeHero(){
+  W=hc.width=hc.offsetWidth;
+  H=hc.height=hc.offsetHeight;
+}
+resizeHero();
+window.addEventListener('resize', resizeHero);
+
+var PARTICLE_COUNT = 120;
+for(var i=0;i<PARTICLE_COUNT;i++){
+  particles.push({
+    x: Math.random()*1400,
+    y: Math.random()*900,
+    vx: (Math.random()-0.5)*0.3,
+    vy: (Math.random()-0.5)*0.3,
+    size: Math.random()*1.5+0.3,
+    opacity: Math.random()*0.6+0.1,
+    pulse: Math.random()*Math.PI*2
+  });
+}
+
+var mouseX=W/2, mouseY=H/2;
+document.addEventListener('mousemove',function(e){
+  var rect=hc.getBoundingClientRect();
+  mouseX=e.clientX-rect.left;
+  mouseY=e.clientY-rect.top;
+});
+
+var frameCount=0;
+function drawHero(){
+  hctx.clearRect(0,0,W,H);
+
+  // Background gradient
+  var bg=hctx.createRadialGradient(W*0.6,H*0.5,0,W*0.6,H*0.5,W*0.6);
+  bg.addColorStop(0,'rgba(0,30,50,0.4)');
+  bg.addColorStop(1,'rgba(0,0,5,0)');
+  hctx.fillStyle=bg;
+  hctx.fillRect(0,0,W,H);
+
+  frameCount++;
+  particles.forEach(function(p,i){
+    p.x+=p.vx; p.y+=p.vy;
+    p.pulse+=0.02;
+    if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+
+    var ao=p.opacity*(0.7+0.3*Math.sin(p.pulse));
+
+    // Draw connections
+    for(var j=i+1;j<particles.length;j++){
+      var p2=particles[j];
+      var dx=p.x-p2.x, dy=p.y-p2.y;
+      var dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){
+        var a=(1-dist/120)*0.12*ao;
+        hctx.beginPath();
+        hctx.moveTo(p.x,p.y);
+        hctx.lineTo(p2.x,p2.y);
+        hctx.strokeStyle='rgba(0,210,255,'+a+')';
+        hctx.lineWidth=0.5;
+        hctx.stroke();
+      }
+    }
+
+    // Mouse influence
+    var mdx=p.x-mouseX, mdy=p.y-mouseY;
+    var mdist=Math.sqrt(mdx*mdx+mdy*mdy);
+    if(mdist<150){
+      var ma=(1-mdist/150)*0.3;
+      hctx.beginPath();
+      hctx.moveTo(p.x,p.y);
+      hctx.lineTo(mouseX,mouseY);
+      hctx.strokeStyle='rgba(0,255,247,'+ma+')';
+      hctx.lineWidth=0.5;
+      hctx.stroke();
+    }
+
+    // Draw particle
+    hctx.beginPath();
+    hctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    hctx.fillStyle='rgba(0,210,255,'+ao+')';
+    hctx.fill();
+
+    // Glow on some particles
+    if(p.size>1.2){
+      hctx.beginPath();
+      hctx.arc(p.x,p.y,p.size*3,0,Math.PI*2);
+      hctx.fillStyle='rgba(0,210,255,'+(ao*0.08)+')';
+      hctx.fill();
+    }
+  });
+
+  // Horizontal scan line
+  var scanY=(frameCount*0.5)%H;
+  var scanGrad=hctx.createLinearGradient(0,scanY-20,0,scanY+20);
+  scanGrad.addColorStop(0,'rgba(0,210,255,0)');
+  scanGrad.addColorStop(0.5,'rgba(0,210,255,0.04)');
+  scanGrad.addColorStop(1,'rgba(0,210,255,0)');
+  hctx.fillStyle=scanGrad;
+  hctx.fillRect(0,scanY-20,W,40);
+
+  requestAnimationFrame(drawHero);
+}
+drawHero();
+
+// ABOUT CANVAS - rotating 3D-like blockchain visualization
+var ac = document.getElementById('about-canvas');
+var actx = ac.getContext('2d');
+var AW, AH, aframe=0;
+
+function resizeAbout(){
+  AW=ac.width=ac.offsetWidth;
+  AH=ac.height=ac.offsetHeight;
+}
+resizeAbout();
+
+var nodes3d=[];
+var NODE_COUNT=12;
+for(var i=0;i<NODE_COUNT;i++){
+  var theta=Math.random()*Math.PI*2;
+  var phi=Math.random()*Math.PI;
+  var r=80+Math.random()*60;
+  nodes3d.push({
+    ox:r*Math.sin(phi)*Math.cos(theta),
+    oy:r*Math.sin(phi)*Math.sin(theta),
+    oz:r*Math.cos(phi),
+    size:Math.random()*3+1.5,
+    label:['NFT','USDC','VAULT','P2P','LOAN','APR','YIELD','BLOCK','TX','NODE','DEFI','POLY'][i]
+  });
+}
+
+function project(x,y,z,rx,ry){
+  // Rotate around Y axis
+  var cosY=Math.cos(ry), sinY=Math.sin(ry);
+  var x1=x*cosY-z*sinY, z1=x*sinY+z*cosY;
+  // Rotate around X axis
+  var cosX=Math.cos(rx), sinX=Math.sin(rx);
+  var y1=y*cosX-z1*sinX, z2=y*sinX+z1*cosX;
+  // Project
+  var fov=400;
+  var scale=fov/(fov+z2);
+  return { x:x1*scale+AW/2, y:y1*scale+AH/2, z:z2, scale:scale };
+}
+
+function drawAbout(){
+  actx.clearRect(0,0,AW,AH);
+  aframe+=0.008;
+
+  var rotY=aframe, rotX=Math.sin(aframe*0.3)*0.3;
+
+  // Project all nodes
+  var proj=nodes3d.map(function(n){
+    return Object.assign({}, n, project(n.ox,n.oy,n.oz,rotX,rotY));
+  });
+
+  // Sort by z
+  proj.sort(function(a,b){return a.z-b.z;});
+
+  // Draw connections
+  for(var i=0;i<proj.length;i++){
+    for(var j=i+1;j<proj.length;j++){
+      var a=proj[i], b=proj[j];
+      var dx=a.ox-b.ox, dy=a.oy-b.oy, dz=a.oz-b.oz;
+      var d3=Math.sqrt(dx*dx+dy*dy+dz*dz);
+      if(d3<120){
+        var alpha=(1-d3/120)*0.25*(a.scale+b.scale)/2;
+        actx.beginPath();
+        actx.moveTo(a.x,a.y);
+        actx.lineTo(b.x,b.y);
+        actx.strokeStyle='rgba(0,210,255,'+alpha+')';
+        actx.lineWidth=0.8;
+        actx.stroke();
+      }
+    }
+  }
+
+  // Draw nodes
+  proj.forEach(function(n){
+    var a=Math.max(0.2,(n.z+200)/350)*n.scale;
+    // Glow
+    actx.beginPath();
+    actx.arc(n.x,n.y,n.size*3*n.scale,0,Math.PI*2);
+    actx.fillStyle='rgba(0,210,255,'+(0.04*n.scale*n.scale)+')';
+    actx.fill();
+    // Core
+    actx.beginPath();
+    actx.arc(n.x,n.y,n.size*n.scale,0,Math.PI*2);
+    actx.fillStyle='rgba(0,210,255,'+(0.6*n.scale/3)+')';
+    actx.fill();
+    // Label
+    if(n.scale>0.7){
+      actx.font=(9*n.scale)+'px "Share Tech Mono"';
+      actx.fillStyle='rgba(0,210,255,'+(0.4*n.scale)+')';
+      actx.textAlign='center';
+      actx.fillText(n.label,n.x,n.y-n.size*n.scale-5);
+    }
+  });
+
+  // Center orb
+  var orbGrad=actx.createRadialGradient(AW/2,AH/2,0,AW/2,AH/2,40);
+  orbGrad.addColorStop(0,'rgba(0,210,255,0.15)');
+  orbGrad.addColorStop(1,'rgba(0,210,255,0)');
+  actx.beginPath();
+  actx.arc(AW/2,AH/2,40,0,Math.PI*2);
+  actx.fillStyle=orbGrad;
+  actx.fill();
+  actx.beginPath();
+  actx.arc(AW/2,AH/2,4,0,Math.PI*2);
+  actx.fillStyle='rgba(0,255,247,0.9)';
+  actx.fill();
+
+  requestAnimationFrame(drawAbout);
+}
+drawAbout();
+
+// SCROLL REVEAL
+var reveals=document.querySelectorAll('.reveal');
+var obs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.1});
+reveals.forEach(function(el){obs.observe(el);});
+</script>
+</body>
+</html>
