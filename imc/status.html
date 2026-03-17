@@ -396,6 +396,7 @@ function loadVaultDetails(vaultAddr) {
     if (clean.length < 512) throw new Error('Bad response');
     var statusVal    = parseInt(clean.slice(0,64), 16);
     var loanAmount   = parseInt(clean.slice(64,128), 16);
+    var totalFunded  = parseInt(clean.slice(128,192), 16);
     var monthlyPay   = parseInt(clean.slice(192,256), 16);
     var nextDue      = parseInt(clean.slice(256,320), 16);
     var paymentsLeft = parseInt(clean.slice(320,384), 16);
@@ -411,20 +412,25 @@ function loadVaultDetails(vaultAddr) {
       statBox('Monthly Payment', '$' + (monthlyPay/1000000).toFixed(2) + ' USDC', 'var(--neon)') +
       statBox('Payments Remaining', paymentsLeft + (totalPmts > 0 ? ' of ' + totalPmts : ''), 'var(--text)');
 
-    var now = Math.floor(Date.now()/1000);
-    var overdue = nextDue > 0 && now > nextDue;
-    var dueStr = nextDue > 0 ? new Date(nextDue*1000).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : 'Ready now';
-    var dueColor = overdue ? 'var(--red)' : 'var(--gold)';
-    document.getElementById('paymentDue').innerHTML =
-      '<div style="font-family:monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Next Payment Due</div>' +
-      '<div style="font-size:1.8rem;color:' + dueColor + ';">' + dueStr + '</div>' +
-      (overdue ? '<div style="font-family:monospace;font-size:0.58rem;color:var(--red);margin-top:0.25rem;">OVERDUE - Please pay immediately to avoid default</div>' : '');
-
     if (statusVal !== 1) {
+      // Not active - hide payment due, disable button
+      document.getElementById('paymentDue').innerHTML =
+        '<div style="font-family:monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Payment Due</div>' +
+        '<div style="font-size:1.1rem;color:var(--dim);">Available once vault is fully funded</div>';
       document.getElementById('makePaymentBtn').disabled = true;
       document.getElementById('makePaymentBtn').style.opacity = '0.4';
       document.getElementById('makePaymentBtn').style.cursor = 'not-allowed';
-      document.getElementById('paymentStatus').textContent = statusLabel === 'PAID OFF' ? 'Loan fully paid off. Congratulations!' : 'Vault status: ' + statusLabel;
+      document.getElementById('makePaymentBtn').textContent = statusLabel === 'PAID OFF' ? 'Loan Fully Paid Off' : 'Awaiting Full Funding';
+      document.getElementById('paymentStatus').textContent = statusLabel === 'PAID OFF' ? 'Congratulations - loan complete!' : 'Vault is ' + (Math.round(totalFunded/loanAmount*100)||0) + '% funded. Payment available once fully funded.';
+    } else {
+      var now = Math.floor(Date.now()/1000);
+      var overdue = nextDue > 0 && now > nextDue;
+      var dueStr = nextDue > 0 ? new Date(nextDue*1000).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : 'Ready now';
+      var dueColor = overdue ? 'var(--red)' : 'var(--gold)';
+      document.getElementById('paymentDue').innerHTML =
+        '<div style="font-family:monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Next Payment Due</div>' +
+        '<div style="font-size:1.8rem;color:' + dueColor + ';">' + dueStr + '</div>' +
+        (overdue ? '<div style="font-family:monospace;font-size:0.58rem;color:var(--red);margin-top:0.25rem;">OVERDUE - Please pay immediately to avoid default</div>' : '');
     }
   }).catch(function(e) {
     document.getElementById('portalLoading').textContent = 'Could not load vault data. Check your network.';
