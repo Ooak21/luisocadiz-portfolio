@@ -299,7 +299,7 @@ function renderStatus(app) {
   // Approved terms
   if (status === 'approved') {
     document.getElementById('approvedTerms').style.display = 'block';
-    if (WALLET) setTimeout(function(){ initPaymentPortal(WALLET); }, 500);
+    if (WALLET) setTimeout(function(){ initPaymentPortal(WALLET, app); }, 500);
     document.getElementById('reapplyBtn').style.display = 'flex';
     var terms = [
       { key: 'Approved APR', val: app.final_apr ? app.final_apr + '%' : '--', color: 'var(--gold)' },
@@ -360,32 +360,24 @@ var VAULTS = [
 ];
 var STATUS_MAP = ['FUNDING','ACTIVE','PAID OFF','DEFAULTED'];
 
-function initPaymentPortal(wallet) {
+function initPaymentPortal(wallet, app) {
   if (!window.ethereum) return;
   document.getElementById('paymentPortal').style.display = 'block';
-  var promises = VAULTS.map(function(v) {
-    return window.ethereum.request({
-      method: 'eth_call',
-      params: [{ to: v.addr, data: '0xeaf8ef7a' }, 'latest']
-    }).then(function(result) {
-      return { vault: v, borrower: '0x' + result.slice(-40) };
-    }).catch(function() {
-      return { vault: v, borrower: null };
-    });
+  // Read vault address directly from the application record
+  var vaultAddr = app && app.vault_contract ? app.vault_contract : null;
+  if (!vaultAddr) {
+    document.getElementById('portalLoading').style.display = 'none';
+    document.getElementById('portalError').style.display = 'block';
+    document.getElementById('portalError').textContent = 'No vault assigned to this application yet. Contact IMC to complete your loan setup.';
+    return;
+  }
+  // Find vault name from known vaults
+  var vaultName = 'Your Loan Vault';
+  VAULTS.forEach(function(v) {
+    if (v.addr.toLowerCase() === vaultAddr.toLowerCase()) vaultName = v.name;
   });
-  Promise.all(promises).then(function(results) {
-    var match = results.find(function(r) {
-      return r.borrower && r.borrower.toLowerCase() === wallet.toLowerCase();
-    });
-    if (!match) {
-      document.getElementById('portalLoading').style.display = 'none';
-      document.getElementById('portalError').style.display = 'block';
-      document.getElementById('portalError').textContent = 'No active vault found for this wallet. Contact IMC if you believe this is an error.';
-      return;
-    }
-    BORROWER_VAULT = match.vault;
-    loadVaultDetails(match.vault.addr);
-  });
+  BORROWER_VAULT = { addr: vaultAddr, name: vaultName };
+  loadVaultDetails(vaultAddr);
 }
 
 function statBox(label, val, color) {
