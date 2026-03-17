@@ -315,9 +315,8 @@ function renderStatus(app) {
       return '<div><div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">' + t.key + '</div>' +
         '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.8rem;color:' + t.color + ';letter-spacing:0.02em;">' + t.val + '</div></div>';
     }).join('');
-    if (app.underwriter_notes) {
-      document.getElementById('nextSteps').textContent = app.underwriter_notes;
-    }
+    // underwriter notes are internal only - show clean borrower message
+    document.getElementById('nextSteps').textContent = 'Your loan has been approved. Our team will contact you within 2 business days to complete documentation and initiate funding on-chain.';
   }
 
   // Denied section
