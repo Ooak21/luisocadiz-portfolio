@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luis Ocadiz — CX Operations Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --surface2: #1a1a1a;
+  --border: rgba(200,240,77,0.08);
+  --border2: rgba(200,240,77,0.18);
+  --cyan: #c8f04d;
+  --cyan2: #d8ff5a;
+  --green: #c8f04d;
+  --red: #ff4444;
+  --gold: #f0c040;
+  --purple: #a070ff;
+  --text: #e8e8e0;
+  --muted: #888880;
+  --dim: #222220;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;font-weight:400;overflow-x:hidden;min-height:100vh;}
+
+/* SCANLINES */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(200,240,77,0.01) 3px,rgba(200,240,77,0.01) 4px);pointer-events:none;z-index:9999;}
+
+/* GRID BG */
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,240,77,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(200,240,77,0.025) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+
+.page{position:relative;z-index:1;padding:2rem 2.5rem 4rem;}
+
+/* HEADER */
+.header{margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border2);position:relative;}
+.header::after{content:'';position:absolute;bottom:-1px;left:0;width:30%;height:1px;background:linear-gradient(90deg,var(--cyan),transparent);}
+
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem;}
+.header-logo{font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em;font-size:0.6rem;font-weight:700;letter-spacing:0.3em;color:var(--cyan);display:flex;align-items:center;gap:0.75rem;}
+.logo-dot{width:8px;height:8px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px rgba(200,240,77,0.6);animation:pulse 2s infinite;}
+.header-meta{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.15em;color:var(--muted);text-align:right;line-height:2;}
+.header-title{font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em;font-weight:900;font-size:clamp(1.4rem,3vw,2.2rem);letter-spacing:0.04em;text-transform:uppercase;color:var(--text);line-height:1;}
+.header-sub{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;color:var(--cyan);margin-top:0.4rem;}
+
+/* TABS */
+.tabs{display:flex;gap:0;margin-bottom:2rem;border-bottom:1px solid var(--border2);}
+.tab{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;padding:0.75rem 1.5rem;background:transparent;border:none;color:var(--muted);cursor:pointer;position:relative;transition:color 0.2s;}
+.tab::after{content:'';position:absolute;bottom:-1px;left:0;right:100%;height:2px;background:var(--cyan);transition:right 0.3s;}
+.tab.active{color:var(--cyan);}
+.tab.active::after{right:0;}
+.tab:hover{color:var(--text);}
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--border2);border:1px solid var(--border2);margin-bottom:2rem;}
+.kpi-card{background:var(--surface);padding:1.25rem 1.5rem;position:relative;overflow:hidden;transition:background 0.2s;}
+.kpi-card:hover{background:var(--surface2);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);opacity:0;transition:opacity 0.2s;}
+.kpi-card:hover::before{opacity:1;}
+.kpi-card.good::before{background:var(--green);opacity:1;}
+.kpi-card.bad::before{background:var(--red);opacity:1;}
+.kpi-card.warn::before{background:var(--gold);opacity:1;}
+.kpi-label{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;}
+.kpi-value{font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em;font-weight:700;font-size:1.6rem;line-height:1;margin-bottom:0.35rem;letter-spacing:0.02em;}
+.kpi-value.cyan{color:var(--cyan);text-shadow:0 0 20px rgba(200,240,77,0.4);}
+.kpi-value.green{color:var(--green);text-shadow:0 0 15px rgba(200,240,77,0.3);}
+.kpi-value.red{color:var(--red);text-shadow:0 0 12px rgba(255,68,68,0.3);}
+.kpi-value.gold{color:var(--gold);text-shadow:0 0 15px rgba(240,192,64,0.3);}
+.kpi-delta{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;margin-bottom:0.2rem;}
+.kpi-delta.up{color:var(--green);}
+.kpi-delta.down-good{color:var(--green);}
+.kpi-delta.down-bad{color:var(--red);}
+.kpi-baseline{font-family:'DM Mono',monospace;font-size:0.45rem;color:var(--muted);}
+.kpi-number{position:absolute;bottom:0.5rem;right:0.75rem;font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em;font-size:3rem;color:rgba(200,240,77,0.04);font-weight:900;line-height:1;}
+
+/* SECTION HEADER */
+.sec-hdr{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem;}
+.sec-hdr::before{content:'//';color:rgba(200,240,77,0.4);}
+.sec-hdr::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent);}
+
+/* CHARTS */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+.chart-box{background:var(--surface);border:1px solid var(--border2);padding:1.5rem;position:relative;overflow:hidden;}
+.chart-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0.4;}
+.chart-title{font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em;font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--text);margin-bottom:0.25rem;}
+.chart-sub{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;color:var(--muted);margin-bottom:1.25rem;}
+.chart-area{height:200px;position:relative;}
+canvas{width:100%!important;height:100%!important;}
+
+/* BAR CHART CUSTOM */
+.bar-chart{display:flex;align-items:flex-end;gap:0.5rem;height:180px;padding:0 0.25rem;}
+.bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:0.3rem;}
+.bar-wrap{width:100%;flex:1;display:flex;align-items:flex-end;gap:2px;}
+.bar{flex:1;border-radius:1px 1px 0 0;position:relative;transition:all 0.8s cubic-bezier(0.16,1,0.3,1);min-width:0;}
+.bar::after{content:attr(data-val);position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:0.4rem;color:var(--text);white-space:nowrap;}
+.bar-label{font-family:'DM Mono',monospace;font-size:0.42rem;color:var(--muted);letter-spacing:0.05em;text-align:center;}
+
+/* LINE CHART */
+.line-chart-wrap{height:180px;position:relative;}
+.lc-canvas{position:absolute;inset:0;}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;margin-bottom:2rem;}
+.data-table th{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);padding:0.75rem 1rem;text-align:left;border-bottom:1px solid var(--border2);background:var(--surface);}
+.data-table td{font-family:'Instrument Sans',sans-serif;font-size:0.9rem;padding:0.7rem 1rem;border-bottom:1px solid var(--border);vertical-align:middle;}
+.data-table tr:hover td{background:rgba(200,240,77,0.02);}
+.data-table tr.section-row td{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan);background:var(--surface2);padding:0.5rem 1rem;}
+.val-good{color:var(--green);font-weight:600;}
+.val-bad{color:var(--red);font-weight:600;}
+.val-q1{color:var(--red);}
+.val-q4{color:var(--green);font-weight:600;}
+.badge{display:inline-block;padding:0.15rem 0.5rem;font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;border:1px solid;}
+.badge.green{color:var(--green);border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);}
+.badge.red{color:var(--red);border-color:rgba(255,45,85,0.3);background:rgba(255,45,85,0.06);}
+.badge.gold{color:var(--gold);border-color:rgba(255,214,10,0.3);background:rgba(255,214,10,0.06);}
+
+/* CHANNEL BLOCKS */
+.channel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);border:1px solid var(--border2);margin-bottom:2rem;}
+.channel-block{background:var(--surface);padding:1.5rem;}
+.channel-icon{font-size:1.2rem;margin-bottom:0.5rem;}
+.channel-name{font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em;font-size:0.65rem;font-weight:700;letter-spacing:0.15em;color:var(--text);margin-bottom:1.25rem;text-transform:uppercase;}
+.ch-metric{display:flex;justify-content:space-between;align-items:center;padding:0.35rem 0;border-bottom:1px solid var(--border);}
+.ch-metric:last-child{border-bottom:none;}
+.ch-key{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;color:var(--muted);}
+.ch-val{font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em;font-size:0.7rem;font-weight:700;}
+
+/* PROGRESS BAR */
+.prog-wrap{margin-bottom:1rem;}
+.prog-label{display:flex;justify-content:space-between;margin-bottom:0.3rem;}
+.prog-name{font-family:'DM Mono',monospace;font-size:0.48rem;color:var(--muted);}
+.prog-val{font-family:'Orbitron',monospace;font-size:0.55rem;font-weight:700;}
+.prog-track{height:4px;background:var(--dim);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;transition:width 1s cubic-bezier(0.16,1,0.3,1);}
+
+/* TEAM TABLE */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--border);border:1px solid var(--border2);margin-bottom:2rem;}
+.team-card{background:var(--surface);padding:1.25rem;position:relative;}
+.team-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;}
+.team-card.green::before{background:var(--green);}
+.team-card.gold::before{background:var(--gold);}
+.team-card.red::before{background:var(--red);}
+.team-sup{font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:1rem;color:var(--text);margin-bottom:0.15rem;}
+.team-name{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;color:var(--cyan);margin-bottom:0.75rem;}
+.team-stats{display:flex;gap:1.5rem;}
+.team-stat-val{font-family:'Orbitron',monospace;font-size:0.9rem;font-weight:700;color:var(--text);}
+.team-stat-lbl{font-family:'DM Mono',monospace;font-size:0.4rem;color:var(--muted);}
+.team-tier{position:absolute;top:1rem;right:1rem;font-family:'DM Mono',monospace;font-size:0.4rem;letter-spacing:0.1em;padding:0.15rem 0.5rem;border:1px solid;}
+
+/* ANIMATIONS */
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(200,240,77,0.6);}50%{opacity:0.4;box-shadow:0 0 4px var(--cyan);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes countUp{from{opacity:0;}to{opacity:1;}}
+
+.reveal{opacity:0;transform:translateY(20px);transition:all 0.7s cubic-bezier(0.16,1,0.3,1);}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+/* NARRATIVE BOX */
+.narrative{background:var(--surface);border:1px solid var(--border2);border-left:3px solid var(--cyan);padding:1.25rem 1.5rem;margin-bottom:2rem;position:relative;}
+.narrative::before{content:'CONTEXT';position:absolute;top:-8px;left:1rem;font-family:'DM Mono',monospace;font-size:0.42rem;letter-spacing:0.2em;color:var(--cyan);background:var(--surface);padding:0 0.5rem;}
+.narrative p{font-size:0.95rem;font-weight:300;color:var(--muted);line-height:1.8;letter-spacing:0.02em;}
+.narrative strong{color:var(--text);font-weight:600;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .page{padding:1.25rem;}
+  .chart-grid{grid-template-columns:1fr;}
+  .channel-grid{grid-template-columns:1fr;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <a href="/" style="display:inline-flex;align-items:center;gap:0.5rem;font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:1.5rem;transition:color 0.2s;" onmouseover="this.style.color='var(--cyan)'" onmouseout="this.style.color='var(--muted)'">
+    ← Back to Portfolio
+  </a>
+
+  <!-- HEADER -->
+  <div class="header reveal">
+    <div class="header-top">
+      <div class="header-logo">
+        <div class="logo-dot"></div>
+        Luis Ocadiz · CX Leadership
+      </div>
+      <div class="header-meta">
+        Director: Luis Ocadiz<br>
+        Reporting Period: FY — 4 Quarters<br>
+        100 Agents · 3 Channels · 1 Campaign
+      </div>
+    </div>
+    <h1 class="header-title">Executive Performance Dashboard</h1>
+    <div class="header-sub">// Inbound Contact Center · Voice · Email · Chat</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab" onclick="switchTab('abandon')">Abandon Rate</button>
+    <button class="tab" onclick="switchTab('sla')">SLA Trends</button>
+    <button class="tab" onclick="switchTab('channels')">By Channel</button>
+    <button class="tab" onclick="switchTab('team')">Team</button>
+  </div>
+
+  <!-- ── OVERVIEW PANEL ── -->
+  <div class="panel active" id="panel-overview">
+
+    <div class="narrative reveal">
+      <p>Inherited a <strong>struggling 100-agent contact center</strong> in Q1 with abandon rates nearly 3× the industry benchmark, SLAs below 62% across all channels, and team morale at a low. Through data-driven staffing realignment, real-time queue monitoring, supervisor coaching cadences, and systematic FCR improvement, <strong>achieved top-quartile performance by Q4</strong> — reducing call abandonment from 9.1% to 1.6%, lifting all SLAs above 88%, and growing CSAT from 3.3 to 4.5/5.0.</p>
+    </div>
+
+    <div class="sec-hdr reveal">Key Performance Indicators — Q4 Current State</div>
+
+    <div class="kpi-grid reveal">
+      <div class="kpi-card good">
+        <div class="kpi-label">Call SLA %</div>
+        <div class="kpi-value green" data-target="91" data-suffix="%">0%</div>
+        <div class="kpi-delta up">▲ +30.0pp vs Q1</div>
+        <div class="kpi-baseline">Q1 baseline: 61.0%</div>
+        <div class="kpi-number">01</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Call Abandon %</div>
+        <div class="kpi-value green" data-target="1.6" data-suffix="%">0%</div>
+        <div class="kpi-delta down-good">▼ -7.5pp vs Q1</div>
+        <div class="kpi-baseline">Q1 baseline: 9.1%</div>
+        <div class="kpi-number">02</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Avg Handle Time</div>
+        <div class="kpi-value cyan" data-target="298" data-suffix="s">0s</div>
+        <div class="kpi-delta down-good">▼ 114s vs Q1</div>
+        <div class="kpi-baseline">Q1 baseline: 412s</div>
+        <div class="kpi-number">03</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Email SLA %</div>
+        <div class="kpi-value green" data-target="88" data-suffix="%">0%</div>
+        <div class="kpi-delta up">▲ +34.0pp vs Q1</div>
+        <div class="kpi-baseline">Q1 baseline: 54.0%</div>
+        <div class="kpi-number">04</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Email Backlog</div>
+        <div class="kpi-value gold" data-target="100" data-suffix="">0</div>
+        <div class="kpi-delta down-good">▼ 1,000 vs Q1</div>
+        <div class="kpi-baseline">Q1 baseline: 1,100</div>
+        <div class="kpi-number">05</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Chat SLA %</div>
+        <div class="kpi-value green" data-target="92" data-suffix="%">0%</div>
+        <div class="kpi-delta up">▲ +34.0pp vs Q1</div>
+        <div class="kpi-baseline">Q1 baseline: 58.0%</div>
+        <div class="kpi-number">06</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Chat Abandon %</div>
+        <div class="kpi-value green" data-target="0.7" data-suffix="%">0%</div>
+        <div class="kpi-delta down-good">▼ -9.6pp vs Q1</div>
+        <div class="kpi-baseline">Q1 baseline: 10.3%</div>
+        <div class="kpi-number">07</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">CSAT (Blended)</div>
+        <div class="kpi-value green" data-target="4.5" data-suffix="/5">0</div>
+        <div class="kpi-delta up">▲ +1.2 vs Q1</div>
+        <div class="kpi-baseline">Q1 baseline: 3.3/5.0</div>
+        <div class="kpi-number">08</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">FCR (Blended)</div>
+        <div class="kpi-value green" data-target="82" data-suffix="%">0%</div>
+        <div class="kpi-delta up">▲ +21pp vs Q1</div>
+        <div class="kpi-baseline">Q1 baseline: 61%</div>
+        <div class="kpi-number">09</div>
+      </div>
+    </div>
+
+    <!-- IMPROVEMENT CHART -->
+    <div class="sec-hdr reveal">SLA Improvement — All Channels (Q1 → Q4)</div>
+    <div class="chart-grid reveal">
+      <div class="chart-box">
+        <div class="chart-title">Service Level % by Channel</div>
+        <div class="chart-sub">// Target line: 90% for voice/chat, 85% for email</div>
+        <div class="chart-area">
+          <canvas id="sla-chart"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">CSAT Score Trend — All Channels</div>
+        <div class="chart-sub">// Target: 4.2+ / 5.0</div>
+        <div class="chart-area">
+          <canvas id="csat-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLA PROGRESS BARS -->
+    <div class="sec-hdr reveal">Q1 vs Q4 — Channel Comparison</div>
+    <div class="channel-grid reveal">
+      <div class="channel-block">
+        <div class="channel-icon">📞</div>
+        <div class="channel-name">Inbound Voice</div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q1 SLA</span><span class="prog-val val-bad">61.0%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:61%;background:var(--red);"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q4 SLA</span><span class="prog-val val-good">91.0%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:91%;background:var(--green);"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q1 Abandon</span><span class="prog-val val-bad">9.1%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:91%;background:var(--red);"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q4 Abandon</span><span class="prog-val val-good">1.6%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:16%;background:var(--green);"></div></div>
+        </div>
+      </div>
+      <div class="channel-block">
+        <div class="channel-icon">📧</div>
+        <div class="channel-name">Email</div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q1 SLA</span><span class="prog-val val-bad">54.0%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:54%;background:var(--red);"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q4 SLA</span><span class="prog-val val-good">88.0%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:88%;background:var(--green);"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q1 Backlog</span><span class="prog-val val-bad">1,100</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:100%;background:var(--red);"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q4 Backlog</span><span class="prog-val val-good">100</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:9%;background:var(--green);"></div></div>
+        </div>
+      </div>
+      <div class="channel-block">
+        <div class="channel-icon">💬</div>
+        <div class="channel-name">Chat</div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q1 SLA</span><span class="prog-val val-bad">58.0%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:58%;background:var(--red);"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q4 SLA</span><span class="prog-val val-good">92.0%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:92%;background:var(--green);"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q1 Abandon</span><span class="prog-val val-bad">10.3%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:100%;background:var(--red);"></div></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-label"><span class="prog-name">Q4 Abandon</span><span class="prog-val val-good">0.7%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:7%;background:var(--green);"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── ABANDON RATE PANEL ── -->
+  <div class="panel" id="panel-abandon">
+    <div class="narrative reveal">
+      <p>Abandon rate is the single most impactful metric for revenue leakage. <strong>Every abandoned contact is a lost customer interaction</strong> — in an inbound campaign, that means unresolved issues, churn risk, and brand damage. The industry benchmark is <strong>&lt;3%</strong> for voice, <strong>&lt;3%</strong> for chat. We inherited both at 3× that level and drove them below 2% by Q3 and below 1% by Q4.</p>
+    </div>
+
+    <div class="sec-hdr reveal">Call Abandon Rate — Quarterly Trend</div>
+    <div class="chart-grid reveal">
+      <div class="chart-box">
+        <div class="chart-title">Call Abandon Rate vs. Benchmark</div>
+        <div class="chart-sub">// Industry benchmark: 3.0% | Red = above benchmark</div>
+        <div class="chart-area"><canvas id="call-abandon-chart"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">Chat Abandon Rate vs. Benchmark</div>
+        <div class="chart-sub">// Industry benchmark: 3.0%</div>
+        <div class="chart-area"><canvas id="chat-abandon-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="sec-hdr reveal">Impact Summary</div>
+    <div class="kpi-grid reveal" style="grid-template-columns:repeat(4,1fr);">
+      <div class="kpi-card good">
+        <div class="kpi-label">Call Abandon Q1</div>
+        <div class="kpi-value red">9.1%</div>
+        <div class="kpi-baseline">3,900 abandoned / qtr</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Call Abandon Q4</div>
+        <div class="kpi-value green">1.6%</div>
+        <div class="kpi-baseline">700 abandoned / qtr</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Calls Recovered</div>
+        <div class="kpi-value gold">3,200</div>
+        <div class="kpi-baseline">Q4 vs Q1 delta</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Est. Revenue Saved</div>
+        <div class="kpi-value cyan">$90K</div>
+        <div class="kpi-baseline">@ $28/contact · Q4 vs Q1</div>
+      </div>
+    </div>
+
+    <div class="sec-hdr reveal">Quarterly Detail — Voice Channel</div>
+    <table class="data-table reveal">
+      <thead><tr>
+        <th>Quarter</th><th>Calls Offered</th><th>Calls Handled</th><th>Abandoned</th><th>Abandon Rate</th><th>vs. 3% Benchmark</th><th>Status</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Q1 (Inherited)</td><td>42,800</td><td>38,900</td><td class="val-bad">3,900</td><td class="val-bad">9.1%</td><td class="val-bad">+6.1pp</td><td><span class="badge red">Critical</span></td></tr>
+        <tr><td>Q2</td><td>44,200</td><td>41,200</td><td class="val-bad">3,000</td><td class="val-bad">6.8%</td><td class="val-bad">+3.8pp</td><td><span class="badge gold">Improving</span></td></tr>
+        <tr><td>Q3</td><td>45,100</td><td>43,400</td><td>1,700</td><td>3.8%</td><td>+0.8pp</td><td><span class="badge gold">Near Target</span></td></tr>
+        <tr><td>Q4 (Current)</td><td>43,600</td><td>42,900</td><td class="val-good">700</td><td class="val-good">1.6%</td><td class="val-good">-1.4pp</td><td><span class="badge green">Exceeds Target</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="sec-hdr reveal">Quarterly Detail — Chat Channel</div>
+    <table class="data-table reveal">
+      <thead><tr>
+        <th>Quarter</th><th>Chats Offered</th><th>Chats Handled</th><th>Abandoned</th><th>Abandon Rate</th><th>vs. 3% Benchmark</th><th>Status</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Q1 (Inherited)</td><td>6,800</td><td>6,100</td><td class="val-bad">700</td><td class="val-bad">10.3%</td><td class="val-bad">+7.3pp</td><td><span class="badge red">Critical</span></td></tr>
+        <tr><td>Q2</td><td>7,200</td><td>6,800</td><td class="val-bad">400</td><td class="val-bad">5.6%</td><td class="val-bad">+2.6pp</td><td><span class="badge gold">Improving</span></td></tr>
+        <tr><td>Q3</td><td>7,600</td><td>7,400</td><td>200</td><td>2.6%</td><td class="val-good">-0.4pp</td><td><span class="badge green">On Target</span></td></tr>
+        <tr><td>Q4 (Current)</td><td>7,400</td><td>7,350</td><td class="val-good">50</td><td class="val-good">0.7%</td><td class="val-good">-2.3pp</td><td><span class="badge green">Exceeds Target</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SLA PANEL ── -->
+  <div class="panel" id="panel-sla">
+    <div class="narrative reveal">
+      <p>Service Level Agreement (SLA) defines the percentage of contacts answered within the threshold time — <strong>30 seconds for voice and chat, 4 hours for email</strong>. Inherited all three channels significantly below target. Sustained SLA improvement required solving staffing, scheduling, routing, and agent skilling simultaneously — not just adding headcount.</p>
+    </div>
+
+    <div class="sec-hdr reveal">SLA Trend — All Channels</div>
+    <div class="chart-box reveal" style="margin-bottom:1.5rem;">
+      <div class="chart-title">SLA % — Voice, Email & Chat — Q1 through Q4</div>
+      <div class="chart-sub">// Targets: Voice/Chat 90%, Email 85%</div>
+      <div class="chart-area" style="height:240px;"><canvas id="sla-all-chart"></canvas></div>
+    </div>
+
+    <div class="sec-hdr reveal">SLA Detail by Channel</div>
+    <table class="data-table reveal">
+      <thead><tr>
+        <th>Channel</th><th>SLA Threshold</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Improvement</th><th>Target Met</th>
+      </tr></thead>
+      <tbody>
+        <tr><td><strong>📞 Inbound Voice</strong></td><td>≤ 30 seconds</td><td class="val-q1">61.0%</td><td>72.0%</td><td>84.0%</td><td class="val-q4">91.0%</td><td class="val-good">+30.0pp</td><td><span class="badge green">✓ Yes</span></td></tr>
+        <tr><td><strong>📧 Email</strong></td><td>≤ 4 hours</td><td class="val-q1">54.0%</td><td>67.0%</td><td>79.0%</td><td class="val-q4">88.0%</td><td class="val-good">+34.0pp</td><td><span class="badge green">✓ Yes</span></td></tr>
+        <tr><td><strong>💬 Chat</strong></td><td>≤ 30 seconds</td><td class="val-q1">58.0%</td><td>70.0%</td><td>83.0%</td><td class="val-q4">92.0%</td><td class="val-good">+34.0pp</td><td><span class="badge green">✓ Yes</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="sec-hdr reveal">Speed Metrics Improvement</div>
+    <div class="kpi-grid reveal" style="grid-template-columns:repeat(3,1fr);">
+      <div class="kpi-card good">
+        <div class="kpi-label">Avg Speed to Answer — Voice</div>
+        <div class="kpi-value green">18s</div>
+        <div class="kpi-delta down-good">▼ 50s vs Q1 (68s)</div>
+        <div class="kpi-baseline">Industry top quartile: &lt;20s</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">Avg Speed to Answer — Chat</div>
+        <div class="kpi-value green">22s</div>
+        <div class="kpi-delta down-good">▼ 60s vs Q1 (82s)</div>
+        <div class="kpi-baseline">Industry top quartile: &lt;30s</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-label">After-Call Work — Voice</div>
+        <div class="kpi-value cyan">52s</div>
+        <div class="kpi-delta down-good">▼ 43s vs Q1 (95s)</div>
+        <div class="kpi-baseline">Industry benchmark: &lt;60s</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHANNELS PANEL ── -->
+  <div class="panel" id="panel-channels">
+    <div class="sec-hdr reveal">Voice Channel — Full Metrics</div>
+    <table class="data-table reveal">
+      <thead><tr><th>Metric</th><th>Unit</th><th class="val-q1">Q1</th><th>Q2</th><th>Q3</th><th class="val-q4">Q4</th></tr></thead>
+      <tbody>
+        <tr class="section-row"><td colspan="6">// VOLUME</td></tr>
+        <tr><td>Calls Offered</td><td>#</td><td>42,800</td><td>44,200</td><td>45,100</td><td>43,600</td></tr>
+        <tr><td>Calls Handled</td><td>#</td><td>38,900</td><td>41,200</td><td>43,400</td><td>42,900</td></tr>
+        <tr><td>Calls Abandoned</td><td>#</td><td class="val-bad">3,900</td><td class="val-bad">3,000</td><td>1,700</td><td class="val-good">700</td></tr>
+        <tr><td>Abandon Rate</td><td>%</td><td class="val-bad">9.1%</td><td class="val-bad">6.8%</td><td>3.8%</td><td class="val-good">1.6%</td></tr>
+        <tr class="section-row"><td colspan="6">// SPEED & EFFICIENCY</td></tr>
+        <tr><td>Avg Handle Time</td><td>sec</td><td class="val-bad">412</td><td>378</td><td>344</td><td class="val-good">298</td></tr>
+        <tr><td>After-Call Work</td><td>sec</td><td class="val-bad">95</td><td>82</td><td>68</td><td class="val-good">52</td></tr>
+        <tr><td>Avg Speed to Answer</td><td>sec</td><td class="val-bad">68</td><td>52</td><td>34</td><td class="val-good">18</td></tr>
+        <tr class="section-row"><td colspan="6">// SERVICE LEVEL & QUALITY</td></tr>
+        <tr><td>SLA % (≤30s)</td><td>%</td><td class="val-bad">61.0%</td><td>72.0%</td><td>84.0%</td><td class="val-good">91.0%</td></tr>
+        <tr><td>CSAT Score</td><td>/5.0</td><td class="val-bad">3.4</td><td>3.7</td><td>4.1</td><td class="val-good">4.5</td></tr>
+        <tr><td>First Call Resolution</td><td>%</td><td class="val-bad">61%</td><td>67%</td><td>74%</td><td class="val-good">82%</td></tr>
+        <tr><td>Transfer Rate</td><td>%</td><td class="val-bad">18%</td><td>14%</td><td>10%</td><td class="val-good">6%</td></tr>
+        <tr><td>Agent Occupancy</td><td>%</td><td class="val-bad">91%</td><td>88%</td><td>85%</td><td class="val-good">83%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sec-hdr reveal">Email Channel — Full Metrics</div>
+    <table class="data-table reveal">
+      <thead><tr><th>Metric</th><th>Unit</th><th class="val-q1">Q1</th><th>Q2</th><th>Q3</th><th class="val-q4">Q4</th></tr></thead>
+      <tbody>
+        <tr class="section-row"><td colspan="6">// VOLUME</td></tr>
+        <tr><td>Emails Received</td><td>#</td><td>9,200</td><td>9,600</td><td>9,900</td><td>9,500</td></tr>
+        <tr><td>Emails Resolved</td><td>#</td><td>8,100</td><td>8,900</td><td>9,600</td><td>9,400</td></tr>
+        <tr><td>End-of-Quarter Backlog</td><td>#</td><td class="val-bad">1,100</td><td class="val-bad">700</td><td>300</td><td class="val-good">100</td></tr>
+        <tr class="section-row"><td colspan="6">// EFFICIENCY & QUALITY</td></tr>
+        <tr><td>Avg Handle Time</td><td>min</td><td class="val-bad">18.2</td><td>15.8</td><td>13.4</td><td class="val-good">11.2</td></tr>
+        <tr><td>After-Contact Work</td><td>min</td><td class="val-bad">4.8</td><td>3.9</td><td>3.1</td><td class="val-good">2.4</td></tr>
+        <tr><td>SLA % (≤4hr)</td><td>%</td><td class="val-bad">54.0%</td><td>67.0%</td><td>79.0%</td><td class="val-good">88.0%</td></tr>
+        <tr><td>CSAT Score</td><td>/5.0</td><td class="val-bad">3.2</td><td>3.6</td><td>4.0</td><td class="val-good">4.4</td></tr>
+        <tr><td>First Contact Resolution</td><td>%</td><td class="val-bad">58%</td><td>65%</td><td>73%</td><td class="val-good">81%</td></tr>
+        <tr><td>Reopen Rate</td><td>%</td><td class="val-bad">14%</td><td>11%</td><td>7%</td><td class="val-good">4%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sec-hdr reveal">Chat Channel — Full Metrics</div>
+    <table class="data-table reveal">
+      <thead><tr><th>Metric</th><th>Unit</th><th class="val-q1">Q1</th><th>Q2</th><th>Q3</th><th class="val-q4">Q4</th></tr></thead>
+      <tbody>
+        <tr class="section-row"><td colspan="6">// VOLUME</td></tr>
+        <tr><td>Chats Offered</td><td>#</td><td>6,800</td><td>7,200</td><td>7,600</td><td>7,400</td></tr>
+        <tr><td>Chats Handled</td><td>#</td><td>6,100</td><td>6,800</td><td>7,400</td><td>7,350</td></tr>
+        <tr><td>Chats Abandoned</td><td>#</td><td class="val-bad">700</td><td class="val-bad">400</td><td>200</td><td class="val-good">50</td></tr>
+        <tr><td>Abandon Rate</td><td>%</td><td class="val-bad">10.3%</td><td>5.6%</td><td>2.6%</td><td class="val-good">0.7%</td></tr>
+        <tr class="section-row"><td colspan="6">// EFFICIENCY & QUALITY</td></tr>
+        <tr><td>Avg Handle Time</td><td>min</td><td class="val-bad">12.4</td><td>10.8</td><td>9.2</td><td class="val-good">7.8</td></tr>
+        <tr><td>Avg Speed to Answer</td><td>sec</td><td class="val-bad">82</td><td>61</td><td>38</td><td class="val-good">22</td></tr>
+        <tr><td>Concurrent Sessions</td><td>x</td><td class="val-bad">1.8</td><td>2.1</td><td>2.4</td><td class="val-good">2.7</td></tr>
+        <tr><td>SLA % (≤30s)</td><td>%</td><td class="val-bad">58.0%</td><td>70.0%</td><td>83.0%</td><td class="val-good">92.0%</td></tr>
+        <tr><td>CSAT Score</td><td>/5.0</td><td class="val-bad">3.3</td><td>3.7</td><td>4.1</td><td class="val-good">4.6</td></tr>
+        <tr><td>First Contact Resolution</td><td>%</td><td class="val-bad">63%</td><td>70%</td><td>77%</td><td class="val-good">84%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── TEAM PANEL ── -->
+  <div class="panel" id="panel-team">
+    <div class="narrative reveal">
+      <p>The team of <strong>100 frontline agents</strong> is organized under 8 supervisors and 2 operations managers. At inheritance in Q1, 6 of 8 supervisors were rated Below Target. Through structured 1:1 coaching, real-time monitoring adoption, and clear KPI ownership at the supervisor level, <strong>all 8 supervisors ended Q4 meeting or exceeding targets</strong>.</p>
+    </div>
+
+    <div class="sec-hdr reveal">Leadership Structure</div>
+    <div class="kpi-grid reveal" style="grid-template-columns:repeat(3,1fr);margin-bottom:2rem;">
+      <div class="kpi-card">
+        <div class="kpi-label">Director, CX</div>
+        <div class="kpi-value cyan" style="font-size:1rem;margin-top:0.5rem;">Luis Ocadiz</div>
+        <div class="kpi-baseline" style="margin-top:0.5rem;">2 Managers · 8 Supervisors · 100 Agents</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Manager, Call Operations</div>
+        <div class="kpi-value cyan" style="font-size:1rem;margin-top:0.5rem;">Sarah Kim</div>
+        <div class="kpi-baseline" style="margin-top:0.5rem;">4 Supervisors · 50 Voice Agents</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Manager, Digital Channels</div>
+        <div class="kpi-value cyan" style="font-size:1rem;margin-top:0.5rem;">Andre Thomas</div>
+        <div class="kpi-baseline" style="margin-top:0.5rem;">4 Supervisors · 50 Email/Chat Agents</div>
+      </div>
+    </div>
+
+    <div class="sec-hdr reveal">Supervisor Roster — Q4 Performance Status</div>
+    <div class="team-grid reveal">
+      <div class="team-card green">
+        <div class="team-tier badge green">Q4: Exceeds</div>
+        <div class="team-sup">Maria Santos</div>
+        <div class="team-name">// Inbound Calls A</div>
+        <div class="team-stats">
+          <div><div class="team-stat-val">13</div><div class="team-stat-lbl">Agents</div></div>
+          <div><div class="team-stat-val">22mo</div><div class="team-stat-lbl">Avg Tenure</div></div>
+          <div><div class="team-stat-val">Voice</div><div class="team-stat-lbl">Channel</div></div>
+        </div>
+      </div>
+      <div class="team-card green">
+        <div class="team-tier badge green">Q4: Exceeds</div>
+        <div class="team-sup">James Okafor</div>
+        <div class="team-name">// Inbound Calls B</div>
+        <div class="team-stats">
+          <div><div class="team-stat-val">12</div><div class="team-stat-lbl">Agents</div></div>
+          <div><div class="team-stat-val">18mo</div><div class="team-stat-lbl">Avg Tenure</div></div>
+          <div><div class="team-stat-val">Voice</div><div class="team-stat-lbl">Channel</div></div>
+        </div>
+      </div>
+      <div class="team-card green">
+        <div class="team-tier badge green">Q4: Meets</div>
+        <div class="team-sup">Priya Mehta</div>
+        <div class="team-name">// Inbound Calls C</div>
+        <div class="team-stats">
+          <div><div class="team-stat-val">13</div><div class="team-stat-lbl">Agents</div></div>
+          <div><div class="team-stat-val">31mo</div><div class="team-stat-lbl">Avg Tenure</div></div>
+          <div><div class="team-stat-val">Voice</div><div class="team-stat-lbl">Channel</div></div>
+        </div>
+      </div>
+      <div class="team-card green">
+        <div class="team-tier badge green">Q4: Exceeds</div>
+        <div class="team-sup">Carlos Rivera</div>
+        <div class="team-name">// Inbound Calls D</div>
+        <div class="team-stats">
+          <div><div class="team-stat-val">12</div><div class="team-stat-lbl">Agents</div></div>
+          <div><div class="team-stat-val">15mo</div><div class="team-stat-lbl">Avg Tenure</div></div>
+          <div><div class="team-stat-val">Voice</div><div class="team-stat-lbl">Channel</div></div>
+        </div>
+      </div>
+      <div class="team-card green">
+        <div class="team-tier badge green">Q4: Exceeds</div>
+        <div class="team-sup">Tanya Williams</div>
+        <div class="team-name">// Email & Chat A</div>
+        <div class="team-stats">
+          <div><div class="team-stat-val">13</div><div class="team-stat-lbl">Agents</div></div>
+          <div><div class="team-stat-val">28mo</div><div class="team-stat-lbl">Avg Tenure</div></div>
+          <div><div class="team-stat-val">Digital</div><div class="team-stat-lbl">Channel</div></div>
+        </div>
+      </div>
+      <div class="team-card green">
+        <div class="team-tier badge green">Q4: Meets</div>
+        <div class="team-sup">Derek Huang</div>
+        <div class="team-name">// Email & Chat B</div>
+        <div class="team-stats">
+          <div><div class="team-stat-val">12</div><div class="team-stat-lbl">Agents</div></div>
+          <div><div class="team-stat-val">12mo</div><div class="team-stat-lbl">Avg Tenure</div></div>
+          <div><div class="team-stat-val">Digital</div><div class="team-stat-lbl">Channel</div></div>
+        </div>
+      </div>
+      <div class="team-card green">
+        <div class="team-tier badge green">Q4: Exceeds</div>
+        <div class="team-sup">Shayla Brown</div>
+        <div class="team-name">// Blended A</div>
+        <div class="team-stats">
+          <div><div class="team-stat-val">13</div><div class="team-stat-lbl">Agents</div></div>
+          <div><div class="team-stat-val">19mo</div><div class="team-stat-lbl">Avg Tenure</div></div>
+          <div><div class="team-stat-val">Blended</div><div class="team-stat-lbl">Channel</div></div>
+        </div>
+      </div>
+      <div class="team-card green">
+        <div class="team-tier badge green">Q4: Exceeds</div>
+        <div class="team-sup">Marcus Johnson</div>
+        <div class="team-name">// Blended B</div>
+        <div class="team-stats">
+          <div><div class="team-stat-val">12</div><div class="team-stat-lbl">Agents</div></div>
+          <div><div class="team-stat-val">24mo</div><div class="team-stat-lbl">Avg Tenure</div></div>
+          <div><div class="team-stat-val">Blended</div><div class="team-stat-lbl">Channel</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// DATA
+var Q = ['Q1','Q2','Q3','Q4'];
+var CALL_SLA  = [0.61,0.72,0.84,0.91];
+var EMAIL_SLA = [0.54,0.67,0.79,0.88];
+var CHAT_SLA  = [0.58,0.70,0.83,0.92];
+var CALL_CSAT = [3.4,3.7,4.1,4.5];
+var EMAIL_CSAT= [3.2,3.6,4.0,4.4];
+var CHAT_CSAT = [3.3,3.7,4.1,4.6];
+var CALL_AB   = [9.1,6.8,3.8,1.6];
+var CHAT_AB   = [10.3,5.6,2.6,0.7];
+
+var CYAN    = 'rgba(200,240,77,';
+var GREEN   = 'rgba(0,255,136,';
+var RED     = 'rgba(255,45,85,';
+var GOLD    = 'rgba(255,214,10,';
+var PURPLE  = 'rgba(191,95,255,';
+
+Chart.defaults.color = '#6a85a0';
+Chart.defaults.font.family = "'Share Tech Mono', monospace";
+Chart.defaults.font.size = 10;
+
+function lineChart(id, datasets, yMax, yLabel, targetLine) {
+  var ctx = document.getElementById(id);
+  if (!ctx) return;
+  var plugins = [];
+  if (targetLine) {
+    plugins.push({
+      id: 'target',
+      afterDraw: function(chart) {
+        var y = chart.scales.y.getPixelForValue(targetLine);
+        var ctx2 = chart.ctx;
+        ctx2.save();
+        ctx2.strokeStyle = 'rgba(255,214,10,0.4)';
+        ctx2.setLineDash([4,4]);
+        ctx2.lineWidth = 1;
+        ctx2.beginPath();
+        ctx2.moveTo(chart.chartArea.left, y);
+        ctx2.lineTo(chart.chartArea.right, y);
+        ctx2.stroke();
+        ctx2.fillStyle = 'rgba(255,214,10,0.8)';
+        ctx2.font = '9px "Share Tech Mono"';
+        ctx2.fillText('Target', chart.chartArea.right - 40, y - 4);
+        ctx2.restore();
+      }
+    });
+  }
+  return new Chart(ctx, {
+    type: 'line',
+    data: { labels: Q, datasets: datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 1200, easing: 'easeOutQuart' },
+      scales: {
+        x: { grid: { color: 'rgba(200,240,77,0.06)' }, ticks: { color: '#6a85a0' } },
+        y: { min: 0, max: yMax, grid: { color: 'rgba(200,240,77,0.06)' }, ticks: { color: '#6a85a0', callback: function(v){ return yLabel ? v + yLabel : v; } } }
+      },
+      plugins: { legend: { labels: { color: '#6a85a0', boxWidth: 12, font: { size: 9 } } } }
+    },
+    plugins: plugins
+  });
+}
+
+function barChart(id, datasets, yLabel) {
+  var ctx = document.getElementById(id);
+  if (!ctx) return;
+  return new Chart(ctx, {
+    type: 'bar',
+    data: { labels: Q, datasets: datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 1000 },
+      scales: {
+        x: { grid: { color: 'rgba(200,240,77,0.06)' }, ticks: { color: '#6a85a0' } },
+        y: { grid: { color: 'rgba(200,240,77,0.06)' }, ticks: { color: '#6a85a0', callback: function(v){ return v + yLabel; } } }
+      },
+      plugins: { legend: { labels: { color: '#6a85a0', boxWidth: 12 } } }
+    }
+  });
+}
+
+// INIT CHARTS
+window.addEventListener('load', function() {
+
+  // SLA overview
+  lineChart('sla-chart', [
+    { label:'Voice', data: CALL_SLA.map(function(v){return Math.round(v*100);}), borderColor: CYAN+'1)', backgroundColor: CYAN+'0.08)', tension: 0.4, pointRadius: 4, pointBackgroundColor: CYAN+'1)' },
+    { label:'Email', data: EMAIL_SLA.map(function(v){return Math.round(v*100);}), borderColor: GREEN+'1)', backgroundColor: GREEN+'0.08)', tension: 0.4, pointRadius: 4, pointBackgroundColor: GREEN+'1)' },
+    { label:'Chat',  data: CHAT_SLA.map(function(v){return Math.round(v*100);}), borderColor: PURPLE+'1)', backgroundColor: PURPLE+'0.08)', tension: 0.4, pointRadius: 4, pointBackgroundColor: PURPLE+'1)' }
+  ], 100, '%', 90);
+
+  // CSAT
+  lineChart('csat-chart', [
+    { label:'Voice', data: CALL_CSAT, borderColor: CYAN+'1)', backgroundColor: CYAN+'0.08)', tension: 0.4, pointRadius: 4 },
+    { label:'Email', data: EMAIL_CSAT, borderColor: GREEN+'1)', backgroundColor: GREEN+'0.08)', tension: 0.4, pointRadius: 4 },
+    { label:'Chat',  data: CHAT_CSAT, borderColor: PURPLE+'1)', backgroundColor: PURPLE+'0.08)', tension: 0.4, pointRadius: 4 }
+  ], 5, '/5', 4.2);
+
+  // Abandon charts
+  barChart('call-abandon-chart', [
+    { label:'Abandon Rate %', data: CALL_AB,
+      backgroundColor: CALL_AB.map(function(v){ return v > 3 ? RED+'0.7)' : GREEN+'0.7)'; }),
+      borderColor: CALL_AB.map(function(v){ return v > 3 ? RED+'1)' : GREEN+'1)'; }),
+      borderWidth: 1 }
+  ], '%');
+
+  barChart('chat-abandon-chart', [
+    { label:'Abandon Rate %', data: CHAT_AB,
+      backgroundColor: CHAT_AB.map(function(v){ return v > 3 ? RED+'0.7)' : GREEN+'0.7)'; }),
+      borderColor: CHAT_AB.map(function(v){ return v > 3 ? RED+'1)' : GREEN+'1)'; }),
+      borderWidth: 1 }
+  ], '%');
+
+  // SLA all channels
+  lineChart('sla-all-chart', [
+    { label:'Voice SLA',  data: CALL_SLA.map(function(v){return Math.round(v*100);}), borderColor: CYAN+'1)', backgroundColor: CYAN+'0.06)', tension: 0.4, pointRadius: 5 },
+    { label:'Email SLA',  data: EMAIL_SLA.map(function(v){return Math.round(v*100);}), borderColor: GREEN+'1)', backgroundColor: GREEN+'0.06)', tension: 0.4, pointRadius: 5 },
+    { label:'Chat SLA',   data: CHAT_SLA.map(function(v){return Math.round(v*100);}), borderColor: PURPLE+'1)', backgroundColor: PURPLE+'0.06)', tension: 0.4, pointRadius: 5 }
+  ], 100, '%', 90);
+
+  // KPI counter animation
+  document.querySelectorAll('.kpi-value[data-target]').forEach(function(el) {
+    var target = parseFloat(el.dataset.target);
+    var suffix = el.dataset.suffix || '';
+    var start = 0;
+    var duration = 1400;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var ease = 1 - Math.pow(1 - progress, 4);
+      var current = start + (target - start) * ease;
+      el.textContent = (target < 10 ? current.toFixed(1) : Math.round(current)) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+
+  // Scroll reveal
+  var reveals = document.querySelectorAll('.reveal');
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e, i) {
+      if (e.isIntersecting) {
+        setTimeout(function() { e.target.classList.add('in'); }, i * 60);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(function(el) { obs.observe(el); });
+});
+
+// TAB SWITCHING
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+  event.target.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  // Reinit charts when switching to panels with charts
+  setTimeout(function() {
+    window.dispatchEvent(new Event('resize'));
+  }, 50);
+}
+</script>
+</body>
+</html>
