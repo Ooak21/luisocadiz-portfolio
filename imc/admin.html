@@ -87,6 +87,17 @@ textarea.inp{resize:vertical;min-height:80px;}
 .chain-btn{border:none;padding:0.75rem 1.25rem;font-family:'DM Mono',monospace;font-size:0.62rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;width:100%;transition:all 0.2s;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border2);}
+
+/* ── RED STATE INDICATORS (additive only — no impact to existing UI) ── */
+.rs-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:6px;vertical-align:middle;flex-shrink:0;}
+.rs-red{background:var(--red);box-shadow:0 0 6px var(--red);animation:rs-blink 1.2s infinite;}
+.rs-amber{background:var(--gold);box-shadow:0 0 6px var(--gold);animation:rs-blink 1.8s infinite;}
+.rs-missed{background:var(--red);box-shadow:0 0 8px var(--red);animation:rs-blink 0.8s infinite;}
+@keyframes rs-blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.rs-tag{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.15rem 0.45rem;border:1px solid;margin-left:4px;vertical-align:middle;}
+.rs-tag-red{color:var(--red);border-color:rgba(255,68,85,0.4);background:rgba(255,68,85,0.08);}
+.rs-tag-amber{color:var(--gold);border-color:rgba(240,192,64,0.4);background:rgba(240,192,64,0.08);}
+.rs-vault-flag{display:flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--red);margin-top:3px;}
 </style>
 </head>
 <body>
@@ -552,6 +563,23 @@ function renderTable(apps) {
     var dc = parseFloat(dti)<28?'var(--green)':parseFloat(dti)<36?'var(--gold)':'var(--red)';
     var rec = getApprovalRec(app);
     var regb = app.status==='denied'&&rec.status==='approve'?' <span style="font-family:monospace;font-size:0.5rem;color:var(--gold);background:rgba(240,192,64,0.1);border:1px solid rgba(240,192,64,0.3);padding:0.15rem 0.4rem;">REG B</span>':'';
+
+    // ── RED STATE INDICATORS (additive — no impact to existing logic) ──
+    var rsHtml = '';
+    var dtiNum = parseFloat(dti);
+    var creditNum = parseFloat(app.credit_score_range)||0;
+    // Red state: DTI > 45 or credit < 600
+    if (dtiNum > 45 || creditNum < 600) {
+      rsHtml += '<span class="rs-dot rs-red" title="Red State: High risk application"></span>';
+    } else if (dtiNum > 36 || (creditNum > 0 && creditNum < 650)) {
+      rsHtml += '<span class="rs-dot rs-amber" title="Caution: Review carefully"></span>';
+    }
+    // Special handling states
+    var specialStates = ['PA','NY','CA','TX','NJ','MA','IL','WA','CO','MN'];
+    var appState = (app.state||app.residence_state||'').toUpperCase().trim();
+    if (appState && specialStates.indexOf(appState) !== -1) {
+      rsHtml += '<span class="rs-tag rs-tag-amber" title="Special handling state: '+appState+'">'+appState+'</span>';
+    }
     return '<tr onclick="openApp(\''+app.id+'\')">' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--dim);">'+date+'</td>' +
       '<td>'+name+'</td>' +
@@ -561,7 +589,7 @@ function renderTable(apps) {
       '<td style="font-family:monospace;font-size:0.7rem;color:'+dc+';">'+dti+'%</td>' +
       '<td style="font-family:monospace;font-size:0.65rem;color:var(--muted);">'+(app.credit_score_range||'--')+'</td>' +
       '<td>'+(app.crypto_included?'<span style="color:var(--purple);font-family:monospace;font-size:0.6rem;">Yes</span>':'<span style="color:var(--dim);font-family:monospace;font-size:0.6rem;">No</span>')+'</td>' +
-      '<td><span class="badge '+sc+'">'+sl+'</span>'+regb+'</td>' +
+      '<td><span class="badge '+sc+'">'+sl+'</span>'+regb+rsHtml+'</td>' +
       '<td><button onclick="event.stopPropagation();openApp(\''+app.id+'\')" style="font-family:monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.3rem 0.75rem;cursor:pointer;">Review</button></td>' +
     '</tr>';
   }).join('');
@@ -1051,9 +1079,11 @@ function loadVaultStatuses() {
       var s = parseInt(result,16);
       var label = statusMap[s]||'UNKNOWN';
       var color = s===1?'var(--green)':s===2?'var(--gold)':s===3?'var(--red)':'var(--neon)';
+      // ── RED STATE: defaulted vault gets blink indicator (additive) ──
+      var missedFlag = s===3 ? '<div class="rs-vault-flag"><span class="rs-dot rs-missed"></span>DEFAULTED — FLAG REVIEW</div>' : '';
       ['status-'+v.key,'pstatus-'+v.key].forEach(function(id){
         var el=document.getElementById(id);
-        if(el){el.textContent=label;el.style.color=color;}
+        if(el){el.innerHTML=label+(missedFlag&&id.startsWith('status-')?missedFlag:'');el.style.color=color;}
       });
     })
     .catch(function(){
