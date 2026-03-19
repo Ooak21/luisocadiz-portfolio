@@ -118,7 +118,6 @@ textarea.inp{resize:vertical;min-height:80px;}
     <div class="nav-badge">Underwriting</div>
   </div>
   <div style="display:flex;align-items:center;gap:1rem;">
-    
     <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Marketplace</a>
     <a href="dashboard.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--neon);text-decoration:none;">Dashboard</a>
     <a href="status.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">My Status</a>
@@ -437,6 +436,14 @@ var allVehicles = [];
 var currentAppId = null;
 var currentVehicleId = null;
 var walletConnected = false;
+
+// ---- GAS SETTINGS (Polygon Amoy) ----
+// These are safe limits for Polygon Amoy testnet.
+// gasLimit: enough for complex contract calls, not so high MetaMask panics.
+// maxFeePerGas / maxPriorityFeePerGas: in wei (50 gwei / 30 gwei).
+var GAS_LIMIT    = '0x' + (300000).toString(16);   // 300,000
+var MAX_FEE      = '0x' + (50000000000).toString(16); // 50 gwei
+var MAX_PRIORITY = '0x' + (30000000000).toString(16); // 30 gwei
 
 // -- GATE -----------------------------------------------------
 function connectAdminWallet() {
@@ -833,7 +840,11 @@ function mintVehicleOnChain(v, terms, vehicleName, listingId) {
     var appraisedCents = Math.round((terms.appraised_value||v.asking_price||0)*100);
     var metaURI = 'https://ooak21.github.io/luisocadiz-portfolio/imc/?vehicle='+encodeURIComponent(v.id);
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
-      from:window.ethereum.selectedAddress, to:NFT_ADDRESS,
+      from:window.ethereum.selectedAddress,
+      to:NFT_ADDRESS,
+      gas: GAS_LIMIT,
+      maxFeePerGas: MAX_FEE,
+      maxPriorityFeePerGas: MAX_PRIORITY,
       data:encodeMintVehicle(v.make||'',v.model||'',parseInt(v.year)||0,v.color||'',v.vin||('IMC-'+v.id.slice(0,8).toUpperCase()),v.ev_converted||false,appraisedCents,metaURI)
     }]});
   })
@@ -929,12 +940,29 @@ function chainStatus(id, msg, color) {
 function encodeAddress(addr) { return '000000000000000000000000'+addr.slice(2).toLowerCase(); }
 function encodeUint256(val) { return parseInt(val).toString(16).padStart(64,'0'); }
 
+// sendChainTx — now includes explicit gas settings to prevent MetaMask fee explosion
 function sendChainTx(to, data, statusId, label) {
   if (!window.ethereum||!window.ethereum.selectedAddress) { chainStatus(statusId,'Connect wallet first','var(--red)'); return; }
-  chainStatus(statusId,'Awaiting MetaMask...','var(--gold)');
-  window.ethereum.request({method:'eth_sendTransaction',params:[{from:window.ethereum.selectedAddress,to:to,data:data}]})
-  .then(function(tx){ chainStatus(statusId,label+' TX: '+tx.slice(0,12)+'...','var(--green)'); })
-  .catch(function(e){ chainStatus(statusId,'Error: '+(e.message||'rejected'),'var(--red)'); });
+  // Ensure correct network first
+  window.ethereum.request({method:'eth_chainId'})
+  .then(function(chainId) {
+    if (chainId !== AMOY_CHAIN_ID) {
+      return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+    }
+  })
+  .then(function() {
+    chainStatus(statusId,'Awaiting MetaMask...','var(--gold)');
+    return window.ethereum.request({method:'eth_sendTransaction',params:[{
+      from: window.ethereum.selectedAddress,
+      to: to,
+      data: data,
+      gas: GAS_LIMIT,
+      maxFeePerGas: MAX_FEE,
+      maxPriorityFeePerGas: MAX_PRIORITY
+    }]});
+  })
+  .then(function(tx){ chainStatus(statusId, label+' TX: '+tx.slice(0,12)+'...', 'var(--green)'); })
+  .catch(function(e){ chainStatus(statusId, 'Error: '+(e.message||'rejected'), 'var(--red)'); });
 }
 
 function adminMintNFT() {
@@ -973,8 +1001,21 @@ function adminApproveUSDC() {
 
 function adminMakePayment(vaultAddr, vaultKey) {
   if (!window.ethereum||!window.ethereum.selectedAddress){chainStatus('payment-status','Connect wallet first','var(--red)');return;}
-  chainStatus('payment-status','Awaiting MetaMask for '+vaultKey+'...','var(--gold)');
-  window.ethereum.request({method:'eth_sendTransaction',params:[{from:window.ethereum.selectedAddress,to:vaultAddr,data:'0xd8d79700'}]})
+  window.ethereum.request({method:'eth_chainId'})
+  .then(function(chainId){
+    if (chainId !== AMOY_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+  })
+  .then(function(){
+    chainStatus('payment-status','Awaiting MetaMask for '+vaultKey+'...','var(--gold)');
+    return window.ethereum.request({method:'eth_sendTransaction',params:[{
+      from:window.ethereum.selectedAddress,
+      to:vaultAddr,
+      data:'0xd8d79700',
+      gas: GAS_LIMIT,
+      maxFeePerGas: MAX_FEE,
+      maxPriorityFeePerGas: MAX_PRIORITY
+    }]});
+  })
   .then(function(tx){
     chainStatus('payment-status',vaultKey.toUpperCase()+' payment TX: '+tx.slice(0,12)+'...','var(--green)');
     setTimeout(loadVaultStatuses,4000);
