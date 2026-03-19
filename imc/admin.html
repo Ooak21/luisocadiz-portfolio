@@ -913,17 +913,26 @@ function submitVehicleDecision(action) {
   var v = allVehicles.find(function(x){return x.id===currentVehicleId;});
   if (!v) return;
   var update = {
-    status:action, loan_apr:parseFloat(document.getElementById('vAPR').value)||null,
+    loan_apr:parseFloat(document.getElementById('vAPR').value)||null,
     loan_amount:parseFloat(document.getElementById('vLoanAmount').value)||null,
     appraised_value:parseFloat(document.getElementById('vAppraised').value)||null,
     loan_term_months:parseInt(document.getElementById('vTerm').value)||null,
-    admin_notes:document.getElementById('vNotes').value, reviewed_at:new Date().toISOString()
+    admin_notes:document.getElementById('vNotes').value,
+    reviewed_at:new Date().toISOString()
   };
-  if (action==='listed') update.listed_at = new Date().toISOString();
+
+  // ── For 'listed': chain TX must confirm BEFORE Supabase status flips ──
+  if (action === 'listed') {
+    closeVModal();
+    pushToMarketplace(v, update);
+    return;
+  }
+
+  // For approve (hold) and reject — no chain TX, safe to update immediately
+  update.status = action;
   fetch(SB_URL+'/rest/v1/imc_vehicles?id=eq.'+currentVehicleId, {
     method:'PATCH', headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'}, body:JSON.stringify(update)
   }).then(function(){
-    if (action==='listed') pushToMarketplace(v,update);
     closeVModal(); loadVehicles();
   }).catch(function(e){alert('Error: '+e);});
 }
@@ -944,35 +953,96 @@ function pushToMarketplace(v, terms) {
     description:v.description||'', highlights:v.highlights||null,
     nft_contract:NFT_ADDRESS, vault_contract:VAULT_ADDRESS, chain_id:'80002', chain_name:'Polygon Amoy'
   };
-  fetch(SB_URL+'/rest/v1/imc_listings', {
-    method:'POST', headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'}, body:JSON.stringify(listing)
-  }).then(function(r){return r.json();})
-  .then(function(d) {
-    var listingId = d&&d[0]?d[0].id.slice(0,8).toUpperCase():'saved';
-    if (window.ethereum) mintVehicleOnChain(v,terms,vehicleName,listingId);
-    else alert(vehicleName+' listed! ID: '+listingId);
-  }).catch(function(e){alert('Error saving listing: '+e);});
+
+  if (!window.ethereum) {
+    // No MetaMask — skip mint, just save listing and flip status
+    fetch(SB_URL+'/rest/v1/imc_listings', {
+      method:'POST', headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'}, body:JSON.stringify(listing)
+    }).then(function(){
+      return commitListedStatus(v.id, terms, null);
+    }).then(function(){
+      alert(vehicleName+' listed (no wallet — skipped on-chain mint).');
+      loadVehicles();
+    }).catch(function(e){alert('Error: '+e);});
+    return;
+  }
+
+  // With MetaMask — mint first, flip status only on TX confirm
+  mintVehicleOnChain(v, terms, vehicleName, listing);
 }
 
-function mintVehicleOnChain(v, terms, vehicleName, listingId) {
+function mintVehicleOnChain(v, terms, vehicleName, listing) {
+  // v = original vehicle record (from imc_vehicles — has .make .model .year .color .vin)
+  // listing = the imc_listings object we're about to save
   window.ethereum.request({method:'eth_chainId'})
   .then(function(chainId){
     if (chainId!==AMOY_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
   })
   .then(function(){
     var appraisedCents = Math.round((terms.appraised_value||v.asking_price||0)*100);
+    var make  = (v.make||'').toString().trim();
+    var model = (v.model||'').toString().trim();
+    var year  = parseInt(v.year)||0;
+    var color = (v.color||'').toString().trim();
+    var vin   = (v.vin||('IMC-'+v.id.slice(0,8).toUpperCase())).toString().trim();
+    var ev    = v.ev_converted === true || v.ev_converted === 'true';
     var metaURI = 'https://ooak21.github.io/luisocadiz-portfolio/imc/?vehicle='+encodeURIComponent(v.id);
+
+    console.log('[MINT] make:'+make+' model:'+model+' year:'+year+' color:'+color+' vin:'+vin+' ev:'+ev+' appraised:'+appraisedCents);
+
+    if (!make || !model || !year) {
+      throw new Error('Missing required fields: make='+make+' model='+model+' year='+year);
+    }
+
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from:window.ethereum.selectedAddress,
       to:NFT_ADDRESS,
       gas: GAS_LIMIT,
       maxFeePerGas: MAX_FEE,
       maxPriorityFeePerGas: MAX_PRIORITY,
-      data:encodeMintVehicle(v.make||'',v.model||'',parseInt(v.year)||0,v.color||'',v.vin||('IMC-'+v.id.slice(0,8).toUpperCase()),v.ev_converted||false,appraisedCents,metaURI)
+      data:encodeMintVehicle(make, model, year, color, vin, ev, appraisedCents, metaURI)
     }]});
   })
-  .then(function(tx){alert(vehicleName+' LIVE! ID: '+listingId+' TX: '+tx.slice(0,12)+'...');})
-  .catch(function(e){alert(vehicleName+' listed (ID: '+listingId+'). Chain error: '+(e.message||''));});
+  .then(function(txHash){
+    // ✅ TX submitted — now save listing and flip status
+    listing.mint_tx_hash = txHash;
+    return fetch(SB_URL+'/rest/v1/imc_listings', {
+      method:'POST', headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'}, body:JSON.stringify(listing)
+    }).then(function(r){return r.json();})
+    .then(function(d){
+      var listingId = d&&d[0]?d[0].id.slice(0,8).toUpperCase():'saved';
+      return commitListedStatus(v.id, terms, txHash).then(function(){
+        alert(vehicleName+' LIVE on marketplace! Listing: '+listingId+' TX: '+txHash.slice(0,12)+'...');
+        loadVehicles();
+      });
+    });
+  })
+  .catch(function(e){
+    // ❌ TX failed or rejected — status stays unchanged
+    var msg = e.message||'Transaction failed or rejected';
+    console.error('[MINT ERROR]', e);
+    alert(vehicleName+' NOT listed — transaction failed.\n\n'+msg+'\n\nVehicle status unchanged.');
+    loadVehicles();
+  });
+}
+
+function commitListedStatus(vehicleId, terms, txHash) {
+  // Only called after TX confirms — this is the ONLY place status flips to 'listed'
+  var update = {
+    status: 'listed',
+    listed_at: new Date().toISOString(),
+    loan_apr: terms.loan_apr||null,
+    loan_amount: terms.loan_amount||null,
+    appraised_value: terms.appraised_value||null,
+    loan_term_months: terms.loan_term_months||null,
+    reviewed_at: terms.reviewed_at||new Date().toISOString()
+  };
+  if (txHash) update.mint_tx_hash = txHash;
+  return fetch(SB_URL+'/rest/v1/imc_vehicles?id=eq.'+vehicleId, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'},
+    body:JSON.stringify(update)
+  });
 }
 
 function encodeMintVehicle(make,model,year,color,vin,evConverted,appraisedValue,metadataURI) {
