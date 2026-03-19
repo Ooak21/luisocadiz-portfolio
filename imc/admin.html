@@ -88,6 +88,16 @@ textarea.inp{resize:vertical;min-height:80px;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border2);}
 
+/* ── RBAC STYLES ── */
+.role-badge{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid;margin-left:0.5rem;}
+.role-l1{color:#8888aa;border-color:rgba(136,136,170,0.3);background:rgba(136,136,170,0.06);}
+.role-l2{color:var(--neon);border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.06);}
+.role-l3{color:var(--purple);border-color:rgba(136,85,255,0.3);background:rgba(136,85,255,0.06);}
+.role-l4{color:var(--gold);border-color:rgba(240,192,64,0.3);background:rgba(240,192,64,0.06);}
+.role-l5{color:var(--green);border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.06);}
+.rbac-locked{opacity:0.25;pointer-events:none;cursor:not-allowed;position:relative;}
+.rbac-locked::after{content:'🔒';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:0.7rem;}
+
 /* ── RED STATE INDICATORS (additive only — no impact to existing UI) ── */
 .rs-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:6px;vertical-align:middle;flex-shrink:0;}
 .rs-red{background:var(--red);box-shadow:0 0 6px var(--red);animation:rs-blink 1.2s infinite;}
@@ -456,6 +466,75 @@ var GAS_LIMIT    = '0x' + (300000).toString(16);   // 300,000
 var MAX_FEE      = '0x' + (50000000000).toString(16); // 50 gwei
 var MAX_PRIORITY = '0x' + (30000000000).toString(16); // 30 gwei
 
+// ── RBAC ─────────────────────────────────────────────────────
+var currentRoleLevel = 0;
+var currentRoleName  = '';
+var ROLE_LABELS = { 1:'Processor', 2:'Sr Underwriter', 3:'Supervisor', 4:'Manager', 5:'Executive' };
+var ROLE_CLASSES = { 1:'role-l1', 2:'role-l2', 3:'role-l3', 4:'role-l4', 5:'role-l5' };
+
+function loadStaffRole(addr) {
+  fetch(SB_URL + '/rest/v1/imc_staff?wallet_address=eq.' + addr + '&select=role_level,role_name,full_name&active=eq.true', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var staff = data && data[0];
+    // Exec wallet hardcoded as L5 even if not in table
+    if (!staff && addr === '0x6c6ad1de674c292c088b29aa1312b991590bbb9f') {
+      staff = { role_level: 5, role_name: 'Executive', full_name: 'Luis Ocadiz' };
+    }
+    if (staff) {
+      currentRoleLevel = staff.role_level || 1;
+      currentRoleName  = staff.role_name || ROLE_LABELS[currentRoleLevel] || 'Staff';
+    } else {
+      currentRoleLevel = 1;
+      currentRoleName  = 'Processor';
+    }
+    applyRBAC();
+  })
+  .catch(function() {
+    // On error default to L1 — fail safe not fail open
+    currentRoleLevel = 1;
+    currentRoleName  = 'Processor';
+    applyRBAC();
+  });
+}
+
+function applyRBAC() {
+  var lvl = currentRoleLevel;
+
+  // Show role badge in nav
+  var existing = document.getElementById('roleBadge');
+  if (existing) existing.remove();
+  var badge = document.createElement('span');
+  badge.id = 'roleBadge';
+  badge.className = 'role-badge ' + (ROLE_CLASSES[lvl] || 'role-l1');
+  badge.textContent = currentRoleName;
+  document.getElementById('walletBtn').parentNode.insertBefore(badge, document.getElementById('walletBtn'));
+
+  // Dealer Submissions tab — L2+
+  var tabV = document.getElementById('tabVehicles');
+  if (lvl < 2) { tabV.classList.add('rbac-locked'); tabV.title = 'L2+ required'; }
+
+  // Blockchain Ops tab — L4+
+  var tabC = document.getElementById('tabChain');
+  if (lvl < 4) { tabC.classList.add('rbac-locked'); tabC.title = 'L4+ required'; }
+
+  // Approve + Deny buttons — L2+
+  var btnApprove = document.querySelector('.btn-approve');
+  var btnDeny    = document.querySelector('.btn-deny');
+  if (lvl < 2) {
+    if (btnApprove) { btnApprove.classList.add('rbac-locked'); btnApprove.title = 'L2+ required'; }
+    if (btnDeny)    { btnDeny.classList.add('rbac-locked');    btnDeny.title    = 'L2+ required'; }
+  }
+
+  // Push to Marketplace — L3+
+  var btnPush = document.querySelector('.btn-push');
+  if (lvl < 3 && btnPush) { btnPush.classList.add('rbac-locked'); btnPush.title = 'L3+ required'; }
+
+  console.log('[RBAC] Role loaded: L' + lvl + ' — ' + currentRoleName);
+}
+
 // -- GATE -----------------------------------------------------
 function connectAdminWallet() {
   if (!window.ethereum) { alert('Please install MetaMask.'); return; }
@@ -481,6 +560,7 @@ function connectAdminWallet() {
           document.getElementById('wLabel').textContent = addr.slice(0,6) + '...' + addr.slice(-4);
           document.getElementById('walletBtn').classList.add('connected');
           walletConnected = true;
+          loadStaffRole(addr);
           loadApplications();
         }, 800);
       } else {
@@ -496,6 +576,11 @@ function connectAdminWallet() {
 
 // -- TAB SWITCHING ---------------------------------------------
 function switchTab(tab) {
+  // RBAC guard — blockchain ops requires L4+
+  if (tab === 'chain' && currentRoleLevel < 4) {
+    alert('Access denied — L4 Manager or above required for Blockchain Ops.');
+    return;
+  }
   var panels = { apps: 'panelApps', vehicles: 'panelVehicles', chain: 'panelChain' };
   Object.keys(panels).forEach(function(key) {
     document.getElementById(panels[key]).style.display = key === tab ? 'block' : 'none';
@@ -661,6 +746,11 @@ function closeModal() { document.getElementById('modalOverlay').classList.remove
 
 function submitDecision(decision) {
   if (!currentAppId) return;
+  // RBAC guard — approve and deny require L2+
+  if ((decision === 'approved' || decision === 'denied') && currentRoleLevel < 2) {
+    alert('Access denied — L2 Senior Underwriter or above required to approve or deny.');
+    return;
+  }
   var app = allApps.find(function(a){return a.id===currentAppId;});
   var update = { status:decision, decision:decision, final_apr:parseFloat(document.getElementById('uwAPR').value)||null, approved_amount:parseFloat(document.getElementById('uwAmount').value)||null, underwriter_notes:document.getElementById('uwNotes').value, reviewed_at:new Date().toISOString() };
   fetch(SB_URL+'/rest/v1/imc_applications?id=eq.'+currentAppId, {
@@ -815,6 +905,11 @@ function closeVModal() { document.getElementById('vModalOverlay').classList.remo
 
 function submitVehicleDecision(action) {
   if (!currentVehicleId) return;
+  // RBAC guard — push to marketplace requires L3+
+  if (action === 'listed' && currentRoleLevel < 3) {
+    alert('Access denied — L3 Supervisor or above required to push to marketplace.');
+    return;
+  }
   var v = allVehicles.find(function(x){return x.id===currentVehicleId;});
   if (!v) return;
   var update = {
