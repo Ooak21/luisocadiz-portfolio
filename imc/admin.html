@@ -1023,7 +1023,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
       data:encodeMintVehicle(make, model, year, color, vin, ev, appraisedCents, metaURI)
     }]});
   })
-  .then(function(mintTxHash){
+  .then(function(mintTxHash){ var _mintTxHash = mintTxHash;
     // ✅ STEP 2 — Deploy Vault
     var appraisedCents = Math.round((terms.appraised_value||v.asking_price||0)*100);
     var loanRaw = Math.round((terms.loan_amount||Math.floor((v.asking_price||0)*0.9))*1000000);
@@ -1094,7 +1094,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
           .then(function(receipt){
             if (receipt && receipt.contractAddress) {
               clearInterval(poll);
-              console.log('[AUTO] Vault receipt got contractAddress:', receipt.contractAddress);resolve({tokenId: tokenId, vaultAddress: receipt.contractAddress, mintTxHash: mintTxHash});
+              console.log('[AUTO] Vault receipt got contractAddress:', receipt.contractAddress);resolve({tokenId: tokenId, vaultAddress: receipt.contractAddress, mintTxHash: _mintTxHash});
             }
           }).catch(reject);
         }, 2000);
