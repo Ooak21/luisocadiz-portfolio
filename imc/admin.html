@@ -1092,7 +1092,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
           .then(function(receipt){
             if (receipt && receipt.contractAddress) {
               clearInterval(poll);
-              resolve({tokenId: tokenId, vaultAddress: receipt.contractAddress, mintTxHash: mintTxHash});
+              console.log('[AUTO] Vault receipt got contractAddress:', receipt.contractAddress);resolve({tokenId: tokenId, vaultAddress: receipt.contractAddress, mintTxHash: mintTxHash});
             }
           }).catch(reject);
         }, 2000);
