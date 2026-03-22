@@ -194,11 +194,33 @@ function padAddress(addr) {
 
 function loadAllPositions(wallet) {
   positions = [];
-  var promises = VAULTS.map(function(vault, i) {
-    return loadVaultPosition(wallet, vault, i);
-  });
-  Promise.all(promises).then(function() {
-    renderDashboard();
+  // Fetch dynamic vaults from Supabase and merge with hardcoded
+  var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
+  fetch(SB_URL + '/rest/v1/imc_vaults?select=vault_address,vault_name,status&status=eq.assigned', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(dbVaults) {
+    var allVaults = VAULTS.slice();
+    var existingAddrs = VAULTS.map(function(v) { return v.addr.toLowerCase(); });
+    (dbVaults || []).forEach(function(dv) {
+      if (existingAddrs.indexOf(dv.vault_address.toLowerCase()) === -1) {
+        allVaults.push({ name: dv.vault_name, short: dv.vault_name, addr: dv.vault_address, apr: 0, color: 'var(--purple)' });
+      }
+    });
+    var promises = allVaults.map(function(vault, i) {
+      return loadVaultPosition(wallet, vault, i);
+    });
+    Promise.all(promises).then(function() {
+      renderDashboard();
+    });
+  })
+  .catch(function() {
+    var promises = VAULTS.map(function(vault, i) {
+      return loadVaultPosition(wallet, vault, i);
+    });
+    Promise.all(promises).then(function() { renderDashboard(); });
   });
 }
 
