@@ -459,12 +459,8 @@ var currentVehicleId = null;
 var walletConnected = false;
 
 // ---- GAS SETTINGS (Polygon Amoy) ----
-// These are safe limits for Polygon Amoy testnet.
-// gasLimit: enough for complex contract calls, not so high MetaMask panics.
-// maxFeePerGas / maxPriorityFeePerGas: in wei (50 gwei / 30 gwei).
-var GAS_LIMIT    = '0x' + (300000).toString(16);   // 300,000
-var MAX_FEE      = '0x' + (50000000000).toString(16); // 50 gwei
-var MAX_PRIORITY = '0x' + (30000000000).toString(16); // 30 gwei
+var GAS_LIMIT  = '0x' + (300000).toString(16);
+var GAS_PRICE  = '0x' + (50000000000).toString(16);
 
 // ── RBAC ─────────────────────────────────────────────────────
 var currentRoleLevel = 0;
