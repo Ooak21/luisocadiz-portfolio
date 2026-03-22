@@ -1119,6 +1119,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     listing.vault_contract = result.vaultAddress;
     // nft_token_id not in schema — skip
 
+    console.log('[AUTO] listing payload:', JSON.stringify(listing));
     return fetch(SB_URL+'/rest/v1/imc_listings', {
       method:'POST', headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'}, body:JSON.stringify(listing)
     }).then(function(r){return r.json();})
