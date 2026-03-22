@@ -559,6 +559,106 @@ function loadDynamicListings() {
         '</div></div></div>';
     }).join('');
     container.innerHTML = html;
+    // Update vault progress for dynamic listings
+    var dynCards = container.querySelectorAll('.glass-card');
+    listings.forEach(function(v, idx) {
+      if (!v.vault_contract || !window.ethereum) return;
+      window.ethereum.request({method:'eth_call',params:[{to:v.vault_contract,data:'0xcf1d224b'},'latest']})
+      .then(function(result){
+        if(!result||result==='0x') return;
+        var hex=result.slice(2);
+        var funded=parseInt(hex.slice(0,64),16);
+        var target=parseInt(hex.slice(64,128),16);
+        var pct=parseInt(hex.slice(192,256),16);
+        var fundedUSD=Math.floor(funded/1e6);
+        var targetUSD=Math.floor(target/1e6);
+        var card=dynCards[idx];
+        if(!card) return;
+        var spans=card.querySelectorAll('span');
+        spans.forEach(function(s){
+          if(s.textContent.indexOf('USDC funded')>-1) s.textContent='
+}
+
+window.addEventListener('load', function() { if (window.ethereum) { switchToAmoy(); } });
+</script>
+
+<!-- INVEST MODAL -->
+<div id="investModal" style="display:none;position:fixed;inset:0;background:rgba(5,5,7,0.92);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:2rem;">
+  <div style="background:var(--surface);border:1px solid var(--border);width:100%;max-width:480px;position:relative;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0.6;"></div>
+    <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.05em;color:var(--text);">Invest in <span id="investVehicleName" style="color:var(--neon);">Vehicle</span></div>
+      <button onclick="closeInvestModal()" style="background:none;border:none;color:var(--dim);font-size:1.5rem;cursor:pointer;line-height:1;">x</button>
+    </div>
+    <div style="padding:2rem;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:1.5rem;">
+        <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem 1.25rem;flex:1;margin-right:0.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Loan Target</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);" id="investTarget">--</div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem 1.25rem;flex:1;margin-left:0.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Your USDC</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--neon);" id="usdcBalance">Loading...</div>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:0.4rem;">Amount (USDC)</label>
+        <input id="investAmount" type="number" step="0.01" min="0.01" placeholder="e.g. 0.25" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.85rem 1rem;font-family:'DM Mono',monospace;font-size:0.85rem;outline:none;width:100%;" oninput="this.style.borderColor='var(--neon)'">
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;margin-bottom:1.25rem;min-height:1.2rem;" id="investStatus"></div>
+      <button id="investBtn" onclick="doInvest()" style="background:var(--neon);border:none;color:#050507;padding:1rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;width:100%;transition:all 0.2s;">Approve & Invest</button>
+      <div style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);line-height:1.7;text-align:center;">Two transactions required: (1) Approve USDC spending, (2) Deposit into vault. Both require MetaMask confirmation.</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
++fundedUSD.toLocaleString()+' / 
+}
+
+window.addEventListener('load', function() { if (window.ethereum) { switchToAmoy(); } });
+</script>
+
+<!-- INVEST MODAL -->
+<div id="investModal" style="display:none;position:fixed;inset:0;background:rgba(5,5,7,0.92);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:2rem;">
+  <div style="background:var(--surface);border:1px solid var(--border);width:100%;max-width:480px;position:relative;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0.6;"></div>
+    <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.05em;color:var(--text);">Invest in <span id="investVehicleName" style="color:var(--neon);">Vehicle</span></div>
+      <button onclick="closeInvestModal()" style="background:none;border:none;color:var(--dim);font-size:1.5rem;cursor:pointer;line-height:1;">x</button>
+    </div>
+    <div style="padding:2rem;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:1.5rem;">
+        <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem 1.25rem;flex:1;margin-right:0.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Loan Target</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);" id="investTarget">--</div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem 1.25rem;flex:1;margin-left:0.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Your USDC</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--neon);" id="usdcBalance">Loading...</div>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:0.4rem;">Amount (USDC)</label>
+        <input id="investAmount" type="number" step="0.01" min="0.01" placeholder="e.g. 0.25" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.85rem 1rem;font-family:'DM Mono',monospace;font-size:0.85rem;outline:none;width:100%;" oninput="this.style.borderColor='var(--neon)'">
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.62rem;margin-bottom:1.25rem;min-height:1.2rem;" id="investStatus"></div>
+      <button id="investBtn" onclick="doInvest()" style="background:var(--neon);border:none;color:#050507;padding:1rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;width:100%;transition:all 0.2s;">Approve & Invest</button>
+      <div style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--dim);line-height:1.7;text-align:center;">Two transactions required: (1) Approve USDC spending, (2) Deposit into vault. Both require MetaMask confirmation.</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
++targetUSD.toLocaleString()+' USDC funded';
+          if(s.textContent==='0%') s.textContent=pct+'%';
+        });
+        var bar=card.querySelector('.prog-fill');
+        if(bar) bar.style.width=Math.min(pct,100)+'%';
+      }).catch(function(){});
+    });
   })
   .catch(function(e) { console.error('Listings error:', e); });
 }
