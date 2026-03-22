@@ -26,6 +26,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .card.gold::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
 .card.green::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
 .card.red::before{background:linear-gradient(90deg,transparent,var(--red),transparent);}
+.card.purple::before{background:linear-gradient(90deg,transparent,var(--purple),transparent);}
 .srow{display:flex;justify-content:space-between;align-items:baseline;padding:0.6rem 0;border-bottom:1px solid var(--border);}
 .srow:last-child{border-bottom:none;}
 .skey{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);}
@@ -35,6 +36,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .badge-approved{background:rgba(0,255,136,0.08);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
 .badge-denied{background:rgba(255,68,85,0.08);color:var(--red);border:1px solid rgba(255,68,85,0.2);}
 .badge-review{background:rgba(240,192,64,0.08);color:var(--gold);border:1px solid rgba(240,192,64,0.2);}
+.badge-funding{background:rgba(136,85,255,0.08);color:var(--purple);border:1px solid rgba(136,85,255,0.2);}
 .timeline{display:flex;flex-direction:column;gap:0;}
 .tl-step{display:flex;gap:1.25rem;align-items:flex-start;padding:0 0 1.5rem 0;position:relative;}
 .tl-step:last-child{padding-bottom:0;}
@@ -49,6 +51,10 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .tl-label.active{color:var(--neon);}
 .tl-label.pending{color:var(--dim);}
 .tl-sub{font-size:0.8rem;color:var(--muted);margin-top:0.25rem;line-height:1.5;}
+.app-section{margin-bottom:2.5rem;border-top:2px solid var(--border);padding-top:2rem;}
+.app-section:first-child{border-top:none;padding-top:0;}
+.withdraw-btn{background:transparent;border:1px solid var(--red);color:var(--red);padding:0.6rem 1.25rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.withdraw-btn:hover{background:rgba(255,68,85,0.1);}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 .fade-in{animation:fadeUp 0.5s ease forwards;}
@@ -63,7 +69,6 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <nav class="nav">
   <a href="index.html" class="nav-logo"><div class="nav-dot"></div>IMC</a>
   <div style="display:flex;align-items:center;gap:1.5rem;">
-    
     <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);text-decoration:none;">Marketplace</a>
     <a href="dashboard.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--neon);text-decoration:none;">Dashboard</a>
     <a href="status.html" style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--neon);text-decoration:none;">My Status</a>
@@ -86,7 +91,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,5rem);line-height:0.9;letter-spacing:0.02em;margin-bottom:1.5rem;">
         CHECK YOUR<br><span style="color:var(--neon);text-shadow:0 0 20px rgba(0,212,255,0.3);">APPLICATION</span>
       </h1>
-      <p style="color:var(--muted);font-size:0.9rem;max-width:420px;margin:0 auto 2.5rem;line-height:1.75;">Connect the wallet you used when applying to view your application status, decision, and approved terms.</p>
+      <p style="color:var(--muted);font-size:0.9rem;max-width:420px;margin:0 auto 2.5rem;line-height:1.75;">Connect the wallet you used when applying to view all your applications, loan status, and payment portal.</p>
       <button onclick="connectAndLoad()" style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:1rem 2.5rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.boxShadow='0 0 20px rgba(0,212,255,0.3)'" onmouseout="this.style.boxShadow='none'">
         Connect Wallet to View Status
       </button>
@@ -96,7 +101,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   <!-- LOADING -->
   <div id="loadingState" style="display:none;text-align:center;padding:4rem 0;">
     <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);">
-      <span style="animation:pulse 1s infinite;display:inline-block;">Checking on-chain records...</span>
+      <span style="animation:pulse 1s infinite;display:inline-block;">Loading your applications...</span>
     </div>
   </div>
 
@@ -104,114 +109,41 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   <div id="noAppState" style="display:none;text-align:center;padding:4rem 0;">
     <div style="font-size:3rem;margin-bottom:1.5rem;opacity:0.3;">&#11042;</div>
     <div class="sl" style="justify-content:center;">No Application Found</div>
-    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:0.05em;margin-bottom:1rem;color:var(--muted);">No applications found<br>for this wallet</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:0.05em;margin-bottom:1rem;color:var(--muted);">No applications found<br>for this wallet</h2>
     <p style="color:var(--dim);font-size:0.85rem;max-width:380px;margin:0 auto 2rem;line-height:1.7;">Make sure you are connected with the same wallet you used when submitting your application.</p>
     <a href="apply.html"><button style="background:var(--gold);border:none;color:#050507;padding:0.85rem 2rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;">Apply Now</button></a>
   </div>
 
-  <!-- APPLICATION STATUS -->
+  <!-- ALL APPLICATIONS -->
   <div id="appStatus" style="display:none;" class="fade-in">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;">
       <div>
-        <div class="sl">Your Application</div>
+        <div class="sl">Your Applications & Loans</div>
         <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,3.5rem);line-height:0.92;letter-spacing:0.02em;" id="statusHeading">Application Status</h1>
       </div>
-      <div id="statusBadge"></div>
-    </div>
-
-    <!-- STATUS CARD -->
-    <div class="card neon" id="statusCard" style="margin-bottom:1rem;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;" id="statusDetails"></div>
-    </div>
-
-    <!-- APPROVED TERMS (shown only if approved) -->
-    <div id="approvedTerms" style="display:none;">
-      <div class="card green">
-        <div class="sl" style="margin-bottom:1.25rem;color:var(--green);">
-          <span style="width:2rem;height:1px;background:var(--green);box-shadow:0 0 4px var(--green);"></span>
-          Approved Loan Terms
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;" id="approvedTermsDetails"></div>
-        <div style="margin-top:1.5rem;padding:1rem;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.15);">
-          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--green);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Next Steps</div>
-          <div style="font-size:0.85rem;color:var(--muted);line-height:1.7;" id="nextSteps">Our team will contact you within 2 business days to complete documentation and initiate funding.</div>
-        </div>
-      </div>
-    <!-- PAYMENT PORTAL -->
-    <div id="paymentPortal" style="display:none;margin-top:1.5rem;">
-      <div class="card neon">
-        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);margin-bottom:1.25rem;display:flex;align-items:center;gap:0.75rem;">
-          <span style="width:1.5rem;height:1px;background:var(--neon);display:inline-block;"></span>
-          Loan Payment Portal
-        </div>
-        <div id="portalLoading" style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--dim);">Loading vault data...</div>
-        <div id="portalContent" style="display:none;">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;" id="portalStats"></div>
-          <div id="paymentDue" style="margin-bottom:1rem;padding:1rem;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);"></div>
-          <button id="makePaymentBtn" onclick="borrowerMakePayment()" style="width:100%;background:var(--neon);border:none;color:#050507;padding:1rem;font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;">Make Monthly Payment</button>
-          <div id="paymentStatus" style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--dim);margin-top:0.75rem;min-height:1rem;text-align:center;"></div>
-        </div>
-        <div id="portalError" style="display:none;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--dim);"></div>
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+        <a href="apply.html"><button style="background:var(--gold);border:none;color:#050507;padding:0.6rem 1.25rem;font-family:'DM Mono',monospace;font-size:0.6rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">+ New Application</button></a>
       </div>
     </div>
-    </div>
-
-    <!-- DENIED (shown only if denied) -->
-    <div id="deniedSection" style="display:none;">
-      <div class="card red">
-        <div class="sl" style="margin-bottom:1.25rem;color:var(--red);">
-          <span style="width:2rem;height:1px;background:var(--red);"></span>
-          Decision Details
-        </div>
-        <div id="deniedReasons" style="margin-bottom:1.5rem;"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-          <div style="padding:1rem;background:var(--surface2);border:1px solid var(--border);">
-            <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.5rem;">Reapply After</div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--neon);" id="reapplyDate">--</div>
-          </div>
-          <div style="padding:1rem;background:var(--surface2);border:1px solid var(--border);">
-            <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.5rem;">Questions / Appeals</div>
-            <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);">appeals@illusivemotorconcepts.com</div>
-          </div>
-        </div>
-        <div style="margin-top:1.5rem;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem;">Resources to Strengthen Your Next Application</div>
-          <div style="display:flex;flex-direction:column;gap:0.5rem;">
-            <a href="https://www.experian.com/boost" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;background:var(--surface2);border:1px solid var(--border);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--neon)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);letter-spacing:0.1em;">Experian Boost</div><div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">Instantly raise your FICO score - free</div></div>
-              <span style="color:var(--dim);font-size:0.8rem;">-></span>
-            </a>
-            <a href="https://www.self.inc" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;background:var(--surface2);border:1px solid var(--border);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--neon)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);letter-spacing:0.1em;">Self Credit Builder</div><div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">Build credit history with a credit builder loan</div></div>
-              <span style="color:var(--dim);font-size:0.8rem;">-></span>
-            </a>
-            <a href="https://www.creditkarma.com" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;background:var(--surface2);border:1px solid var(--border);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--neon)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div><div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);letter-spacing:0.1em;">Credit Karma</div><div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">Free credit monitoring and personalized tips</div></div>
-              <span style="color:var(--dim);font-size:0.8rem;">-></span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TIMELINE -->
-    <div class="card neon" style="margin-top:1rem;">
-      <div class="sl" style="margin-bottom:1.5rem;">Application Timeline</div>
-      <div class="timeline" id="timeline"></div>
-    </div>
-
-    <!-- APPLY AGAIN / BROWSE -->
+    <div id="applicationsContainer"></div>
     <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;">
       <a href="index.html" style="flex:1;"><button style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;width:100%;transition:all 0.2s;">Browse Marketplace</button></a>
-      <a href="apply.html" id="reapplyBtn" style="flex:1;display:none;"><button style="background:var(--gold);border:none;color:#050507;padding:0.85rem;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;width:100%;">Apply for Another Vehicle</button></a>
     </div>
   </div>
+
 </div>
 
 <script>
 var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
 var WALLET = '';
+var AMOY_CHAIN_ID = '0x13882';
+
+var SEL = {
+  getLoanSummary:  '0x6ce5891d',
+  makePayment:     '0xd8d79700',
+  getFundingProgress: '0xcf1d224b'
+};
 
 function show(id) {
   ['connectPrompt','loadingState','noAppState','appStatus'].forEach(function(s) {
@@ -239,231 +171,302 @@ function connectAndLoad() {
 }
 
 function loadApplications(wallet) {
-  fetch(SB_URL + '/rest/v1/imc_applications?wallet_address=eq.' + encodeURIComponent(wallet) + '&order=created_at.desc&limit=1', {
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
-      'Content-Type': 'application/json'
-    }
+  fetch(SB_URL + '/rest/v1/imc_applications?wallet_address=eq.' + encodeURIComponent(wallet) + '&order=created_at.desc', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
-    if (!data || data.length === 0) {
-      show('noAppState');
-      return;
-    }
-    renderStatus(data[0]);
+    if (!data || data.length === 0) { show('noAppState'); return; }
+    var name = ((data[0].first_name||'') + ' ' + (data[0].last_name||'')).trim();
+    document.getElementById('statusHeading').textContent = name || 'Your Applications';
+    show('appStatus');
+    renderAllApplications(data);
   })
-  .catch(function(e) {
-    console.error(e);
-    show('noAppState');
+  .catch(function(e) { console.error(e); show('noAppState'); });
+}
+
+function renderAllApplications(apps) {
+  var container = document.getElementById('applicationsContainer');
+  container.innerHTML = apps.map(function(app, idx) {
+    return renderAppCard(app, idx);
+  }).join('');
+
+  // Load vault data for approved/funded apps
+  apps.forEach(function(app) {
+    if (app.vault_contract && (app.status === 'approved' || app.status === 'pending_funding' || app.status === 'active')) {
+      loadVaultData(app);
+    }
   });
 }
 
-function renderStatus(app) {
-  show('appStatus');
+function renderAppCard(app, idx) {
   var status = app.status || 'pending';
   var statusConfig = {
-    pending:  { label: 'Under Review',  badge: 'badge-pending',  heading: 'Under Review',   color: 'var(--neon)',  dot: 'active' },
-    review:   { label: 'In Review',     badge: 'badge-review',   heading: 'In Review',       color: 'var(--gold)', dot: 'active' },
-    approved: { label: 'Approved',      badge: 'badge-approved', heading: 'Approved',        color: 'var(--green)',dot: 'done'   },
-    denied:   { label: 'Not Approved',  badge: 'badge-denied',   heading: 'Not Approved',    color: 'var(--red)',  dot: 'pending'}
+    pending:         { label: 'Under Review',    color: 'var(--neon)',    cardClass: 'neon',   badgeClass: 'badge-pending' },
+    review:          { label: 'In Review',        color: 'var(--gold)',    cardClass: 'gold',   badgeClass: 'badge-review' },
+    approved:        { label: 'Approved',         color: 'var(--green)',   cardClass: 'green',  badgeClass: 'badge-approved' },
+    pending_funding: { label: 'Awaiting Funding', color: 'var(--purple)',  cardClass: 'purple', badgeClass: 'badge-funding' },
+    active:          { label: 'Loan Active',      color: 'var(--green)',   cardClass: 'green',  badgeClass: 'badge-approved' },
+    denied:          { label: 'Not Approved',     color: 'var(--red)',     cardClass: 'red',    badgeClass: 'badge-denied' },
+    agent_error:     { label: 'Under Review',     color: 'var(--gold)',    cardClass: 'gold',   badgeClass: 'badge-review' }
   };
   var cfg = statusConfig[status] || statusConfig.pending;
+  var appDate = new Date(app.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var appId = app.id ? app.id.slice(0,8).toUpperCase() : '--';
 
-  // Heading
-  var name = ((app.first_name || '') + (app.last_name ? ' ' + app.last_name : '')).trim();
-  document.getElementById('statusHeading').textContent = name ? name + ' - ' + cfg.heading : cfg.heading;
-  document.getElementById('statusHeading').style.color = cfg.color;
+  var html = '<div class="app-section">';
 
-  // Badge
-  document.getElementById('statusBadge').innerHTML =
-    '<div class="status-badge ' + cfg.badge + '">' +
-    '<div style="width:7px;height:7px;border-radius:50%;background:currentColor;' + (status === 'approved' || status === 'pending' || status === 'review' ? 'animation:pulse 1.5s infinite;' : '') + '"></div>' +
-    cfg.label + '</div>';
+  // Header
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">';
+  html += '<div style="display:flex;align-items:center;gap:1rem;">';
+  html += '<span style="font-family:\'DM Mono\',monospace;font-size:0.65rem;letter-spacing:0.1em;color:var(--dim);">APP ' + appId + '</span>';
+  html += '<span class="status-badge ' + cfg.badgeClass + '"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;' + (status !== 'denied' ? 'animation:pulse 1.5s infinite;' : '') + '"></span>' + cfg.label + '</span>';
+  html += '</div>';
 
-  // Card color
-  var cardEl = document.getElementById('statusCard');
-  cardEl.className = 'card ' + (status === 'approved' ? 'green' : status === 'denied' ? 'red' : status === 'review' ? 'gold' : 'neon');
-
-  // Details
-  var appDate = new Date(app.created_at).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
-  var details = [
-    { key: 'Application ID', val: app.id ? app.id.slice(0,8).toUpperCase() : '--', color: 'var(--gold)' },
-    { key: 'Submitted', val: appDate, color: 'var(--text)' },
-    { key: 'Vehicle', val: app.vehicle_name || '1957 Chevrolet Bel Air', color: 'var(--text)' },
-    { key: 'Loan Requested', val: app.loan_amount ? '$' + app.loan_amount.toLocaleString() + ' USDC' : '--', color: 'var(--text)' },
-    { key: 'Term', val: app.term_months ? app.term_months + ' months' : '--', color: 'var(--text)' },
-    { key: 'Wallet', val: app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--', color: 'var(--neon)' },
-  ];
-  document.getElementById('statusDetails').innerHTML = details.map(function(d) {
-    return '<div><div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">' + d.key + '</div>' +
-      '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.1rem;color:' + d.color + ';letter-spacing:0.05em;">' + d.val + '</div></div>';
-  }).join('');
-
-  // Approved terms
-  if (status === 'approved') {
-    document.getElementById('approvedTerms').style.display = 'block';
-    if (WALLET) setTimeout(function(){ initPaymentPortal(WALLET, app); }, 500);
-    document.getElementById('reapplyBtn').style.display = 'flex';
-    var terms = [
-      { key: 'Approved APR', val: app.final_apr ? app.final_apr + '%' : '--', color: 'var(--gold)' },
-      { key: 'Approved Amount', val: app.approved_amount ? '$' + app.approved_amount.toLocaleString() : '$' + (app.loan_amount||0).toLocaleString(), color: 'var(--green)' },
-      { key: 'Term', val: (app.approved_term || app.term_months || '--') + ' months', color: 'var(--text)' },
-    ];
-    document.getElementById('approvedTermsDetails').innerHTML = terms.map(function(t) {
-      return '<div><div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">' + t.key + '</div>' +
-        '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.8rem;color:' + t.color + ';letter-spacing:0.02em;">' + t.val + '</div></div>';
-    }).join('');
-    // underwriter notes are internal only - show clean borrower message
-    document.getElementById('nextSteps').textContent = 'Your loan has been approved. Our team will contact you within 2 business days to complete documentation and initiate funding on-chain.';
+  // Withdraw button for pending applications
+  if (status === 'pending' || status === 'review') {
+    html += '<button class="withdraw-btn" onclick="withdrawApplication(\'' + app.id + '\')">Withdraw Application</button>';
   }
+  html += '</div>';
+
+  // Main card
+  html += '<div class="card ' + cfg.cardClass + '">';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">';
+
+  var details = [
+    ['Vehicle', app.vehicle_name || '--'],
+    ['Loan Requested', app.loan_amount ? '$' + Number(app.loan_amount).toLocaleString() + ' USDC' : '--'],
+    ['Term', app.term_months ? app.term_months + ' months' : '--'],
+    ['Submitted', appDate],
+    ['Wallet', app.wallet_address ? app.wallet_address.slice(0,6)+'...'+app.wallet_address.slice(-4) : '--']
+  ];
+
+  if (app.final_apr) details.push(['Approved APR', app.final_apr + '%']);
+  if (app.approved_amount) details.push(['Approved Amount', '$' + Number(app.approved_amount).toLocaleString() + ' USDC']);
+
+  html += '<div>' + details.map(function(d) {
+    return '<div class="srow"><span class="skey">' + d[0] + '</span><span class="sval">' + d[1] + '</span></div>';
+  }).join('') + '</div>';
+
+  // Timeline col
+  html += '<div>';
+  html += renderTimeline(app);
+  html += '</div>';
+
+  html += '</div>';
+
+  // Underwriter notes
+  if (app.underwriter_notes && status !== 'denied') {
+    html += '<div style="margin-top:1.25rem;padding:1rem;background:var(--surface2);border:1px solid var(--border);">';
+    html += '<div style="font-family:\'DM Mono\',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.4rem;">Decision Details</div>';
+    html += '<div style="font-size:0.8rem;color:var(--muted);line-height:1.6;">' + app.underwriter_notes + '</div>';
+    html += '</div>';
+  }
+
+  html += '</div>'; // end card
 
   // Denied section
   if (status === 'denied') {
-    document.getElementById('deniedSection').style.display = 'block';
-    document.getElementById('reapplyBtn').style.display = 'flex';
-    var reapply = new Date(Date.now() + 90*24*60*60*1000);
-    document.getElementById('reapplyDate').textContent = reapply.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
-    var reasons = [];
-    if (app.underwriter_notes) reasons.push(app.underwriter_notes);
-    else reasons.push('Your application did not meet current lending criteria. Please see the resources below to strengthen your profile.');
-    document.getElementById('deniedReasons').innerHTML = reasons.map(function(r) {
-      return '<div style="font-size:0.85rem;color:var(--muted);line-height:1.7;padding:0.75rem 1rem;background:rgba(255,68,85,0.04);border:1px solid rgba(255,68,85,0.1);margin-bottom:0.5rem;">' + r + '</div>';
-    }).join('');
+    var reapplyDate = new Date(new Date(app.created_at).getTime() + 90*24*60*60*1000).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    html += '<div class="card red" style="margin-top:0.5rem;">';
+    html += '<div class="sl" style="color:var(--red);"><span style="width:2rem;height:1px;background:var(--red);display:inline-block;"></span>Decision Details</div>';
+    if (app.underwriter_notes) {
+      html += '<div style="margin-bottom:1.25rem;font-size:0.82rem;color:var(--muted);line-height:1.6;">' + app.underwriter_notes + '</div>';
+    }
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">';
+    html += '<div style="padding:1rem;background:var(--surface2);border:1px solid var(--border);">';
+    html += '<div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.5rem;">Reapply After</div>';
+    html += '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.3rem;color:var(--neon);">' + reapplyDate + '</div></div>';
+    html += '<div style="padding:1rem;background:var(--surface2);border:1px solid var(--border);">';
+    html += '<div style="font-family:\'DM Mono\',monospace;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.5rem;">Questions / Appeals</div>';
+    html += '<div style="font-family:\'DM Mono\',monospace;font-size:0.65rem;color:var(--neon);">appeals@illusivemotorconcepts.com</div></div>';
+    html += '</div>';
+    html += '<div style="font-family:\'DM Mono\',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:1rem;">Resources to Strengthen Your Next Application</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:0.5rem;">';
+    var resources = [
+      ['https://www.experian.com/boost','Experian Boost','Instantly raise your FICO score - free'],
+      ['https://www.self.inc','Self Credit Builder','Build credit history with a credit builder loan'],
+      ['https://www.creditkarma.com','Credit Karma','Free credit monitoring and personalized tips']
+    ];
+    resources.forEach(function(r) {
+      html += '<a href="'+r[0]+'" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;background:var(--surface2);border:1px solid var(--border);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'var(--neon)\'" onmouseout="this.style.borderColor=\'var(--border)\'">';
+      html += '<div><div style="font-family:\'DM Mono\',monospace;font-size:0.65rem;color:var(--neon);letter-spacing:0.1em;">'+r[1]+'</div><div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">'+r[2]+'</div></div>';
+      html += '<span style="color:var(--dim);font-size:0.8rem;">-></span></a>';
+    });
+    html += '</div></div>';
   }
 
-  // Timeline
+  // Payment portal for active loans
+  if (app.vault_contract && (status === 'approved' || status === 'pending_funding' || status === 'active')) {
+    html += '<div id="vault-portal-' + app.id + '" style="margin-top:0.5rem;">';
+    html += '<div class="card neon">';
+    html += '<div style="font-family:\'DM Mono\',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);margin-bottom:1.25rem;">Loan Payment Portal</div>';
+    html += '<div id="portal-loading-' + app.id + '" style="font-family:\'DM Mono\',monospace;font-size:0.65rem;color:var(--dim);">Loading vault data...</div>';
+    html += '<div id="portal-content-' + app.id + '" style="display:none;">';
+    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;" id="portal-stats-' + app.id + '"></div>';
+    html += '<div id="portal-due-' + app.id + '" style="margin-bottom:1rem;padding:1rem;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);"></div>';
+    html += '<button id="portal-btn-' + app.id + '" onclick="borrowerMakePayment(\'' + app.id + '\',\'' + app.vault_contract + '\')" style="width:100%;background:var(--neon);border:none;color:#050507;padding:1rem;font-family:\'DM Mono\',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;">Make Monthly Payment</button>';
+    html += '<div id="portal-status-' + app.id + '" style="font-family:\'DM Mono\',monospace;font-size:0.62rem;color:var(--dim);margin-top:0.75rem;min-height:1rem;text-align:center;"></div>';
+    html += '</div>';
+    html += '<div id="portal-error-' + app.id + '" style="display:none;font-family:\'DM Mono\',monospace;font-size:0.62rem;color:var(--dim);"></div>';
+    html += '</div></div>';
+  }
+
+  html += '</div>'; // end app-section
+  return html;
+}
+
+function renderTimeline(app) {
+  var status = app.status || 'pending';
   var steps = [
-    { label: 'Application Submitted', sub: 'Received ' + appDate, state: 'done' },
-    { label: 'Under Review', sub: status === 'pending' ? 'Our underwriting team is reviewing your application' : 'Completed', state: status === 'pending' ? 'active' : 'done' },
-    { label: 'Decision Made', sub: status === 'pending' || status === 'review' ? 'Expected within 24-48 hours' : (status === 'approved' ? 'Approved - see terms above' : 'See decision details above'), state: (status === 'approved' || status === 'denied') ? 'done' : status === 'review' ? 'active' : 'pending' },
-    { label: 'Documentation', sub: status === 'approved' ? 'Contact our team to complete paperwork' : 'Pending approval', state: status === 'approved' ? 'active' : 'pending' },
-    { label: 'Loan Funded', sub: 'USDC transferred to dealership on Polygon', state: 'pending' },
+    { key: 'submitted', label: 'Application Submitted', sub: 'Received ' + new Date(app.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) },
+    { key: 'review',    label: 'Under Review', sub: 'Completed' },
+    { key: 'decision',  label: 'Decision Made', sub: status === 'denied' ? 'See decision details above' : status === 'pending' || status === 'review' ? 'Pending' : 'Approved' },
+    { key: 'docs',      label: 'Documentation', sub: status === 'approved' || status === 'pending_funding' || status === 'active' ? 'Pending approval' : 'Pending' },
+    { key: 'funded',    label: 'Loan Funded', sub: 'USDC transferred to dealership on Polygon' }
   ];
 
-  document.getElementById('timeline').innerHTML = steps.map(function(step, i) {
-    var isLast = i === steps.length - 1;
-    return '<div class="tl-step' + (step.state === 'done' ? ' done-step' : '') + '">' +
-      (!isLast ? '<div class="tl-line"></div>' : '') +
-      '<div class="tl-dot ' + step.state + '"></div>' +
-      '<div>' +
-      '<div class="tl-label ' + step.state + '">' + step.label + '</div>' +
-      '<div class="tl-sub">' + step.sub + '</div>' +
-      '</div></div>';
-  }).join('');
-}
+  var activeIdx = 0;
+  if (status === 'review') activeIdx = 1;
+  else if (status === 'approved' || status === 'denied') activeIdx = 2;
+  else if (status === 'pending_funding') activeIdx = 3;
+  else if (status === 'active') activeIdx = 4;
 
-// -- PAYMENT PORTAL --
-var BORROWER_VAULT = null;
-var VAULTS = [
-  {key:'belair',  addr:'0x4d525e0DE065973b8CB4367c09e9796254d05f5d', name:'1957 Bel Air EV'},
-  {key:'charger', addr:'0x00C18588F028483098c28aC21B89AdbA1F097011', name:'1969 Charger R/T EV'},
-  {key:'mustang', addr:'0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad', name:'1970 Mustang Boss 429 EV'},
-  {key:'demo',    addr:'0xF537E0419300Cc91670b6a3A740d3BA047c7b7a9', name:'Demo Vault'}
-];
-var STATUS_MAP = ['FUNDING','ACTIVE','PAID OFF','DEFAULTED'];
-
-function initPaymentPortal(wallet, app) {
-  if (!window.ethereum) return;
-  document.getElementById('paymentPortal').style.display = 'block';
-  // Read vault address directly from the application record
-  var vaultAddr = app && app.vault_contract ? app.vault_contract : null;
-  if (!vaultAddr) {
-    document.getElementById('portalLoading').style.display = 'none';
-    document.getElementById('portalError').style.display = 'block';
-    document.getElementById('portalError').textContent = 'No vault assigned to this application yet. Contact IMC to complete your loan setup.';
-    return;
-  }
-  // Find vault name from known vaults
-  var vaultName = 'Your Loan Vault';
-  VAULTS.forEach(function(v) {
-    if (v.addr.toLowerCase() === vaultAddr.toLowerCase()) vaultName = v.name;
+  var html = '<div class="sl" style="margin-bottom:1rem;">Application Timeline</div>';
+  html += '<div class="timeline">';
+  steps.forEach(function(step, i) {
+    var dotClass = i < activeIdx ? 'done' : i === activeIdx ? 'active' : 'pending';
+    var labelClass = i < activeIdx ? 'done' : i === activeIdx ? 'active' : 'pending';
+    var stepClass = i < activeIdx ? 'done-step' : '';
+    html += '<div class="tl-step ' + stepClass + '">';
+    if (i < steps.length - 1) html += '<div class="tl-line"></div>';
+    html += '<div class="tl-dot ' + dotClass + '"></div>';
+    html += '<div><div class="tl-label ' + labelClass + '">' + step.label + '</div>';
+    html += '<div class="tl-sub">' + step.sub + '</div></div>';
+    html += '</div>';
   });
-  BORROWER_VAULT = { addr: vaultAddr, name: vaultName };
-  loadVaultDetails(vaultAddr);
+  html += '</div>';
+  return html;
 }
 
-function statBox(label, val, color) {
-  return '<div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;">' +
-    '<div style="font-family:monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">' + label + '</div>' +
-    '<div style="font-size:1.4rem;color:' + color + ';">' + val + '</div>' +
-    '</div>';
-}
+function loadVaultData(app) {
+  if (!window.ethereum || !app.vault_contract) return;
 
-function loadVaultDetails(vaultAddr) {
+  // Get loan summary
   window.ethereum.request({
     method: 'eth_call',
-    params: [{ to: vaultAddr, data: '0x6ce5891d' }, 'latest']
-  }).then(function(result) {
-    var clean = result.slice(2);
-    if (clean.length < 512) throw new Error('Bad response');
-    var statusVal    = parseInt(clean.slice(0,64), 16);
-    var loanAmount   = parseInt(clean.slice(64,128), 16);
-    var totalFunded  = parseInt(clean.slice(128,192), 16);
-    var monthlyPay   = parseInt(clean.slice(192,256), 16);
-    var nextDue      = parseInt(clean.slice(256,320), 16);
-    var paymentsLeft = parseInt(clean.slice(320,384), 16);
-    var statusLabel  = STATUS_MAP[statusVal] || 'UNKNOWN';
-    var statusColor  = statusVal===1?'var(--green)':statusVal===2?'var(--gold)':statusVal===3?'var(--red)':'var(--neon)';
-    var totalPmts    = loanAmount > 0 && monthlyPay > 0 ? Math.round(loanAmount/monthlyPay) : 0;
-
-    document.getElementById('portalLoading').style.display = 'none';
-    document.getElementById('portalContent').style.display = 'block';
-
-    document.getElementById('portalStats').innerHTML =
-      statBox('Vault Status', statusLabel, statusColor) +
-      statBox('Monthly Payment', '$' + (monthlyPay/1000000).toFixed(2) + ' USDC', 'var(--neon)') +
-      statBox('Payments Remaining', paymentsLeft + (totalPmts > 0 ? ' of ' + totalPmts : ''), 'var(--text)');
-
-    if (statusVal !== 1) {
-      // Not active - hide payment due, disable button
-      document.getElementById('paymentDue').innerHTML =
-        '<div style="font-family:monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Payment Due</div>' +
-        '<div style="font-size:1.1rem;color:var(--dim);">Available once vault is fully funded</div>';
-      document.getElementById('makePaymentBtn').disabled = true;
-      document.getElementById('makePaymentBtn').style.opacity = '0.4';
-      document.getElementById('makePaymentBtn').style.cursor = 'not-allowed';
-      document.getElementById('makePaymentBtn').textContent = statusLabel === 'PAID OFF' ? 'Loan Fully Paid Off' : 'Awaiting Full Funding';
-      document.getElementById('paymentStatus').textContent = statusLabel === 'PAID OFF' ? 'Congratulations - loan complete!' : 'Vault is ' + (Math.round(totalFunded/loanAmount*100)||0) + '% funded. Payment available once fully funded.';
-    } else {
-      var now = Math.floor(Date.now()/1000);
-      var overdue = nextDue > 0 && now > nextDue;
-      var dueStr = nextDue > 0 ? new Date(nextDue*1000).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : 'Ready now';
-      var dueColor = overdue ? 'var(--red)' : 'var(--gold)';
-      document.getElementById('paymentDue').innerHTML =
-        '<div style="font-family:monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">Next Payment Due</div>' +
-        '<div style="font-size:1.8rem;color:' + dueColor + ';">' + dueStr + '</div>' +
-        (overdue ? '<div style="font-family:monospace;font-size:0.58rem;color:var(--red);margin-top:0.25rem;">OVERDUE - Please pay immediately to avoid default</div>' : '');
+    params: [{ to: app.vault_contract, data: SEL.getLoanSummary }, 'latest']
+  })
+  .then(function(result) {
+    if (!result || result === '0x') {
+      document.getElementById('portal-loading-' + app.id).style.display = 'none';
+      document.getElementById('portal-error-' + app.id).style.display = 'block';
+      document.getElementById('portal-error-' + app.id).textContent = 'Vault data unavailable — check network connection.';
+      return;
     }
-  }).catch(function(e) {
-    document.getElementById('portalLoading').textContent = 'Could not load vault data. Check your network.';
-    console.error(e);
+    var hex = result.slice(2);
+    var statusNum     = parseInt(hex.slice(0,   64), 16);
+    var loanAmount    = parseInt(hex.slice(64,  128), 16);
+    var totalFunded   = parseInt(hex.slice(128, 192), 16);
+    var principal     = parseInt(hex.slice(192, 256), 16);
+    var monthly       = parseInt(hex.slice(256, 320), 16);
+    var payments      = parseInt(hex.slice(320, 384), 16);
+    var termMonths    = parseInt(hex.slice(384, 448), 16);
+    var nextDue       = parseInt(hex.slice(448, 512), 16);
+
+    var statusMap = ['FUNDING','ACTIVE','PAID OFF','DEFAULTED'];
+    var statusLabel = statusMap[statusNum] || 'UNKNOWN';
+    var statusColor = statusNum === 1 ? 'var(--green)' : statusNum === 2 ? 'var(--gold)' : statusNum === 3 ? 'var(--red)' : 'var(--neon)';
+
+    var monthlyUSD = (monthly / 1e6).toFixed(2);
+    var principalUSD = (principal / 1e6).toFixed(2);
+    var fundedUSD = (totalFunded / 1e6).toFixed(2);
+    var loanUSD = (loanAmount / 1e6).toFixed(2);
+
+    var stats = [
+      { label: 'Vault Status', val: statusLabel, color: statusColor },
+      { label: 'Monthly Payment', val: '$' + monthlyUSD, color: 'var(--neon)' },
+      { label: 'Principal Left', val: '$' + principalUSD, color: 'var(--text)' }
+    ];
+
+    document.getElementById('portal-stats-' + app.id).innerHTML = stats.map(function(s) {
+      return '<div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;text-align:center;">' +
+        '<div style="font-family:\'DM Mono\',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">' + s.label + '</div>' +
+        '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.3rem;color:' + s.color + ';">' + s.val + '</div></div>';
+    }).join('');
+
+    // Funding progress
+    var pct = loanAmount > 0 ? Math.round((totalFunded / loanAmount) * 100) : 0;
+    var dueEl = document.getElementById('portal-due-' + app.id);
+    if (statusNum === 0) {
+      dueEl.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:0.6rem;color:var(--purple);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.35rem;">Funding Progress</div>' +
+        '<div style="font-size:0.85rem;color:var(--muted);">$' + fundedUSD + ' / $' + loanUSD + ' USDC funded (' + pct + '%)</div>';
+    } else if (statusNum === 1 && nextDue > 0) {
+      var dueDate = new Date(nextDue * 1000).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+      var now = Date.now() / 1000;
+      var overdue = nextDue < now;
+      dueEl.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:0.6rem;color:' + (overdue ? 'var(--red)' : 'var(--neon)') + ';letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.35rem;">' + (overdue ? 'Payment Overdue' : 'Next Payment Due') + '</div>' +
+        '<div style="font-size:0.85rem;color:var(--muted);">' + dueDate + ' — $' + monthlyUSD + ' USDC</div>';
+    }
+
+    // Button state
+    var btn = document.getElementById('portal-btn-' + app.id);
+    if (statusNum !== 1) {
+      btn.disabled = true;
+      btn.style.opacity = '0.4';
+      btn.style.cursor = 'not-allowed';
+      btn.textContent = statusNum === 2 ? 'Loan Fully Paid Off' : statusNum === 0 ? 'Awaiting Full Funding' : 'Vault Defaulted';
+    }
+
+    document.getElementById('portal-loading-' + app.id).style.display = 'none';
+    document.getElementById('portal-content-' + app.id).style.display = 'block';
+  })
+  .catch(function(e) {
+    document.getElementById('portal-loading-' + app.id).style.display = 'none';
+    document.getElementById('portal-error-' + app.id).style.display = 'block';
+    document.getElementById('portal-error-' + app.id).textContent = 'Could not load vault: ' + (e.message || 'network error');
   });
 }
 
-function borrowerMakePayment() {
-  if (!BORROWER_VAULT || !window.ethereum || !window.ethereum.selectedAddress) return;
-  var btn = document.getElementById('makePaymentBtn');
-  var st = document.getElementById('paymentStatus');
-  btn.textContent = 'Awaiting MetaMask...';
+function borrowerMakePayment(appId, vaultAddr) {
+  if (!window.ethereum) { alert('Connect MetaMask'); return; }
+  var btn = document.getElementById('portal-btn-' + appId);
+  var statusEl = document.getElementById('portal-status-' + appId);
   btn.disabled = true;
-  st.style.color = 'var(--gold)';
-  st.textContent = 'Confirm the transaction in MetaMask...';
-  window.ethereum.request({
-    method: 'eth_sendTransaction',
-    params: [{ from: window.ethereum.selectedAddress, to: BORROWER_VAULT.addr, data: '0xd8d79700' }]
-  }).then(function(tx) {
-    st.style.color = 'var(--green)';
-    st.textContent = 'Payment sent! TX: ' + tx.slice(0,12) + '...';
-    btn.textContent = 'Payment Submitted';
-    setTimeout(function() { loadVaultDetails(BORROWER_VAULT.addr); }, 5000);
-  }).catch(function(e) {
-    st.style.color = 'var(--red)';
-    st.textContent = 'Error: ' + (e.message || 'Transaction rejected');
-    btn.textContent = 'Make Monthly Payment';
+  statusEl.textContent = 'Awaiting MetaMask confirmation...';
+  statusEl.style.color = 'var(--gold)';
+
+  window.ethereum.request({ method: 'eth_chainId' })
+  .then(function(chainId) {
+    if (chainId !== AMOY_CHAIN_ID) return window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: AMOY_CHAIN_ID }] });
+  })
+  .then(function() {
+    return window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [{ from: WALLET, to: vaultAddr, data: SEL.makePayment, gas: '0x' + (200000).toString(16), gasPrice: '0x' + (50000000000).toString(16) }]
+    });
+  })
+  .then(function(tx) {
+    statusEl.textContent = 'Payment submitted! TX: ' + tx.slice(0,14) + '...';
+    statusEl.style.color = 'var(--green)';
+    setTimeout(function() { loadApplications(WALLET); }, 5000);
+  })
+  .catch(function(e) {
+    statusEl.textContent = 'Error: ' + (e.message || 'rejected');
+    statusEl.style.color = 'var(--red)';
     btn.disabled = false;
   });
+}
+
+function withdrawApplication(appId) {
+  if (!confirm('Withdraw this application? This cannot be undone.')) return;
+  fetch(SB_URL + '/rest/v1/imc_applications?id=eq.' + appId, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY },
+    body: JSON.stringify({ status: 'withdrawn', underwriter_notes: 'Withdrawn by applicant.' })
+  })
+  .then(function() { loadApplications(WALLET); })
+  .catch(function(e) { alert('Error: ' + e.message); });
 }
 </script>
 </body>
