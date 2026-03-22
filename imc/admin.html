@@ -1048,7 +1048,7 @@ function encodeMintVehicle(make,model,year,color,vin,evConverted,appraisedValue,
     while(dh.length%64!==0)dh+='00';return lh+dh;
   }
   var es=[make,model,color,vin,metadataURI].map(encodeString);
-  var o=256,o0=o,o1=o0+es[0].length/2,o2=o1+es[1].length/2,o3=o2+es[2].length/2,o4=o3+es[3].length/2;
+  var o=256,o0=o,o1=o0+32+es[0].length/2,o2=o1+32+es[1].length/2,o3=o2+32+es[2].length/2,o4=o3+32+es[3].length/2;
   var head=padLeft(o0,64)+padLeft(o1,64)+padLeft(year,64)+padLeft(o2,64)+padLeft(o3,64)+padLeft(evConverted?1:0,64)+padLeft(appraisedValue,64)+padLeft(o4,64);
   return '0x9a9c4f65'+head+es[0]+es[1]+es[2]+es[3]+es[4];
 }
