@@ -997,7 +997,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from:window.ethereum.selectedAddress,
       to:NFT_ADDRESS,
-      gas: GAS_LIMIT,
+      gasLimit: GAS_LIMIT,
       maxFeePerGas: MAX_FEE,
       maxPriorityFeePerGas: MAX_PRIORITY,
       data:encodeMintVehicle(make, model, year, color, vin, ev, appraisedCents, metaURI)
@@ -1149,7 +1149,7 @@ function sendChainTx(to, data, statusId, label) {
       from: window.ethereum.selectedAddress,
       to: to,
       data: data,
-      gas: GAS_LIMIT,
+      gasLimit: GAS_LIMIT,
       maxFeePerGas: MAX_FEE,
       maxPriorityFeePerGas: MAX_PRIORITY
     }]});
@@ -1204,7 +1204,7 @@ function adminMakePayment(vaultAddr, vaultKey) {
       from:window.ethereum.selectedAddress,
       to:vaultAddr,
       data:'0xd8d79700',
-      gas: GAS_LIMIT,
+      gasLimit: GAS_LIMIT,
       maxFeePerGas: MAX_FEE,
       maxPriorityFeePerGas: MAX_PRIORITY
     }]});
