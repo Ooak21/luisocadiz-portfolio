@@ -571,7 +571,10 @@ function loadDynamicListings() {
         var pct=parseInt(hex.slice(192,256),16);
         var fundedUSD=Math.floor(funded/1e6);
         var targetUSD=Math.floor(target/1e6);
-        var card=dynCards[idx];
+        var card=null;
+        dynCards.forEach(function(dc){
+          if(dc.innerHTML.indexOf(v.id)>-1) card=dc;
+        });
         if(!card) return;
         card.querySelectorAll('span').forEach(function(s){
           if(s.textContent.indexOf('USDC funded')>-1) s.textContent='$'+fundedUSD.toLocaleString()+' / $'+targetUSD.toLocaleString()+' USDC funded';
