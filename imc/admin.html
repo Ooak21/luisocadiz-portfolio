@@ -1243,7 +1243,7 @@ function adminAttachVault() {
   var tokenId=document.getElementById('attach-tokenid').value.trim();
   var vault=document.getElementById('attach-vault').value.trim();
   if (!tokenId||!vault){chainStatus('attach-status','Enter token ID and vault address','var(--red)');return;}
-  sendChainTx(NFT_ADDRESS,'0xbc9318c1'+encodeUint256(tokenId)+encodeAddress(vault),'attach-status','Attach Vault');
+  if(!window.ethereum||!window.ethereum.selectedAddress){chainStatus('attach-status','Connect wallet first','var(--red)');return;}var data='0xbc9318c1'+encodeUint256(parseInt(tokenId))+encodeAddress(vault);chainStatus('attach-status','Awaiting MetaMask...','var(--gold)');window.ethereum.request({method:'eth_chainId'}).then(function(cId){if(cId!==AMOY_CHAIN_ID)return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});}).then(function(){return window.ethereum.request({method:'eth_sendTransaction',params:[{from:window.ethereum.selectedAddress,to:NFT_ADDRESS,data:data,gas:GAS_LIMIT,gasPrice:GAS_PRICE}]});}).then(function(tx){chainStatus('attach-status','Attached TX: '+tx.slice(0,18)+'...','var(--green)');}).catch(function(e){chainStatus('attach-status','Error: '+(e.message||'rejected'),'var(--red)');});
 }
 
 function adminSetBorrower() {
