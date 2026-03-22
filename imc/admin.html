@@ -1115,7 +1115,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
   })
   .then(function(result){
     // ✅ STEP 5 — Save listing + vault to Supabase
-    listing.mint_tx_hash = result.mintTxHash;
+    // mint_tx_hash not in imc_listings schema
     listing.vault_contract = result.vaultAddress;
     // nft_token_id not in schema — skip
 
