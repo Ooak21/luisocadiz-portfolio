@@ -1081,7 +1081,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from: window.ethereum.selectedAddress,
       data: deployData,
-      gas: '0x' + (2000000).toString(16),
+      gas: '0x' + (3500000).toString(16),
       gasPrice: GAS_PRICE
     }]}).then(function(deployTx){
       console.log('[AUTO] Vault deploy TX:', deployTx);
@@ -1206,7 +1206,7 @@ function adminDeployVault() {
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from: window.ethereum.selectedAddress,
       data: deployData,
-      gas: '0x' + (2000000).toString(16),
+      gas: '0x' + (3500000).toString(16),
       gasPrice: GAS_PRICE
     }]});
   })
