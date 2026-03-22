@@ -1023,36 +1023,26 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
       data:encodeMintVehicle(make, model, year, color, vin, ev, appraisedCents, metaURI)
     }]});
   })
-  .then(function(mintTxHash){ var _mintTxHash = mintTxHash;
-    // ✅ STEP 2 — Deploy Vault
-    var appraisedCents = Math.round((terms.appraised_value||v.asking_price||0)*100);
-    var loanRaw = Math.round((terms.loan_amount||Math.floor((v.asking_price||0)*0.9))*1000000);
-    var aprBPS = Math.round((terms.loan_apr||12)*100);
-    var termMonths = terms.loan_term_months||60;
-    var tokenIdForVault = null;
-
-    // Get token ID from mint receipt
+  .then(function(mintTxHash){
+    // ✅ STEP 2 — Wait for mint receipt, extract tokenId
     return new Promise(function(resolve, reject){
       var poll = setInterval(function(){
         window.ethereum.request({method:'eth_getTransactionReceipt',params:[mintTxHash]})
         .then(function(receipt){
           if (receipt && receipt.blockNumber) {
             clearInterval(poll);
-            // Token ID is the counter — get from logs or use totalVehicles
-            // Extract tokenId from logs (VehicleMinted event topic)
             var tokenId = null;
             if (receipt.logs) {
               for (var i=0; i<receipt.logs.length; i++) {
                 var log = receipt.logs[i];
-                // VehicleMinted event has tokenId as topics[1], Transfer event also has tokenId as topics[3]
                 if (log.address && log.address.toLowerCase() === NFT_ADDRESS.toLowerCase() && log.topics && log.topics.length >= 4) {
                   tokenId = parseInt(log.topics[3], 16);
                   break;
                 }
               }
             }
-            console.log('[AUTO] Extracted tokenId:', tokenId, 'from', receipt.logs ? receipt.logs.length : 0, 'logs');
-            resolve({receipt: receipt, tokenId: tokenId});
+            console.log('[AUTO] Extracted tokenId:', tokenId, 'mintTxHash:', mintTxHash);
+            resolve({tokenId: tokenId, mintTxHash: mintTxHash});
           }
         }).catch(reject);
       }, 2000);
@@ -1061,9 +1051,10 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
   })
   .then(function(mintResult){
     var tokenId = mintResult.tokenId;
+    var mintTxHash = mintResult.mintTxHash;
     console.log('[AUTO] Mint confirmed, Token ID:', tokenId);
 
-    // Deploy Vault
+    // ✅ STEP 3 — Deploy Vault
     var loanRaw = Math.round((terms.loan_amount||Math.floor((v.asking_price||0)*0.9))*1000000);
     var aprBPS = Math.round((terms.loan_apr||12)*100);
     var termMonths = terms.loan_term_months||60;
@@ -1087,18 +1078,19 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
       gasPrice: GAS_PRICE
     }]}).then(function(deployTx){
       console.log('[AUTO] Vault deploy TX:', deployTx);
-      // Wait for vault address
-      return new Promise(function(resolve, reject){
-        var poll = setInterval(function(){
+      // Wait for vault contract address
+      return new Promise(function(resolve2, reject2){
+        var poll2 = setInterval(function(){
           window.ethereum.request({method:'eth_getTransactionReceipt',params:[deployTx]})
-          .then(function(receipt){
-            if (receipt && receipt.contractAddress) {
-              clearInterval(poll);
-              console.log('[AUTO] Vault receipt got contractAddress:', receipt.contractAddress);resolve({tokenId: tokenId, vaultAddress: receipt.contractAddress, mintTxHash: _mintTxHash});
+          .then(function(receipt2){
+            if (receipt2 && receipt2.contractAddress) {
+              clearInterval(poll2);
+              console.log('[AUTO] Vault deployed:', receipt2.contractAddress);
+              resolve2({tokenId: tokenId, mintTxHash: mintTxHash, vaultAddress: receipt2.contractAddress});
             }
-          }).catch(reject);
+          }).catch(reject2);
         }, 2000);
-        setTimeout(function(){ clearInterval(poll); reject(new Error('Deploy receipt timeout')); }, 120000);
+        setTimeout(function(){ clearInterval(poll2); reject2(new Error('Deploy receipt timeout')); }, 120000);
       });
     });
   })
@@ -1106,10 +1098,10 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     var tokenId = result.tokenId;
     var vaultAddress = result.vaultAddress;
     var mintTxHash = result.mintTxHash;
-    console.log('[AUTO] Vault deployed:', vaultAddress, 'attaching to token', tokenId);
+    console.log('[AUTO] Attaching vault', vaultAddress, 'to token', tokenId);
 
-    // Attach Vault to NFT
-    var attachData = '0xbc9318a7'+BigInt(tokenId).toString(16).padStart(64,'0')+'000000000000000000000000'+vaultAddress.replace('0x','').toLowerCase();var mintTxHash=result.mintTxHash;
+    // ✅ STEP 4 — Attach Vault to NFT
+    var attachData = '0xbc9318a7'+BigInt(tokenId).toString(16).padStart(64,'0')+'000000000000000000000000'+vaultAddress.replace('0x','').toLowerCase();
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from: window.ethereum.selectedAddress,
       to: NFT_ADDRESS,
@@ -1122,7 +1114,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     });
   })
   .then(function(result){
-    // ✅ STEP 3 — Save listing + vault to Supabase
+    // ✅ STEP 5 — Save listing + vault to Supabase
     listing.mint_tx_hash = result.mintTxHash;
     listing.vault_contract = result.vaultAddress;
     listing.nft_token_id = result.tokenId;
@@ -1132,9 +1124,8 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     }).then(function(r){return r.json();})
     .then(function(d){
       var listingId = d&&d[0]?d[0].id.slice(0,8).toUpperCase():'saved';
-      // Add vault to imc_vaults pool
       return fetch(SB_URL+'/rest/v1/imc_vaults', {
-        method:'POST', headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}, 
+        method:'POST', headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY},
         body:JSON.stringify({vault_address:result.vaultAddress, vault_name:'Vault '+vehicleName, status:'assigned', notes:'Token #'+result.tokenId+' — '+vehicleName})
       }).then(function(){
         return commitListedStatus(v.id, terms, result.mintTxHash).then(function(){
@@ -1144,7 +1135,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
       });
     });
   })
-  .catch(function(e){
+    .catch(function(e){
     // ❌ TX failed or rejected — status stays unchanged
     var msg = e.message||'Transaction failed or rejected';
     console.error('[MINT ERROR]', e);
