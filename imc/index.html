@@ -554,7 +554,7 @@ function loadDynamicListings() {
         '<div style="font-family:monospace;font-size:0.58rem;color:var(--dim);margin-top:0.4rem;">New listing - Be the first investor</div>' +
         '</div>' +
         '<div style="display:flex;gap:0.75rem;">' +
-        '<button class="btn-neon" style="flex:1;" onclick="openInvestModal(\'' + v.id + '\',\'' + vehicleName + '\',' + (v.loan_amount||0) + ',\'' + (v.vault_contract||'') + '\')">Fund This Loan</button>' +
+        '<button class="btn-neon" style="flex:1;" onclick="openInvestModal(\'' + v.id + '\',\'' + vehicleName + '\',' + ((v.loan_amount||0)*1000000) + ',\'' + (v.vault_contract||'') + '\')">Fund This Loan</button>' +
         '<button class="btn-gold" style="padding:0.85rem 1.25rem;" onclick="location.href=\'apply.html?vehicle=' + v.id + '\'">Apply Now</button>' +
         '</div></div></div>';
     }).join('');
