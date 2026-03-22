@@ -433,17 +433,40 @@ function borrowerMakePayment(appId, vaultAddr) {
   var btn = document.getElementById('portal-btn-' + appId);
   var statusEl = document.getElementById('portal-status-' + appId);
   btn.disabled = true;
-  statusEl.textContent = 'Awaiting MetaMask confirmation...';
+  statusEl.textContent = 'Step 1/2 - Approving USDC...';
   statusEl.style.color = 'var(--gold)';
 
-  window.ethereum.request({ method: 'eth_chainId' })
-  .then(function(chainId) {
-    if (chainId !== AMOY_CHAIN_ID) return window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: AMOY_CHAIN_ID }] });
-  })
-  .then(function() {
-    return window.ethereum.request({
-      method: 'eth_sendTransaction',
-      params: [{ from: WALLET, to: vaultAddr, data: SEL.makePayment, gas: '0x' + (200000).toString(16), gasPrice: '0x' + (50000000000).toString(16) }]
+  var USDC_ADDR = '0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa';
+  var GAS_PRICE = '0x' + (50000000000).toString(16);
+
+  // First get monthly payment amount from vault
+  window.ethereum.request({method:'eth_call',params:[{to:vaultAddr,data:'0x6ce5891d'},'latest']})
+  .then(function(result){
+    var hex = result.slice(2);
+    var monthlyRaw = BigInt('0x' + hex.slice(256,320));
+    var amountHex = monthlyRaw.toString(16).padStart(64,'0');
+    var vaultPadded = '000000000000000000000000' + vaultAddr.slice(2).toLowerCase();
+    var approveData = '0x095ea7b3' + vaultPadded + amountHex;
+
+    return window.ethereum.request({method:'eth_chainId'})
+    .then(function(chainId){
+      if(chainId !== AMOY_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+    })
+    .then(function(){
+      return window.ethereum.request({
+        method:'eth_sendTransaction',
+        params:[{from:WALLET, to:USDC_ADDR, data:approveData, gas:'0x186A0', gasPrice:GAS_PRICE}]
+      });
+    })
+    .then(function(approveTx){
+      statusEl.textContent = 'Step 2/2 - Making payment...';
+      return new Promise(function(resolve){ setTimeout(resolve, 3000); });
+    })
+    .then(function(){
+      return window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{ from: WALLET, to: vaultAddr, data: SEL.makePayment, gas: '0x' + (300000).toString(16), gasPrice: GAS_PRICE }]
+      });
     });
   })
   .then(function(tx) {
