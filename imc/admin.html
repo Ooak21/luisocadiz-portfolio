@@ -1047,22 +1047,9 @@ function encodeMintVehicle(make,model,year,color,vin,evConverted,appraisedValue,
     var lh=padLeft(bytes.length,64),dh='';for(var j=0;j<bytes.length;j++)dh+=padLeft(bytes[j],2);
     while(dh.length%64!==0)dh+='00';return lh+dh;
   }
-  var strings=[make,model,color,vin,metadataURI];
-  var es=strings.map(encodeString);
-  var HEAD=256,dynOffset=HEAD;
-  var dynParams=[0,1,null,2,3,null,null,4];
-  var offsets=[];
-  for(var i=0;i<dynParams.length;i++){
-    if(dynParams[i]!==null){offsets.push(dynOffset);dynOffset+=32+es[dynParams[i]].length/2;}
-    else offsets.push(null);
-  }
-  var head='',oi=0;
-  for(var i=0;i<dynParams.length;i++){
-    if(i===2)head+=padLeft(year,64);
-    else if(i===5)head+=padLeft(evConverted?1:0,64);
-    else if(i===6)head+=padLeft(appraisedValue,64);
-    else{head+=padLeft(offsets[i],64);oi++;}
-  }
+  var es=[make,model,color,vin,metadataURI].map(encodeString);
+  var o=256,o0=o,o1=o0+32+es[0].length/2,o2=o1+32+es[1].length/2,o3=o2+32+es[2].length/2,o4=o3+32+es[3].length/2;
+  var head=padLeft(o0,64)+padLeft(o1,64)+padLeft(year,64)+padLeft(o2,64)+padLeft(o3,64)+padLeft(evConverted?1:0,64)+padLeft(appraisedValue,64)+padLeft(o4,64);
   return '0x9a9c4f65'+head+es[0]+es[1]+es[2]+es[3]+es[4];
 }
 
