@@ -483,7 +483,7 @@ function doInvest() {
     var investData = '0x2afcf480' + investAmountHex; // invest(uint256)
     return window.ethereum.request({
       method: 'eth_sendTransaction',
-      params: [{ from: window.ethereum.selectedAddress, to: activeVault, data: investData, gas: '0x186A0', gasPrice: '0x' + (50000000000).toString(16) }]
+      params: [{ from: window.ethereum.selectedAddress, to: activeVault, data: investData, gas: '0x493E0', gasPrice: '0x' + (50000000000).toString(16) }]
     });
   })
   .then(function(investTx) {
