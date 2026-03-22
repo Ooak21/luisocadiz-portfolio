@@ -1044,12 +1044,14 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
             if (receipt.logs) {
               for (var i=0; i<receipt.logs.length; i++) {
                 var log = receipt.logs[i];
-                if (log.topics && log.topics[1]) {
-                  tokenId = parseInt(log.topics[1], 16);
+                // VehicleMinted event has tokenId as topics[1], Transfer event also has tokenId as topics[3]
+                if (log.address && log.address.toLowerCase() === NFT_ADDRESS.toLowerCase() && log.topics && log.topics.length >= 4) {
+                  tokenId = parseInt(log.topics[3], 16);
                   break;
                 }
               }
             }
+            console.log('[AUTO] Extracted tokenId:', tokenId, 'from', receipt.logs ? receipt.logs.length : 0, 'logs');
             resolve({receipt: receipt, tokenId: tokenId});
           }
         }).catch(reject);
