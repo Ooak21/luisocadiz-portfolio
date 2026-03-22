@@ -385,11 +385,39 @@ var cryptoEnabled = false;
 var decls = { d1: false, d2: false, d3: false, d4: false };
 var selectedVehicleId = '1';
 
-var VEHICLES = [
-  { id: '1', name: '1957 Chevrolet Bel Air', color: 'Aquamarine', tag: 'Tesla EV Conversion - Las Vegas', appraised: 55000, maxLoan: 49500, status: 'funding' },
-  { id: '2', name: '1969 Dodge Charger R/T', color: 'Plum Crazy Purple', tag: 'Tesla EV Conversion - Las Vegas', appraised: 68000, maxLoan: 61200, status: 'active' },
-  { id: '3', name: '1970 Ford Mustang Boss 429', color: 'Grabber Green', tag: 'Tesla EV Conversion - Las Vegas', appraised: 72000, maxLoan: 64800, status: 'active' }
-];
+var VEHICLES = [];
+var SB_URL_APPLY = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+var SB_KEY_APPLY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
+
+function loadVehiclesFromSupabase() {
+  fetch(SB_URL_APPLY + '/rest/v1/imc_listings?select=*&order=created_at.desc', {
+    headers: { 'apikey': SB_KEY_APPLY, 'Authorization': 'Bearer ' + SB_KEY_APPLY }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(listings) {
+    VEHICLES = (listings || []).map(function(l) {
+      return {
+        id: l.id,
+        name: l.vehicle_name || 'Vehicle',
+        color: l.vehicle_color || '',
+        tag: [l.dealer_city, l.dealer_state].filter(Boolean).join(', ') || 'Las Vegas, NV',
+        appraised: l.appraised_value || 0,
+        maxLoan: l.loan_amount || 0,
+        status: l.status || 'funding',
+        vault_contract: l.vault_contract || null,
+        nft_contract: l.nft_contract || null
+      };
+    });
+    var urlVehicle = getURLParam('vehicle');
+    if (urlVehicle && VEHICLES.find(function(v){ return v.id === urlVehicle; })) {
+      selectedVehicleId = urlVehicle;
+    } else if (VEHICLES.length > 0) {
+      selectedVehicleId = VEHICLES[0].id;
+    }
+    renderVehicleCards();
+  })
+  .catch(function(e) { console.error('Failed to load vehicles:', e); });
+}
 
 function getURLParam(name) {
   try {
@@ -768,14 +796,7 @@ function showSuccess(id) {
 
 // ---- INIT ----
 (function init() {
-  var param = getURLParam('vehicle') || '1';
-  selectedVehicleId = param;
-  renderVehicleCards();
-  var v = VEHICLES.find(function(x) { return x.id === param; });
-  if (v) {
-    document.getElementById('maxLoanHint').textContent = 'Max $' + v.maxLoan.toLocaleString();
-    document.getElementById('sumVehicle').textContent = v.name;
-  }
+  loadVehiclesFromSupabase();
 })();
 </script>
 </body>
