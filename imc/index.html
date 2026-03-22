@@ -568,9 +568,9 @@ function loadDynamicListings() {
         var hex=result.slice(2);
         var funded=parseInt(hex.slice(0,64),16);
         var target=parseInt(hex.slice(64,128),16);
-        var pct=parseInt(hex.slice(192,256),16);
         var fundedUSD=Math.floor(funded/1e6);
         var targetUSD=Math.floor(target/1e6);
+        var pct=targetUSD>0?Math.round((fundedUSD/targetUSD)*100):0;
         var card=null;
         dynCards.forEach(function(dc){
           var btn=dc.querySelector('button');
