@@ -1060,9 +1060,10 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     var termMonths = terms.loan_term_months||60;
 
     function encodeDeployArgs(usdc, platformWallet, tid, loanAmt, apr, term, fee) {
+      var intv = VAULT_DEMO_MODE ? 600 : 2592000;
       function p(val){ return BigInt(val).toString(16).padStart(64,'0'); }
       function pa(addr){ return '000000000000000000000000'+addr.replace('0x','').toLowerCase(); }
-      return pa(usdc)+pa(platformWallet)+p(tid)+p(loanAmt)+p(apr)+p(term)+p(fee);
+      return pa(usdc)+pa(platformWallet)+p(tid)+p(loanAmt)+p(apr)+p(term)+p(fee)+p(intv);
     }
 
     var deployData = '0x'+VAULT_BYTECODE+encodeDeployArgs(
