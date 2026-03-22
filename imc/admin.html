@@ -1107,7 +1107,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     console.log('[AUTO] Vault deployed:', vaultAddress, 'attaching to token', tokenId);
 
     // Attach Vault to NFT
-    var attachData = '0xbc9318a7'+BigInt(tokenId).toString(16).padStart(64,'0')+'000000000000000000000000'+vaultAddress.replace('0x','').toLowerCase();
+    var attachData = '0xbc9318a7'+BigInt(tokenId).toString(16).padStart(64,'0')+'000000000000000000000000'+vaultAddress.replace('0x','').toLowerCase();var mintTxHash=result.mintTxHash;
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from: window.ethereum.selectedAddress,
       to: NFT_ADDRESS,
