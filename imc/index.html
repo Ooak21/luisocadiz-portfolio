@@ -573,7 +573,8 @@ function loadDynamicListings() {
         var targetUSD=Math.floor(target/1e6);
         var card=null;
         dynCards.forEach(function(dc){
-          if(dc.innerHTML.indexOf(v.id)>-1) card=dc;
+          var btn=dc.querySelector('button');
+          if(btn&&btn.getAttribute('onclick')&&btn.getAttribute('onclick').indexOf(v.id)>-1) card=dc;
         });
         if(!card) return;
         card.querySelectorAll('span').forEach(function(s){
