@@ -142,6 +142,7 @@ var AMOY_CHAIN_ID = '0x13882';
 var SEL = {
   getLoanSummary:  '0x6ce5891d',
   makePayment:     '0xd8d79700',
+  earlyPayoff:     '0x83222cbb',
   getFundingProgress: '0xcf1d224b'
 };
 
@@ -305,7 +306,10 @@ function renderAppCard(app, idx) {
     html += '<div id="portal-content-' + app.id + '" style="display:none;">';
     html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;" id="portal-stats-' + app.id + '"></div>';
     html += '<div id="portal-due-' + app.id + '" style="margin-bottom:1rem;padding:1rem;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);"></div>';
-    html += '<button id="portal-btn-' + app.id + '" onclick="borrowerMakePayment(\'' + app.id + '\',\'' + app.vault_contract + '\')" style="width:100%;background:var(--neon);border:none;color:#050507;padding:1rem;font-family:\'DM Mono\',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;">Make Monthly Payment</button>';
+    html += '<div style="display:flex;gap:0.75rem;">' +
+    '<button id="portal-btn-' + app.id + '" onclick="borrowerMakePayment(\'' + app.id + '\',\'' + app.vault_contract + '\')" style="flex:1;background:var(--neon);border:none;color:#050507;padding:1rem;font-family:\'DM Mono\',monospace;font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;">Make Monthly Payment</button>' +
+    '<button id="payoff-btn-' + app.id + '" onclick="borrowerPayoff(\'' + app.id + '\',\'' + app.vault_contract + '\')" style="background:var(--gold);border:none;color:#050507;padding:1rem 1.25rem;font-family:\'DM Mono\',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Pay in Full</button>' +
+    '</div>';
     html += '<div id="portal-status-' + app.id + '" style="font-family:\'DM Mono\',monospace;font-size:0.62rem;color:var(--dim);margin-top:0.75rem;min-height:1rem;text-align:center;"></div>';
     html += '</div>';
     html += '<div id="portal-error-' + app.id + '" style="display:none;font-family:\'DM Mono\',monospace;font-size:0.62rem;color:var(--dim);"></div>';
@@ -476,6 +480,61 @@ function borrowerMakePayment(appId, vaultAddr) {
   })
   .catch(function(e) {
     statusEl.textContent = 'Error: ' + (e.message || 'rejected');
+    statusEl.style.color = 'var(--red)';
+    btn.disabled = false;
+  });
+}
+
+function borrowerPayoff(appId, vaultAddr) {
+  if (!window.ethereum) { alert('Connect MetaMask'); return; }
+  if (!confirm('Pay off the full remaining principal? This cannot be undone.')) return;
+  var btn = document.getElementById('payoff-btn-' + appId);
+  var statusEl = document.getElementById('portal-status-' + appId);
+  btn.disabled = true;
+  statusEl.textContent = 'Step 1/2 - Approving USDC for payoff...';
+  statusEl.style.color = 'var(--gold)';
+
+  var USDC_ADDR = '0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa';
+  var GAS_PRICE = '0x' + (50000000000).toString(16);
+
+  // Get principal remaining
+  window.ethereum.request({method:'eth_call',params:[{to:vaultAddr,data:'0x6ce5891d'},'latest']})
+  .then(function(result){
+    var hex = result.slice(2);
+    var principal = BigInt('0x' + hex.slice(192,256));
+    var amountHex = principal.toString(16).padStart(64,'0');
+    var vaultPadded = '000000000000000000000000' + vaultAddr.slice(2).toLowerCase();
+    var approveData = '0x095ea7b3' + vaultPadded + amountHex;
+
+    return window.ethereum.request({method:'eth_chainId'})
+    .then(function(chainId){
+      if(chainId !== AMOY_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+    })
+    .then(function(){
+      return window.ethereum.request({
+        method:'eth_sendTransaction',
+        params:[{from:WALLET, to:USDC_ADDR, data:approveData, gas:'0x186A0', gasPrice:GAS_PRICE}]
+      });
+    })
+    .then(function(){
+      statusEl.textContent = 'Step 2/2 - Processing payoff...';
+      return new Promise(function(resolve){ setTimeout(resolve, 3000); });
+    })
+    .then(function(){
+      return window.ethereum.request({
+        method:'eth_sendTransaction',
+        params:[{from:WALLET, to:vaultAddr, data:SEL.earlyPayoff, gas:'0x' + (500000).toString(16), gasPrice:GAS_PRICE}]
+      });
+    })
+    .then(function(tx){
+      statusEl.textContent = 'Loan paid off! TX: ' + tx.slice(0,14) + '...';
+      statusEl.style.color = 'var(--green)';
+      btn.textContent = 'Paid Off!';
+      setTimeout(function(){ loadApplications(WALLET); }, 5000);
+    });
+  })
+  .catch(function(e){
+    statusEl.textContent = 'Error: ' + (e.message||'rejected');
     statusEl.style.color = 'var(--red)';
     btn.disabled = false;
   });
