@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMC — Get Started on the Blockchain</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#000005;--surface:#03030d;--surface2:#07071a;--border:rgba(0,210,255,0.08);--border2:rgba(0,210,255,0.2);
+  --cyan:#00d2ff;--cyan2:#00fff7;--purple:#6030ff;--red:#ff2050;--gold:#f0c040;--green:#00ff88;
+  --text:#f2f4ff;--muted:#8090b8;--dim:#1a1a2e;--glow:rgba(0,210,255,0.15);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:400;overflow-x:hidden;}
+
+/* SCANLINES */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,20,0.03) 2px,rgba(0,0,20,0.03) 4px);pointer-events:none;z-index:1000;animation:scanline 8s linear infinite;}
+@keyframes scanline{0%{background-position:0 0;}100%{background-position:0 100vh;}}
+
+/* HUD CORNERS */
+.hud-tl,.hud-tr,.hud-bl,.hud-br{position:fixed;width:40px;height:40px;pointer-events:none;z-index:900;}
+.hud-tl{top:16px;left:16px;border-top:1px solid rgba(0,210,255,0.4);border-left:1px solid rgba(0,210,255,0.4);}
+.hud-tr{top:16px;right:16px;border-top:1px solid rgba(0,210,255,0.4);border-right:1px solid rgba(0,210,255,0.4);}
+.hud-bl{bottom:16px;left:16px;border-bottom:1px solid rgba(0,210,255,0.4);border-left:1px solid rgba(0,210,255,0.4);}
+.hud-br{bottom:16px;right:16px;border-bottom:1px solid rgba(0,210,255,0.4);border-right:1px solid rgba(0,210,255,0.4);}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;padding:0 4rem;height:60px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,5,0.85);backdrop-filter:blur(30px);border-bottom:1px solid var(--border);}
+nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0.3;}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:0.2em;color:var(--cyan);text-decoration:none;display:flex;align-items:center;gap:0.85rem;}
+.nav-logo-icon{width:22px;height:22px;border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;position:relative;}
+.nav-logo-icon::before{content:'';width:8px;height:8px;background:var(--cyan);box-shadow:0 0 10px var(--cyan),0 0 20px var(--cyan);animation:pulse-dot 2s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(0.6);opacity:0.5;}}
+.nav-btn{font-family:'Orbitron',monospace;font-size:0.52rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--bg);background:var(--cyan);border:none;padding:0.6rem 1.5rem;cursor:pointer;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all 0.2s;display:inline-block;}
+.nav-btn:hover{background:var(--cyan2);box-shadow:0 0 20px rgba(0,210,255,0.5);}
+
+/* GRID BG */
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,210,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,210,255,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;animation:grid-drift 20s linear infinite;}
+@keyframes grid-drift{0%{background-position:0 0;}100%{background-position:40px 40px;}}
+
+/* SECTIONS */
+.section{position:relative;z-index:2;}
+
+/* GATE SCREEN */
+#gateScreen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:6rem 2rem 4rem;text-align:center;}
+.gate-eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--cyan);margin-bottom:2rem;display:flex;align-items:center;justify-content:center;gap:1rem;opacity:0;animation:fadeUp 0.8s 0.3s forwards;}
+.gate-eyebrow-line{width:2rem;height:1px;background:var(--cyan);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.gate-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(2.2rem,5vw,4.5rem);line-height:1.0;letter-spacing:0.02em;text-transform:uppercase;margin-bottom:1.5rem;}
+.gate-title .t1{display:block;color:var(--text);opacity:0;animation:fadeUp 0.8s 0.5s forwards;}
+.gate-title .t2{display:block;color:transparent;-webkit-text-stroke:1px var(--cyan);opacity:0;animation:fadeUp 0.8s 0.7s forwards;text-shadow:0 0 40px rgba(0,210,255,0.3);}
+.gate-sub{font-size:1.1rem;font-weight:300;color:var(--muted);line-height:1.8;max-width:520px;margin:0 auto 3rem;opacity:0;animation:fadeUp 0.8s 0.9s forwards;}
+
+/* ROLE CARDS */
+.role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;max-width:900px;width:100%;margin:0 auto 3rem;opacity:0;animation:fadeUp 0.8s 1.1s forwards;}
+.role-card{background:var(--surface);border:1px solid var(--border);padding:2rem;cursor:pointer;position:relative;overflow:hidden;transition:all 0.3s;text-align:left;}
+.role-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.3s;}
+.role-card:hover{border-color:var(--border2);background:var(--surface2);}
+.role-card:hover::before{opacity:1;}
+.role-card.selected{border-color:var(--cyan);background:rgba(0,210,255,0.05);}
+.role-card.selected::before{opacity:1;}
+.role-icon{font-size:2rem;margin-bottom:1rem;}
+.role-title{font-family:'Orbitron',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);margin-bottom:0.5rem;}
+.role-desc{font-size:0.9rem;color:var(--muted);line-height:1.6;}
+.role-check{position:absolute;top:1rem;right:1rem;width:20px;height:20px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--cyan);opacity:0;transition:opacity 0.2s;}
+.role-card.selected .role-check{opacity:1;}
+
+/* FORM */
+.gate-form{max-width:520px;width:100%;margin:0 auto;opacity:0;animation:fadeUp 0.8s 1.3s forwards;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.form-group{margin-bottom:1rem;text-align:left;}
+.form-label{font-family:'Share Tech Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.4rem;}
+.form-input{width:100%;background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:0.75rem 1rem;font-family:'Rajdhani',sans-serif;font-size:1rem;outline:none;transition:border-color 0.2s;}
+.form-input:focus{border-color:var(--cyan);box-shadow:0 0 0 1px rgba(0,210,255,0.1);}
+.form-input::placeholder{color:var(--muted);}
+.btn-primary{font-family:'Orbitron',sans-serif;font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--bg);background:var(--cyan);border:none;padding:1rem 2.5rem;cursor:pointer;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);transition:all 0.2s;display:inline-block;position:relative;overflow:hidden;width:100%;}
+.btn-primary::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transition:left 0.4s;}
+.btn-primary:hover{box-shadow:0 0 30px rgba(0,210,255,0.5);}
+.btn-primary:hover::before{left:100%;}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.form-note{font-size:0.78rem;color:var(--muted);text-align:center;margin-top:0.75rem;}
+.form-error{color:var(--red);font-size:0.78rem;margin-top:0.5rem;display:none;}
+
+/* GUIDE SCREEN */
+#guideScreen{display:none;min-height:100vh;padding:6rem 2rem 4rem;}
+.guide-wrap{max-width:900px;margin:0 auto;}
+.guide-header{text-align:center;margin-bottom:4rem;}
+.guide-header h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.8rem,4vw,3rem);letter-spacing:0.05em;text-transform:uppercase;color:var(--text);margin-bottom:0.75rem;}
+.guide-header p{color:var(--muted);font-size:1rem;max-width:500px;margin:0 auto;}
+
+/* WALLET TABS */
+.wallet-tabs{display:flex;gap:1px;margin-bottom:2rem;flex-wrap:wrap;}
+.wallet-tab{font-family:'Share Tech Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.6rem 1.25rem;border:1px solid var(--border2);color:var(--muted);cursor:pointer;transition:all 0.2s;background:var(--surface);}
+.wallet-tab.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,210,255,0.05);}
+.wallet-tab:hover{color:var(--text);}
+
+/* STEPS */
+.steps-container{display:none;}
+.steps-container.active{display:block;}
+.step-block{display:flex;gap:1.5rem;margin-bottom:1.5rem;align-items:flex-start;}
+.step-num{font-family:'Orbitron',sans-serif;font-size:0.6rem;font-weight:700;color:var(--bg);background:var(--cyan);width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-content h3{font-family:'Orbitron',sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);margin-bottom:0.4rem;}
+.step-content p{color:var(--muted);font-size:0.9rem;line-height:1.7;}
+.step-content p strong{color:var(--text);}
+.addr-box{font-family:'Share Tech Mono',monospace;font-size:0.72rem;background:var(--surface2);border:1px solid var(--border2);padding:0.6rem 0.9rem;color:var(--cyan);margin:0.5rem 0;word-break:break-all;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.copy-btn{font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;color:var(--muted);cursor:pointer;border:1px solid var(--border2);padding:0.2rem 0.5rem;flex-shrink:0;transition:all 0.2s;}
+.copy-btn:hover{color:var(--cyan);border-color:var(--cyan);}
+.note-box{background:rgba(0,210,255,0.04);border:1px solid rgba(0,210,255,0.15);padding:1rem;margin:0.75rem 0;font-size:0.85rem;color:var(--muted);}
+.note-box strong{color:var(--cyan);}
+.warn-box{background:rgba(240,192,64,0.04);border:1px solid rgba(240,192,64,0.2);padding:1rem;margin:0.75rem 0;font-size:0.85rem;color:var(--muted);}
+.warn-box strong{color:var(--gold);}
+.net-table{width:100%;border-collapse:collapse;margin:0.75rem 0;}
+.net-table th{font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);padding:0.5rem 0.75rem;border:1px solid var(--border);text-align:left;background:var(--surface2);}
+.net-table td{padding:0.5rem 0.75rem;border:1px solid var(--border);font-size:0.85rem;color:var(--muted);}
+.net-table tr:nth-child(even) td{background:var(--surface);}
+.net-table td:first-child{color:var(--text);font-weight:600;}
+
+/* SECTION DIVIDER */
+.sect-div{border:none;border-top:1px solid var(--border2);margin:2.5rem 0;}
+.sect-title{font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan);margin:2rem 0 1.5rem;display:flex;align-items:center;gap:1rem;}
+.sect-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent);}
+
+/* ROLE BADGE */
+.role-badge{display:inline-flex;align-items:center;gap:0.5rem;font-family:'Share Tech Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.3rem 0.75rem;border:1px solid var(--border2);color:var(--cyan);margin-bottom:2rem;}
+.role-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);animation:pulse-dot 2s infinite;}
+
+/* QUICK REF */
+.qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:1rem;}
+.qr-item{background:var(--surface);border:1px solid var(--border);padding:1rem;}
+.qr-label{font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem;}
+.qr-val{font-size:0.82rem;color:var(--cyan);word-break:break-all;}
+.qr-val a{color:var(--cyan);text-decoration:none;}
+.qr-val a:hover{text-decoration:underline;}
+
+/* SUCCESS */
+#successMsg{display:none;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.3);padding:1rem;margin-bottom:1rem;font-size:0.85rem;color:var(--green);text-align:center;}
+
+@media(max-width:768px){
+  nav{padding:0 1.5rem;}
+  #gateScreen{padding:5rem 1.5rem 3rem;}
+  .form-row{grid-template-columns:1fr;}
+  .qr-grid{grid-template-columns:1fr;}
+  .role-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="hud-tl"></div><div class="hud-tr"></div><div class="hud-bl"></div><div class="hud-br"></div>
+<div class="grid-bg"></div>
+
+<nav>
+  <a href="https://innovativeblockchainsolutions.live" class="nav-logo">
+    <div class="nav-logo-icon"><div></div></div>
+    ILLUSIVE MOTOR CONCEPTS
+  </a>
+  <a href="https://innovativeblockchainsolutions.live/imc/" class="nav-btn">Enter Platform</a>
+</nav>
+
+<!-- ══════════════════════════ GATE SCREEN ══════════════════════════ -->
+<div id="gateScreen" class="section">
+  <div class="gate-eyebrow"><div class="gate-eyebrow-line"></div>[ IMC BLOCKCHAIN ACCESS ]<div class="gate-eyebrow-line"></div></div>
+  <div class="gate-title">
+    <span class="t1">GET STARTED ON</span>
+    <span class="t2">THE BLOCKCHAIN</span>
+  </div>
+  <p class="gate-sub">Select your role to get a personalized setup guide. We'll walk you through MetaMask, test funds, and how to interact with the platform.</p>
+
+  <div class="role-grid">
+    <div class="role-card" onclick="selectRole('dealer')" id="card-dealer">
+      <div class="role-check">✓</div>
+      <div class="role-icon">🚗</div>
+      <div class="role-title">I'm a Dealer</div>
+      <div class="role-desc">Submit vehicles for financing. Get your inventory listed on the IMC marketplace backed by blockchain.</div>
+    </div>
+    <div class="role-card" onclick="selectRole('borrower')" id="card-borrower">
+      <div class="role-check">✓</div>
+      <div class="role-icon">🔑</div>
+      <div class="role-title">I'm Looking for Financing</div>
+      <div class="role-desc">Apply for a loan on a listed vehicle. Transparent terms, blockchain-verified, no hidden fees.</div>
+    </div>
+    <div class="role-card" onclick="selectRole('investor')" id="card-investor">
+      <div class="role-check">✓</div>
+      <div class="role-icon">📈</div>
+      <div class="role-title">I Want to Fund Vaults</div>
+      <div class="role-desc">Earn yield by funding auto loans. Invest USDC into vehicle loan vaults and collect monthly returns.</div>
+    </div>
+  </div>
+
+  <div class="gate-form">
+    <div id="successMsg">✓ You're on the list. Loading your setup guide...</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input class="form-input" id="fname" type="text" placeholder="Luis" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input class="form-input" id="lname" type="text" placeholder="Ocadiz" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" id="email" type="email" placeholder="you@example.com" />
+    </div>
+    <div class="form-group" id="companyGroup" style="display:none;">
+      <label class="form-label">Dealership / Company Name</label>
+      <input class="form-input" id="company" type="text" placeholder="Teklynks Auto Sales" />
+    </div>
+    <div id="formError" class="form-error">Please fill in all fields and select a role.</div>
+    <button class="btn-primary" onclick="submitGate()">ACCESS MY SETUP GUIDE →</button>
+    <p class="form-note">No spam. We'll send you relevant updates about the IMC platform.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════ GUIDE SCREEN ══════════════════════════ -->
+<div id="guideScreen" class="section">
+  <div class="guide-wrap">
+
+    <div class="guide-header">
+      <div id="roleBadge" class="role-badge"><div class="role-badge-dot"></div><span id="roleBadgeText">Investor Setup</span></div>
+      <h1>Your Setup Guide</h1>
+      <p id="guideSubtitle">Everything you need to interact with the IMC platform on Polygon Amoy Testnet.</p>
+    </div>
+
+    <!-- STEP 1: MetaMask -->
+    <div class="sect-title">Step 1 — Install a Wallet</div>
+    <div class="wallet-tabs">
+      <div class="wallet-tab active" onclick="switchWallet('mm-desktop')">MetaMask Desktop</div>
+      <div class="wallet-tab" onclick="switchWallet('mm-mobile')">MetaMask Mobile</div>
+      <div class="wallet-tab" onclick="switchWallet('mm-ext')">MetaMask Extension</div>
+      <div class="wallet-tab" onclick="switchWallet('coinbase')">Coinbase Wallet</div>
+    </div>
+
+    <!-- MetaMask Desktop -->
+    <div class="steps-container active" id="steps-mm-desktop">
+      <div class="step-block">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Download MetaMask</h3>
+          <p>Go to <strong>metamask.io</strong> and click <strong>Download for Chrome</strong> (or Firefox). This installs as a browser extension.</p>
+        </div>
+      </div>
+      <div class="step-block">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Create a New Wallet</h3>
+          <p>Click the MetaMask fox icon in your browser toolbar → <strong>Create a new wallet</strong>. Set a password and write down your <strong>Secret Recovery Phrase</strong>. Store it somewhere safe.</p>
+          <div class="warn-box"><strong>⚠ TEST WALLET ONLY:</strong> This is for the IMC demo. No real money involved. Never use a real wallet with real funds on testnet.</div>
+        </div>
+      </div>
+      <div class="step-block">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Your Wallet Address</h3>
+          <p>After setup, click the account name to copy your wallet address — it looks like <strong>0xABCD...1234</strong>. You'll need this to receive test funds.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MetaMask Mobile -->
+    <div class="steps-container" id="steps-mm-mobile">
+      <div class="step-block">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Download MetaMask App</h3>
+          <p>Search <strong>MetaMask</strong> in the App Store (iOS) or Google Play (Android). Install the official app by ConsenSys.</p>
+        </div>
+      </div>
+      <div class="step-block">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Create Wallet</h3>
+          <p>Open the app → <strong>Create a new wallet</strong> → set a password → write down your Secret Recovery Phrase. Confirm it when prompted.</p>
+        </div>
+      </div>
+      <div class="step-block">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Use the In-App Browser</h3>
+          <p>In MetaMask mobile, tap the <strong>Browser</strong> tab (compass icon). Navigate to <strong>innovativeblockchainsolutions.live/imc/</strong> to access the platform. The browser connects directly to your wallet.</p>
+        </div>
+      </div>
+      <div class="step-block">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Copy Your Address</h3>
+          <p>Tap your account name at the top → <strong>Copy address</strong>. You'll need this for test funds.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MetaMask Extension (already installed) -->
+    <div class="steps-container" id="steps-mm-ext">
+      <div class="step-block">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>You Already Have MetaMask</h3>
+          <p>If MetaMask is already installed as a browser extension, click the fox icon in your toolbar to open it.</p>
+        </div>
+      </div>
+      <div class="step-block">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Create a Separate Test Account</h3>
+          <p>Click the account icon → <strong>Add account or hardware wallet</strong> → <strong>Add a new account</strong>. Name it <strong>IMC Test</strong>. This keeps your real accounts separate.</p>
+        </div>
+      </div>
+      <div class="step-block">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Copy the Test Address</h3>
+          <p>Select your new IMC Test account and copy the address shown at the top. Send this to the IMC admin to receive test funds.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coinbase Wallet -->
+    <div class="steps-container" id="steps-coinbase">
+      <div class="step-block">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Install Coinbase Wallet</h3>
+          <p>Go to <strong>coinbase.com/wallet</strong> and install the browser extension or mobile app. This is separate from the Coinbase exchange app.</p>
+        </div>
+      </div>
+      <div class="step-block">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Create a Self-Custody Wallet</h3>
+          <p>Open Coinbase Wallet → <strong>Create a new wallet</strong>. Save your recovery phrase. This gives you a standard EVM wallet address.</p>
+        </div>
+      </div>
+      <div class="step-block">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Get Your Address</h3>
+          <p>Tap <strong>Receive</strong> → <strong>Ethereum</strong> to see your wallet address. Copy it — it works on all EVM chains including Polygon Amoy.</p>
+        </div>
+      </div>
+      <div class="note-box"><strong>NOTE:</strong> Coinbase Wallet supports Polygon Amoy. You may need to manually add the network in Settings → Networks.</div>
+    </div>
+
+    <!-- STEP 2: Network -->
+    <hr class="sect-div">
+    <div class="sect-title">Step 2 — Add Polygon Amoy Testnet</div>
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Open Network Settings</h3>
+        <p>In MetaMask, click the network dropdown at the top (shows "Ethereum Mainnet" by default) → <strong>Add a custom network</strong>.</p>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Enter Network Details</h3>
+        <table class="net-table">
+          <tr><th>Field</th><th>Value</th></tr>
+          <tr><td>Network Name</td><td>Polygon Amoy Testnet</td></tr>
+          <tr><td>RPC URL</td><td>https://rpc-amoy.polygon.technology</td></tr>
+          <tr><td>Chain ID</td><td>80002</td></tr>
+          <tr><td>Currency Symbol</td><td>POL</td></tr>
+          <tr><td>Block Explorer</td><td>https://amoy.polygonscan.com</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Save & Switch</h3>
+        <p>Click <strong>Save</strong> then select <strong>Polygon Amoy Testnet</strong> from your network list. You should see your balance show as <strong>0 POL</strong>.</p>
+      </div>
+    </div>
+
+    <!-- STEP 3: POL -->
+    <hr class="sect-div">
+    <div class="sect-title">Step 3 — Get Free Test POL</div>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem;">POL is used for gas fees — think of it as the fuel for your transactions. It's free on testnet.</p>
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Go to the Faucet</h3>
+        <p>Open <strong><a href="https://faucet.polygon.technology" target="_blank" style="color:var(--cyan);">faucet.polygon.technology</a></strong> in your browser.</p>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Select Polygon Amoy</h3>
+        <p>In the network dropdown, select <strong>Polygon Amoy</strong>. Paste your wallet address and click <strong>Submit</strong>.</p>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Wait for POL</h3>
+        <p>You'll receive ~0.5 POL within 1-2 minutes. This is enough for dozens of transactions.</p>
+        <div class="note-box"><strong>BACKUP FAUCET:</strong> If polygon.technology is slow, try <a href="https://www.alchemy.com/faucets/polygon-amoy" target="_blank" style="color:var(--cyan);">alchemy.com/faucets/polygon-amoy</a></div>
+      </div>
+    </div>
+
+    <!-- STEP 4: MockUSDC -->
+    <hr class="sect-div">
+    <div class="sect-title">Step 4 — Add MockUSDC to Your Wallet</div>
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Import Token in MetaMask</h3>
+        <p>In MetaMask → <strong>Tokens</strong> tab → scroll down → <strong>Import tokens</strong>. Paste this contract address:</p>
+        <div class="addr-box">
+          <span>0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa</span>
+          <span class="copy-btn" onclick="copyText('0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa',this)">COPY</span>
+        </div>
+        <p>Token symbol <strong>USDC</strong> and decimals <strong>6</strong> should auto-fill. Click <strong>Add Custom Token</strong>.</p>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Request MockUSDC from IMC Admin</h3>
+        <p>Send your wallet address to the IMC admin. They'll mint test USDC directly to your wallet from the admin panel. Request at least <strong>$50,000 USDC</strong> for testing.</p>
+        <div class="note-box"><strong>NOTE:</strong> MockUSDC has no real value. It's testnet-only for demonstration purposes.</div>
+      </div>
+    </div>
+
+    <!-- ROLE-SPECIFIC STEPS -->
+    <hr class="sect-div">
+    <div id="roleSteps"></div>
+
+    <!-- QUICK REFERENCE -->
+    <hr class="sect-div">
+    <div class="sect-title">Quick Reference</div>
+    <div class="qr-grid">
+      <div class="qr-item"><div class="qr-label">Marketplace</div><div class="qr-val"><a href="https://innovativeblockchainsolutions.live/imc/">innovativeblockchainsolutions.live/imc/</a></div></div>
+      <div class="qr-item"><div class="qr-label">Investor Dashboard</div><div class="qr-val"><a href="https://innovativeblockchainsolutions.live/imc/dashboard.html">...imc/dashboard.html</a></div></div>
+      <div class="qr-item"><div class="qr-label">My Status (Borrower)</div><div class="qr-val"><a href="https://innovativeblockchainsolutions.live/imc/status.html">...imc/status.html</a></div></div>
+      <div class="qr-item"><div class="qr-label">Apply for Loan</div><div class="qr-val"><a href="https://innovativeblockchainsolutions.live/imc/apply.html">...imc/apply.html</a></div></div>
+      <div class="qr-item"><div class="qr-label">Dealer Portal</div><div class="qr-val"><a href="https://innovativeblockchainsolutions.live/imc/dealer.html">...imc/dealer.html</a></div></div>
+      <div class="qr-item"><div class="qr-label">MockUSDC Contract</div><div class="qr-val">0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa</div></div>
+      <div class="qr-item"><div class="qr-label">POL Faucet</div><div class="qr-val"><a href="https://faucet.polygon.technology" target="_blank">faucet.polygon.technology</a></div></div>
+      <div class="qr-item"><div class="qr-label">Block Explorer</div><div class="qr-val"><a href="https://amoy.polygonscan.com" target="_blank">amoy.polygonscan.com</a></div></div>
+      <div class="qr-item"><div class="qr-label">Chain ID</div><div class="qr-val">80002 (Polygon Amoy Testnet)</div></div>
+      <div class="qr-item"><div class="qr-label">Support</div><div class="qr-val"><a href="mailto:appeals@illusivemotorconcepts.com">appeals@illusivemotorconcepts.com</a></div></div>
+    </div>
+
+    <div style="text-align:center;margin-top:3rem;padding:2rem;border-top:1px solid var(--border);">
+      <a href="https://innovativeblockchainsolutions.live/imc/" class="btn-primary" style="max-width:300px;display:inline-block;">ENTER THE PLATFORM →</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var selectedRole = null;
+var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
+
+var roleContent = {
+  dealer: {
+    badge: 'Dealer Setup Guide',
+    subtitle: 'How to submit vehicles and get listed on the IMC marketplace.',
+    steps: `
+      <div class="sect-title">Step 5 — Submit Your First Vehicle</div>
+      <div class="step-block"><div class="step-num">1</div><div class="step-content"><h3>Access the Dealer Portal</h3><p>Go to <a href="https://innovativeblockchainsolutions.live/imc/dealer.html" target="_blank" style="color:var(--cyan);">Dealer Portal</a> and connect your MetaMask wallet.</p></div></div>
+      <div class="step-block"><div class="step-num">2</div><div class="step-content"><h3>Fill In Vehicle Details</h3><p>Enter: <strong>Year, Make, Model, Color, VIN, Mileage, Condition, EV status, Asking Price, Description.</strong></p>
+      <div class="note-box"><strong>VIN FORMAT:</strong> Use IMC format — <strong>IMC-[MAKE]-[NUMBER]</strong><br>Examples: IMC-Mustang-001, IMC-Skyline-002, IMC-CivicR-003</div></div></div>
+      <div class="step-block"><div class="step-num">3</div><div class="step-content"><h3>Submit for Review</h3><p>Click <strong>Submit Vehicle</strong>. Your submission appears in the admin underwriting queue. An IMC underwriter will review and set loan terms.</p></div></div>
+      <div class="step-block"><div class="step-num">4</div><div class="step-content"><h3>Vehicle Goes Live</h3><p>Once approved, the admin clicks <strong>Push to Marketplace</strong>. This automatically mints your vehicle as an NFT, deploys a loan vault, and lists it live. You'll receive confirmation.</p></div></div>
+      <div class="warn-box"><strong>DEALER ACCESS:</strong> Dealer submissions require your wallet to be approved. Contact <a href="mailto:appeals@illusivemotorconcepts.com" style="color:var(--gold);">appeals@illusivemotorconcepts.com</a> to get your wallet whitelisted as an authorized dealer.</div>
+    `
+  },
+  borrower: {
+    badge: 'Borrower Setup Guide',
+    subtitle: 'How to apply for a vehicle loan and track your loan status.',
+    steps: `
+      <div class="sect-title">Step 5 — Apply for a Loan</div>
+      <div class="step-block"><div class="step-num">1</div><div class="step-content"><h3>Browse the Marketplace</h3><p>Go to the <a href="https://innovativeblockchainsolutions.live/imc/" target="_blank" style="color:var(--cyan);">Marketplace</a> and connect your wallet. Browse available vehicle listings.</p></div></div>
+      <div class="step-block"><div class="step-num">2</div><div class="step-content"><h3>Click Apply Now</h3><p>On any vehicle listing, click <strong>Apply Now</strong>. The vehicle will be pre-selected in the application form.</p></div></div>
+      <div class="step-block"><div class="step-num">3</div><div class="step-content"><h3>Complete Your Application</h3><p>Fill in: <strong>Name, Email, Annual Income, Employment Status, Crypto Holdings.</strong> Your connected wallet address is captured automatically.</p></div></div>
+      <div class="step-block"><div class="step-num">4</div><div class="step-content"><h3>Wait for Decision</h3><p>An IMC underwriter reviews your application. You'll receive an email with the decision. Track your status at <a href="https://innovativeblockchainsolutions.live/imc/status.html" target="_blank" style="color:var(--cyan);">My Status</a>.</p></div></div>
+      <div class="step-block"><div class="step-num">5</div><div class="step-content"><h3>Make Monthly Payments</h3><p>Once approved and funded, your borrower portal activates. Click <strong>Make Monthly Payment</strong> — two MetaMask confirmations: (1) Approve USDC, (2) Make payment. Or click <strong>Pay in Full</strong> to settle early.</p></div></div>
+      <div class="note-box"><strong>PAYMENTS:</strong> You need MockUSDC in your wallet to make payments. The IMC admin can mint test USDC to your address. Request it at appeals@illusivemotorconcepts.com.</div>
+    `
+  },
+  investor: {
+    badge: 'Investor Setup Guide',
+    subtitle: 'How to fund vehicle loan vaults and earn yield on your USDC.',
+    steps: `
+      <div class="sect-title">Step 5 — Fund a Loan Vault</div>
+      <div class="step-block"><div class="step-num">1</div><div class="step-content"><h3>Browse Active Listings</h3><p>Go to the <a href="https://innovativeblockchainsolutions.live/imc/" target="_blank" style="color:var(--cyan);">Marketplace</a> and connect your MetaMask wallet. You'll see vehicles with funding progress bars.</p></div></div>
+      <div class="step-block"><div class="step-num">2</div><div class="step-content"><h3>Click Fund This Loan</h3><p>On any listing, click <strong>Fund This Loan</strong>. A modal will show the loan target, your USDC balance, and an amount field.</p></div></div>
+      <div class="step-block"><div class="step-num">3</div><div class="step-content"><h3>Enter Investment Amount</h3><p>Type how much USDC you want to invest. You can invest any amount up to the remaining loan target. Click <strong>Approve &amp; Invest</strong>.</p></div></div>
+      <div class="step-block"><div class="step-num">4</div><div class="step-content"><h3>Two MetaMask Confirmations</h3><p><strong>Transaction 1:</strong> Approve USDC spending for the vault.<br><strong>Transaction 2:</strong> Deposit USDC into the vault.</p><p style="margin-top:0.5rem;">After both confirm, the funding bar updates in real time.</p></div></div>
+      <div class="step-block"><div class="step-num">5</div><div class="step-content"><h3>Track Your Position</h3><p>Go to <a href="https://innovativeblockchainsolutions.live/imc/dashboard.html" target="_blank" style="color:var(--cyan);">Investor Dashboard</a> to see all your positions, yield accumulated, and claimable balance.</p></div></div>
+      <div class="step-block"><div class="step-num">6</div><div class="step-content"><h3>Claim Yield</h3><p>When <strong>Claimable Now</strong> shows a balance, click <strong>Claim Yield</strong>. One MetaMask confirmation — USDC transfers directly to your wallet.</p></div></div>
+      <div class="note-box"><strong>YIELD:</strong> Yield accrues after each borrower payment. Demo vaults run on 10-minute cycles so you can see returns quickly. Production vaults will use 30-day payment cycles.</div>
+    `
+  }
+};
+
+function selectRole(role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-card').forEach(function(c){ c.classList.remove('selected'); });
+  document.getElementById('card-'+role).classList.add('selected');
+  document.getElementById('companyGroup').style.display = role === 'dealer' ? 'block' : 'none';
+}
+
+function submitGate() {
+  var fname = document.getElementById('fname').value.trim();
+  var lname = document.getElementById('lname').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var errEl = document.getElementById('formError');
+
+  if (!fname || !email || !selectedRole) {
+    errEl.textContent = 'Please fill in your name, email, and select a role.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  // Save to Supabase imc_leads (create this table or use existing)
+  var company = document.getElementById('company').value.trim();
+  fetch(SB_URL + '/rest/v1/imc_leads', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({
+      first_name: fname,
+      last_name: lname,
+      email: email,
+      role: selectedRole,
+      company: company || null,
+      source: 'get-started'
+    })
+  }).catch(function(){});
+
+  // Show success and transition
+  document.getElementById('successMsg').style.display = 'block';
+  setTimeout(function(){
+    showGuide();
+  }, 1200);
+}
+
+function showGuide() {
+  document.getElementById('gateScreen').style.display = 'none';
+  document.getElementById('guideScreen').style.display = 'block';
+  window.scrollTo(0,0);
+
+  var content = roleContent[selectedRole];
+  document.getElementById('roleBadgeText').textContent = content.badge;
+  document.getElementById('guideSubtitle').textContent = content.subtitle;
+  document.getElementById('roleSteps').innerHTML = content.steps;
+}
+
+function switchWallet(type) {
+  document.querySelectorAll('.wallet-tab').forEach(function(t,i){
+    t.classList.remove('active');
+  });
+  document.querySelectorAll('.steps-container').forEach(function(s){
+    s.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  document.getElementById('steps-'+type).classList.add('active');
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(function(){
+    var orig = btn.textContent;
+    btn.textContent = 'COPIED!';
+    btn.style.color = 'var(--green)';
+    setTimeout(function(){ btn.textContent = orig; btn.style.color = ''; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
