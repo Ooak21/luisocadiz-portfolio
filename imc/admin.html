@@ -222,17 +222,17 @@ textarea.inp{resize:vertical;min-height:80px;}
 
     <!-- Contract Registry -->
     <div style="margin-bottom:1.5rem;">
-      <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">Contract Registry — Polygon Amoy Testnet</div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">Contract Registry — Base Sepolia Testnet</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;">
         <div style="background:var(--surface);border:1px solid var(--border);padding:1rem 1.25rem;">
           <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">IMCVehicleNFT</div>
           <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--neon);">0x28fcC3277E5A77B61785f6CBC99AE0c2f3AE9Af6</div>
-          <a href="https://amoy.polygonscan.com/address/0x28fcC3277E5A77B61785f6CBC99AE0c2f3AE9Af6" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);text-decoration:none;">View on Polygonscan</a>
+          <a href="https://sepolia.basescan.org/address/0x28fcC3277E5A77B61785f6CBC99AE0c2f3AE9Af6" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);text-decoration:none;">View on BaseScan</a>
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);padding:1rem 1.25rem;">
           <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">MockUSDC (Testnet)</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--neon);">0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa</div>
-          <a href="https://amoy.polygonscan.com/address/0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);text-decoration:none;">View on Polygonscan</a>
+          <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--neon);">0x036CbD53842c5426634e7929541ec2318f3dcf7e</div>
+          <a href="https://sepolia.basescan.org/address/0x036CbD53842c5426634e7929541ec2318f3dcf7e" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);text-decoration:none;">View on BaseScan</a>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;">
@@ -474,8 +474,8 @@ var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
 var NFT_ADDRESS = '0x28fcC3277E5A77B61785f6CBC99AE0c2f3AE9Af6';
 var VAULT_ADDRESS = '0x4d525e0DE065973b8CB4367c09e9796254d05f5d';
-var USDC_ADDR = '0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa';
-var AMOY_CHAIN_ID = '0x13882';
+var USDC_ADDR = '0x036CbD53842c5426634e7929541ec2318f3dcf7e';
+var BASE_CHAIN_ID = '0x14A34';
 var AUTHORIZED = ['0x6c6ad1de674c292c088b29aa1312b991590bbb9f','0x8050d5462309dd334116bb3e949386c3238db9ac'];
 var allApps = [];
 var allVehicles = [];
@@ -483,7 +483,7 @@ var currentAppId = null;
 var currentVehicleId = null;
 var walletConnected = false;
 
-// ---- GAS SETTINGS (Polygon Amoy) ----
+// ---- GAS SETTINGS (Base Sepolia) ----
 var GAS_LIMIT  = '0x' + (500000).toString(16);
 var GAS_PRICE  = '0x' + (50000000000).toString(16);
 
@@ -972,7 +972,7 @@ function pushToMarketplace(v, terms) {
     status:'funding', ev_converted:v.ev_converted||false, ev_drivetrain:v.ev_drivetrain||null,
     dealer_city:v.dealership_city||'Las Vegas', dealer_state:v.dealership_state||'NV',
     description:v.description||'', highlights:v.highlights||null,
-    nft_contract:NFT_ADDRESS, vault_contract:VAULT_ADDRESS, chain_id:'80002', chain_name:'Polygon Amoy'
+    nft_contract:NFT_ADDRESS, vault_contract:VAULT_ADDRESS, chain_id:'84532', chain_name:'Base Sepolia'
   };
 
   if (!window.ethereum) {
@@ -997,7 +997,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
   // listing = the imc_listings object we're about to save
   window.ethereum.request({method:'eth_chainId'})
   .then(function(chainId){
-    if (chainId!==AMOY_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+    if (chainId!==BASE_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});
   })
   .then(function(){
     var appraisedCents = Math.round((terms.appraised_value||v.asking_price||0)*100);
@@ -1200,7 +1200,7 @@ function adminDeployVault() {
 
   window.ethereum.request({method:'eth_chainId'})
   .then(function(chainId){
-    if (chainId !== AMOY_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+    if (chainId !== BASE_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});
   })
   .then(function(){
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
@@ -1313,8 +1313,8 @@ function sendChainTx(to, data, statusId, label) {
   // Ensure correct network first
   window.ethereum.request({method:'eth_chainId'})
   .then(function(chainId) {
-    if (chainId !== AMOY_CHAIN_ID) {
-      return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+    if (chainId !== BASE_CHAIN_ID) {
+      return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});
     }
   })
   .then(function() {
@@ -1348,7 +1348,7 @@ function adminAttachVault() {
   var tokenId=document.getElementById('attach-tokenid').value.trim();
   var vault=document.getElementById('attach-vault').value.trim();
   if (!tokenId||!vault){chainStatus('attach-status','Enter token ID and vault address','var(--red)');return;}
-  if(!window.ethereum||!window.ethereum.selectedAddress){chainStatus('attach-status','Connect wallet first','var(--red)');return;}var data='0xbc9318a7'+encodeUint256(parseInt(tokenId))+encodeAddress(vault);chainStatus('attach-status','Awaiting MetaMask...','var(--gold)');window.ethereum.request({method:'eth_chainId'}).then(function(cId){if(cId!==AMOY_CHAIN_ID)return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});}).then(function(){return window.ethereum.request({method:'eth_sendTransaction',params:[{from:window.ethereum.selectedAddress,to:NFT_ADDRESS,data:data,gas:GAS_LIMIT,gasPrice:GAS_PRICE}]});}).then(function(tx){chainStatus('attach-status','Attached TX: '+tx.slice(0,18)+'...','var(--green)');}).catch(function(e){chainStatus('attach-status','Error: '+(e.message||'rejected'),'var(--red)');});
+  if(!window.ethereum||!window.ethereum.selectedAddress){chainStatus('attach-status','Connect wallet first','var(--red)');return;}var data='0xbc9318a7'+encodeUint256(parseInt(tokenId))+encodeAddress(vault);chainStatus('attach-status','Awaiting MetaMask...','var(--gold)');window.ethereum.request({method:'eth_chainId'}).then(function(cId){if(cId!==BASE_CHAIN_ID)return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});}).then(function(){return window.ethereum.request({method:'eth_sendTransaction',params:[{from:window.ethereum.selectedAddress,to:NFT_ADDRESS,data:data,gas:GAS_LIMIT,gasPrice:GAS_PRICE}]});}).then(function(tx){chainStatus('attach-status','Attached TX: '+tx.slice(0,18)+'...','var(--green)');}).catch(function(e){chainStatus('attach-status','Error: '+(e.message||'rejected'),'var(--red)');});
 }
 
 function adminSetBorrower() {
@@ -1369,7 +1369,7 @@ function adminMakePayment(vaultAddr, vaultKey) {
   if (!window.ethereum||!window.ethereum.selectedAddress){chainStatus('payment-status','Connect wallet first','var(--red)');return;}
   window.ethereum.request({method:'eth_chainId'})
   .then(function(chainId){
-    if (chainId !== AMOY_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+    if (chainId !== BASE_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});
   })
   .then(function(){
     chainStatus('payment-status','Awaiting MetaMask for '+vaultKey+'...','var(--gold)');

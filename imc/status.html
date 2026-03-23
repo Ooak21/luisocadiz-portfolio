@@ -137,7 +137,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
 var WALLET = '';
-var AMOY_CHAIN_ID = '0x13882';
+var BASE_CHAIN_ID = '0x14A34';
 
 var SEL = {
   getLoanSummary:  '0x6ce5891d',
@@ -440,7 +440,7 @@ function borrowerMakePayment(appId, vaultAddr) {
   statusEl.textContent = 'Step 1/2 - Approving USDC...';
   statusEl.style.color = 'var(--gold)';
 
-  var USDC_ADDR = '0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa';
+  var USDC_ADDR = '0x036CbD53842c5426634e7929541ec2318f3dcf7e';
   var GAS_PRICE = '0x' + (50000000000).toString(16);
 
   // First get monthly payment amount from vault
@@ -454,7 +454,7 @@ function borrowerMakePayment(appId, vaultAddr) {
 
     return window.ethereum.request({method:'eth_chainId'})
     .then(function(chainId){
-      if(chainId !== AMOY_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+      if(chainId !== BASE_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});
     })
     .then(function(){
       return window.ethereum.request({
@@ -494,7 +494,7 @@ function borrowerPayoff(appId, vaultAddr) {
   statusEl.textContent = 'Step 1/2 - Approving USDC for payoff...';
   statusEl.style.color = 'var(--gold)';
 
-  var USDC_ADDR = '0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa';
+  var USDC_ADDR = '0x036CbD53842c5426634e7929541ec2318f3dcf7e';
   var GAS_PRICE = '0x' + (50000000000).toString(16);
 
   // Get principal remaining
@@ -508,7 +508,7 @@ function borrowerPayoff(appId, vaultAddr) {
 
     return window.ethereum.request({method:'eth_chainId'})
     .then(function(chainId){
-      if(chainId !== AMOY_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:AMOY_CHAIN_ID}]});
+      if(chainId !== BASE_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});
     })
     .then(function(){
       return window.ethereum.request({

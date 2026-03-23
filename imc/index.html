@@ -217,7 +217,7 @@ var VAULT_BELAIR     = '0x4d525e0DE065973b8CB4367c09e9796254d05f5d';
 var VAULT_CHARGER    = '0x00C18588F028483098c28aC21B89AdbA1F097011';
 var VAULT_MUSTANG    = '0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad';
 var VAULT_ADDRESS    = VAULT_BELAIR; // default for single vault calls
-var AMOY_CHAIN_ID = '0x13882';
+var BASE_CHAIN_ID = '0x14A34';
 
 function loadVaultProgress() {
   loadSingleVaultProgress(VAULT_BELAIR, 0);
@@ -253,19 +253,19 @@ function loadSingleVaultProgress(vaultAddr, cardIndex) {
   .catch(function(e) { console.log('Vault read:', e.message); });
 }
 
-function switchToAmoy() {
+function switchToBase() {
   if (!window.ethereum) return;
   window.ethereum.request({ method: 'eth_chainId' })
   .then(function(chainId) {
-    if (chainId !== AMOY_CHAIN_ID) {
+    if (chainId !== BASE_CHAIN_ID) {
       return window.ethereum.request({
         method: 'wallet_addEthereumChain',
         params: [{
-          chainId: AMOY_CHAIN_ID,
-          chainName: 'Polygon Amoy Testnet',
-          nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
-          rpcUrls: ['https://rpc-amoy.polygon.technology'],
-          blockExplorerUrls: ['https://amoy.polygonscan.com']
+          chainId: BASE_CHAIN_ID,
+          chainName: 'Base Sepolia Testnet',
+          nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+          rpcUrls: ['https://sepolia.base.org'],
+          blockExplorerUrls: ['https://sepolia.basescan.org']
         }]
       });
     }
@@ -276,7 +276,7 @@ function switchToAmoy() {
 
 
 // -- USDC + INVEST CONFIG ---------------------------------
-var USDC_ADDRESS = '0xc962f3EEE94b5506bDF5214A3FcFbd3f3eC1DFFa'; // MockUSDC testnet
+var USDC_ADDRESS = '0x036CbD53842c5426634e7929541ec2318f3dcf7e'; // MockUSDC testnet
 // USDC approve(address,uint256) selector: 0x095ea7b3
 // USDC balanceOf(address) selector: 0x70a08231
 // vault invest(uint256) selector: 0x2af4b637 -- wait, compute below
@@ -469,7 +469,7 @@ function loadDynamicListings() {
   .catch(function(e) { console.error('Listings error:', e); });
 }
 
-window.addEventListener('load', function() { if (window.ethereum) { switchToAmoy(); } });
+window.addEventListener('load', function() { if (window.ethereum) { switchToBase(); } });
 </script>
 
 <!-- INVEST MODAL -->
