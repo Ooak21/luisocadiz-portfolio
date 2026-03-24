@@ -79,7 +79,7 @@ nav.scrolled-light .nav-links a:hover{color:var(--text-light);}
   color:#0a6cf5;border:1px solid rgba(0,200,255,0.2);
   padding:0.35rem 1rem;border-radius:980px;
   background:rgba(0,200,255,0.06);margin-bottom:2rem;
-  opacity:0;animation:slideDown 0.7s 0.3s forwards;
+  animation:slideDown 0.7s 0.3s both;
 }
 .hero-badge-dot{width:5px;height:5px;border-radius:50%;background:#0a6cf5;animation:pulse-dot 2s infinite;}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.6)}}
@@ -89,28 +89,27 @@ nav.scrolled-light .nav-links a:hover{color:var(--text-light);}
   font-weight:800;letter-spacing:-0.04em;line-height:0.95;
   color:var(--text-dark);margin-bottom:1.75rem;
 }
-.hero-title .t1{display:block;opacity:0;animation:slideUp 0.8s 0.5s forwards;}
+.hero-title .t1{display:block;animation:slideUp 0.8s 0.5s both;}
 .hero-title .t2{
   display:block;
   background:linear-gradient(90deg,#00ff88 0%,#8b00ff 40%,#cc00ff 65%,#00d4ff 100%);
   background-size:300% auto;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:slideUp 0.8s 0.7s forwards,gradient-shift 6s 1.5s linear infinite,glitch-pixel 9s 2.5s infinite;
-  opacity:0;
+  animation:slideUp 0.8s 0.7s both,gradient-shift 6s 1.5s linear infinite,glitch-pixel 9s 2.5s infinite;
 }
 @keyframes gradient-shift{0%{background-position:0% center}100%{background-position:200% center}}
 @keyframes streak-card{0%{background-position:-200% center}100%{background-position:200% center}}
 @keyframes glitch-pixel{0%,82%,100%{filter:none}83%{filter:brightness(1.6) saturate(1.4)}84%{filter:hue-rotate(40deg) brightness(1.8) saturate(2)}85%{filter:hue-rotate(-20deg) brightness(2.2) saturate(2.5)}86%{filter:brightness(1.4) saturate(1.6)}87%{filter:none}}
-.hero-title .t3{display:block;opacity:0;animation:slideUp 0.8s 0.9s forwards;}
+.hero-title .t3{display:block;animation:slideUp 0.8s 0.9s both;}
 
 .hero-sub{
   font-size:1.15rem;font-weight:300;color:rgba(255,255,255,0.9);line-height:1.75;
   letter-spacing:-0.01em;max-width:520px;margin:0 auto 3rem;
-  opacity:0;animation:slideUp 0.7s 1.1s forwards;
+  animation:slideUp 0.7s 1.1s both;
 }
 .hero-actions{
   display:flex;gap:1rem;justify-content:center;align-items:center;
-  opacity:0;animation:slideUp 0.7s 1.3s forwards;
+  animation:slideUp 0.7s 1.3s both;
 }
 .btn-glow{
   font-size:0.82rem;font-weight:600;letter-spacing:0.02em;text-transform:uppercase;
@@ -411,7 +410,9 @@ footer{background:var(--dark);border-top:1px solid var(--border-dark);padding:2.
 .footer-copy{font-size:0.62rem;color:rgba(255,255,255,0.25);letter-spacing:-0.01em;}
 
 /* REVEAL */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1),transform 0.9s cubic-bezier(0.16,1,0.3,1);}
+.reveal{opacity:1;transform:none;transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.hidden{opacity:0;transform:translateY(20px);}
+.reveal.hidden.visible{opacity:1;transform:none;}
 .reveal.visible{opacity:1;transform:translateY(0);}
 .reveal-delay-1{transition-delay:0.1s;} .reveal-delay-2{transition-delay:0.2s;} .reveal-delay-3{transition-delay:0.3s;}
 
@@ -803,7 +804,7 @@ drawAbout();
     var dist=Math.pow(Math.random(),0.55)*0.55;
     stars.push({bx:0.5+Math.cos(ang)*dist*0.65,by:0.5+Math.sin(ang)*dist*0.42,x:0,y:0,
       r:0.3+Math.random()*1.3,a:0.1+Math.random()*0.75,
-      p:Math.random()*Math.PI*2,ps:0.0063+Math.random()*0.0252,
+      p:Math.random()*Math.PI*2,ps:0.00724+Math.random()*0.02898,
       h:['255,255,255','130,80,255','0,200,255','240,165,30'][Math.floor(Math.random()*4)]});
   }
   stars.forEach(function(s){s.x=s.bx;s.y=s.by;});
@@ -825,7 +826,7 @@ drawAbout();
       mctx.beginPath();mctx.arc(w.x*MW,w.y*MH,w.r,0,Math.PI*2);
       mctx.fillStyle=g;mctx.fill();
     });
-    var drift=mf*0.0002625;
+    var drift=mf*0.000302;
     var cosd=Math.cos(drift),sind=Math.sin(drift);
     stars.forEach(function(s){
       s.p+=s.ps;
@@ -848,7 +849,8 @@ drawAbout();
 })();
 
 // ── SCROLL REVEAL ──
-var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('hidden');});
+var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');e.target.classList.remove('hidden');}});},{threshold:0.05,rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});
 </script>
 </body>
