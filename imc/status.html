@@ -6,7 +6,7 @@
 <title>IMC — Application Status</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050507;--surface:#0a0a0f;--surface2:#0f0f18;--surface3:#14141f;--border:#1e1e2e;--neon:#00d4ff;--gold:#f0c040;--green:#00ff88;--red:#ff4455;--purple:#8855ff;--text:#e8e8f0;--muted:#8888aa;--dim:#444460;}
+:root{--bg:#06060f;--surface:#0c0c1a;--surface2:#11111f;--surface3:#16162a;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--neon:#0a6cf5;--neon-glow:rgba(10,108,245,0.25);--ibs-blue:#0a6cf5;--ibs-blue-hover:#1a7cff;--gold:#f0c040;--green:#00ff88;--red:#ff4455;--purple:#8b00ff;--purple2:#cc00ff;--cyan:#00d4ff;--text:#f0f0f8;--muted:rgba(255,255,255,0.45);--dim:rgba(255,255,255,0.2);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;min-height:100vh;}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.008) 0px,rgba(0,212,255,0.008) 1px,transparent 1px,transparent 4px);pointer-events:none;z-index:9000;}
@@ -63,6 +63,42 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 ::-webkit-scrollbar-thumb{background:var(--border);}
 @media(max-width:768px){.wrap{padding:5rem 1.5rem 3rem;}.nav{padding:1rem 1.5rem;}}
 </style>
+
+<style>
+/* IBS DESIGN SYSTEM OVERRIDE */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap');
+body{font-family:'Inter',system-ui,sans-serif!important;-webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4,h5{font-family:'Inter',sans-serif!important;letter-spacing:-0.03em!important;}
+.nav-logo{font-family:'Inter',sans-serif!important;font-weight:700!important;font-size:0.9rem!important;letter-spacing:-0.01em!important;}
+.nav-links a{font-family:'Inter',sans-serif!important;font-size:0.78rem!important;letter-spacing:-0.01em!important;text-transform:none!important;color:rgba(255,255,255,0.55)!important;}
+.nav-links a:hover{color:rgba(255,255,255,0.9)!important;}
+.nav-wallet{font-family:'Inter',sans-serif!important;font-size:0.72rem!important;font-weight:500!important;letter-spacing:0.01em!important;text-transform:none!important;border-radius:980px!important;transition:all 0.2s!important;}
+.nav-wallet:hover,.nav-wallet.connected{border-color:#0a6cf5!important;color:#fff!important;background:rgba(10,108,245,0.08)!important;}
+.w-dot.on{background:#0a6cf5!important;box-shadow:0 0 6px #0a6cf5!important;}
+.btn-neon{background:#0a6cf5!important;border:none!important;color:#fff!important;border-radius:980px!important;font-family:'Inter',sans-serif!important;font-weight:600!important;font-size:0.78rem!important;letter-spacing:0.01em!important;text-transform:none!important;box-shadow:0 4px 20px rgba(10,108,245,0.25)!important;transition:all 0.2s!important;}
+.btn-neon:hover{background:#1a7cff!important;box-shadow:0 8px 30px rgba(10,108,245,0.4)!important;transform:translateY(-1px)!important;}
+.btn-gold{border-radius:980px!important;font-family:'Inter',sans-serif!important;font-weight:700!important;font-size:0.78rem!important;text-transform:none!important;letter-spacing:0.01em!important;}
+.btn-ghost,.btn-outline{border-radius:980px!important;font-family:'Inter',sans-serif!important;font-weight:500!important;font-size:0.78rem!important;text-transform:none!important;}
+.sl{font-family:'Inter',sans-serif!important;font-weight:600!important;font-size:0.65rem!important;letter-spacing:0.1em!important;color:#0a6cf5!important;}
+.sl::before{background:#0a6cf5!important;box-shadow:none!important;}
+.stat-val{font-family:'Inter',sans-serif!important;font-weight:800!important;letter-spacing:-0.04em!important;color:#0a6cf5!important;text-shadow:0 0 20px rgba(10,108,245,0.3)!important;}
+.stat-lbl{font-family:'Inter',sans-serif!important;font-weight:500!important;font-size:0.62rem!important;letter-spacing:0.06em!important;}
+.badge{font-family:'Inter',sans-serif!important;font-weight:600!important;font-size:0.6rem!important;letter-spacing:0.06em!important;border-radius:980px!important;}
+.badge-funding{background:rgba(10,108,245,0.1)!important;color:#0a6cf5!important;border:1px solid rgba(10,108,245,0.25)!important;}
+.card,.stat-card,.position-card,.vault-card,.listing-card{background:linear-gradient(145deg,#0e0e20 0%,#0a0a18 100%)!important;border:1px solid rgba(255,255,255,0.07)!important;border-radius:20px!important;box-shadow:0 16px 40px rgba(0,0,0,0.4),0 4px 12px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05)!important;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.35s!important;}
+.card:hover,.stat-card:hover,.position-card:hover,.listing-card:hover{transform:translateY(-3px)!important;box-shadow:0 24px 60px rgba(0,0,0,0.5),0 8px 24px rgba(10,108,245,0.06),0 0 0 1px rgba(10,108,245,0.12)!important;border-color:rgba(10,108,245,0.15)!important;}
+.card::before,.stat-card::before,.position-card::before{background:linear-gradient(90deg,transparent,#0a6cf5,#8b00ff,transparent)!important;opacity:0.4!important;height:1px!important;}
+.prog-fill,.progress-fill,.fund-fill{background:linear-gradient(90deg,#0a6cf5,#8b00ff)!important;box-shadow:0 0 8px rgba(10,108,245,0.3)!important;}
+.ndiv,hr{background:linear-gradient(90deg,transparent,rgba(10,108,245,0.2),transparent)!important;border:none!important;height:1px!important;}
+input[type=text],input[type=number],input[type=email],input[type=password],select,textarea{background:rgba(255,255,255,0.04)!important;border:1px solid rgba(255,255,255,0.1)!important;border-radius:12px!important;font-family:'Inter',sans-serif!important;font-size:0.9rem!important;font-weight:300!important;transition:border-color 0.2s,box-shadow 0.2s!important;}
+input:focus,select:focus,textarea:focus{border-color:#0a6cf5!important;box-shadow:0 0 0 3px rgba(10,108,245,0.12)!important;outline:none!important;}
+label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-weight:600!important;letter-spacing:0.04em!important;text-transform:uppercase!important;color:rgba(255,255,255,0.4)!important;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(10,108,245,0.3);border-radius:2px;}
+::selection{background:rgba(10,108,245,0.25);color:#fff;}
+</style>
+
 </head>
 <body>
 
