@@ -101,47 +101,34 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
 (function(){
   var c=document.getElementById('ibs-grid-canvas');
   if(!c)return;
-  var ctx=c.getContext('2d'),W,H,t=0;
-  var COLS=28,ROWS=18,PAD=2;
-  var cells=[];
+  var ctx=c.getContext('2d'),W,H;
+  var COLS=24,ROWS=16,PAD=2,cells=[];
   function resize(){
     W=c.width=window.innerWidth;
     H=c.height=window.innerHeight;
     var cw=Math.floor(W/COLS),ch=Math.floor(H/ROWS);
     cells=[];
-    for(var r=0;r<ROWS;r++){
-      for(var col=0;col<COLS;col++){
-        cells.push({
-          x:col*cw,y:r*ch,w:cw-PAD,h:ch-PAD,
+    for(var r=0;r<ROWS;r++)
+      for(var col=0;col<COLS;col++)
+        cells.push({x:col*cw,y:r*ch,w:cw-PAD,h:ch-PAD,
           phase:Math.random()*Math.PI*2,
-          speed:0.004+Math.random()*0.008,
-          peak:0.04+Math.random()*0.1,
-          color:Math.random()>0.85?
-            (Math.random()>0.5?'10,108,245':'139,0,255'):
-            '10,108,245'
-        });
-      }
-    }
+          speed:0.006+Math.random()*0.01,
+          peak:0.05+Math.random()*0.09,
+          col:Math.random()>0.82?(Math.random()>0.5?'10,108,245':'139,0,255'):'10,108,245'});
   }
   resize();
-  window.addEventListener('resize',resize);
+  window.addEventListener('resize',function(){clearTimeout(window._grt);window._grt=setTimeout(resize,200);});
   function draw(){
     ctx.clearRect(0,0,W,H);
-    t++;
-    cells.forEach(function(cell){
+    for(var i=0;i<cells.length;i++){
+      var cell=cells[i];
       cell.phase+=cell.speed;
       var a=Math.max(0,Math.sin(cell.phase))*cell.peak;
-      if(a<0.005){requestAnimationFrame(draw);return;}
-      ctx.beginPath();
-      ctx.rect(cell.x,cell.y,cell.w,cell.h);
-      ctx.fillStyle='rgba('+cell.color+','+a+')';
-      ctx.fill();
-      if(a>0.06){
-        ctx.strokeStyle='rgba('+cell.color+','+(a*0.6)+')';
-        ctx.lineWidth=0.5;
-        ctx.stroke();
+      if(a>0.008){
+        ctx.fillStyle='rgba('+cell.col+','+a+')';
+        ctx.fillRect(cell.x,cell.y,cell.w,cell.h);
       }
-    });
+    }
     requestAnimationFrame(draw);
   }
   draw();
