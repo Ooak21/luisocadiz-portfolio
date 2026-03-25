@@ -1293,11 +1293,31 @@ function encodeMintVehicle(make,model,year,color,vin,evConverted,appraisedValue,
   return '0x9a9c4f65'+head+es[0]+es[1]+es[2]+es[3]+es[4];
 }
 
+
 // -- EMAIL -----------------------------------------------------
+// IBS Branded Email Templates v2
+
+var EMAIL_STYLES = '<style>*{box-sizing:border-box;margin:0;padding:0;}body{background:#f0f0f5;font-family:Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;}.wrap{max-width:640px;margin:0 auto;background:#fff;}.hdr{background:#06060f;padding:28px 36px 20px;}.htop{display:flex;justify-content:space-between;align-items:flex-start;}.brand{display:flex;align-items:center;gap:10px;}.bico{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a6cf5,#8b00ff);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;}.bnm{font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);}.bsb{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}.bdg{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:5px;}.bdg-ok{background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.25);}.bdg-d30{background:rgba(240,192,64,.15);color:#f0c040;border:1px solid rgba(240,192,64,.3);}.bdg-d60{background:rgba(255,100,50,.15);color:#ff6432;border:1px solid rgba(255,100,50,.3);}.bdg-d90{background:rgba(255,68,85,.15);color:#ff4455;border:1px solid rgba(255,68,85,.3);}.bdg-deny{background:rgba(255,68,85,.12);color:#ff4455;border:1px solid rgba(255,68,85,.25);}.bdg-paid{background:rgba(0,255,136,.1);color:#00c97a;border:1px solid rgba(0,255,136,.2);}.dvd{height:1px;background:linear-gradient(90deg,transparent,rgba(10,108,245,.5),rgba(139,0,255,.4),transparent);margin:18px 0 0;}.bdy{padding:32px 36px;}.refs{display:flex;gap:20px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f0f0f5;}.ri .rl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ri .rv{font-size:12px;font-weight:600;color:#1a1a2e;}p{font-size:14px;color:#3a3a5a;line-height:1.8;margin-bottom:14px;font-weight:300;}p strong{color:#1a1a2e;font-weight:600;}.abox{background:#f8f8fc;border:1px solid #e8e8f0;border-radius:10px;padding:16px;margin:16px 0;}.atitle{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:12px;}.agrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}.ai .al{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ai .av{font-size:13px;font-weight:600;color:#1a1a2e;}.alrt{border-radius:10px;padding:14px 16px;margin:16px 0;display:flex;gap:10px;align-items:flex-start;}.alrt.warn{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.2);}.alrt.danger{background:rgba(255,68,85,.05);border:1px solid rgba(255,68,85,.2);}.alrt.success{background:rgba(0,201,122,.05);border:1px solid rgba(0,201,122,.18);}.alrt-ico{font-size:15px;flex-shrink:0;margin-top:1px;}.alrt-txt{font-size:13px;color:#3a3a5a;line-height:1.6;}.alrt-txt strong{color:#1a1a2e;font-weight:600;}.cta{display:inline-block;background:#0a6cf5;color:white;font-size:13px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:100px;margin:6px 6px 6px 0;}.cta.out{background:transparent;color:#0a6cf5;border:1px solid rgba(10,108,245,.3);}.sig{margin-top:24px;padding-top:16px;border-top:1px solid #f0f0f5;}.sig-cl{font-size:14px;color:#3a3a5a;margin-bottom:12px;}.sig-nm{font-size:14px;font-weight:700;color:#1a1a2e;}.sig-tt{font-size:12px;color:#a0a0b8;}.sig-co{font-size:12px;font-weight:600;color:#0a6cf5;margin-top:5px;}.ftr{background:#f8f8fc;border-top:1px solid #e8e8f0;padding:18px 36px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}.ftr-lg{font-size:10px;color:#b0b0c8;line-height:1.6;max-width:380px;}.ftr-lk{text-align:right;}.ftr-lk a{font-size:11px;color:#0a6cf5;text-decoration:none;display:block;line-height:1.9;}.chn{font-size:10px;color:rgba(10,108,245,.6);margin-top:6px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}</style>';
+
+function ibsEmailHeader(badgeCls, badgeTxt, date) {
+  return '<div class="hdr"><div class="htop"><div class="brand"><div class="bico">&#9670;</div><div><div class="bnm">Illusive Motor Concepts</div><div class="bsb">Innovative Blockchain Solutions &middot; Las Vegas, NV</div></div></div><div style="text-align:right;"><div class="bdg '+badgeCls+'">'+badgeTxt+'</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">'+date+'</div></div></div><div class="dvd"></div></div>';
+}
+
+function ibsEmailFooter(legal, vaultShort) {
+  return '<div class="ftr"><div class="ftr-lg">'+legal+'<div class="chn">&#9679; On Base &middot; Vault: '+vaultShort+'</div></div><div class="ftr-lk"><a href="mailto:hello@luisocadiz.online">hello@luisocadiz.online</a><a href="https://innovativeblockchainsolutions.live/imc/status.html">Borrower Portal</a><a href="https://innovativeblockchainsolutions.live">innovativeblockchainsolutions.live</a></div></div>';
+}
+
+function ibsShortAddr(addr) { return addr ? addr.slice(0,10)+'...'+addr.slice(-6) : 'N/A'; }
+function ibsUsd(val) { return '$'+(val||0).toLocaleString()+' USDC'; }
+
 function sendDecisionEmail(app, decision, update) {
-  var name = ((app.first_name||'')+' '+(app.last_name||'')).trim()||'Applicant';
+  var name = ((app.first_name||'')+' '+(app.last_name||'')).trim()||'Valued Customer';
+  var firstName = name.split(' ')[0];
+  var date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var vaultShort = ibsShortAddr(app.vault_contract||'');
   var subject, html;
-  if (decision==='denied') {
+
+  if (decision === 'denied') {
     var reasons = [];
     var credit = parseFloat(app.credit_score_range)||0;
     var income = app.gross_monthly_income||0;
@@ -1308,43 +1328,100 @@ function sendDecisionEmail(app, decision, update) {
     if (dti2>45) reasons.push('Debt-to-income ratio exceeds 45% maximum');
     if (income<2000&&income>0) reasons.push('Insufficient verifiable income');
     if (!app.employment_status) reasons.push('Insufficient employment information');
-    if (update.underwriter_notes) reasons.push('Notes: '+update.underwriter_notes);
+    if (update.underwriter_notes) reasons.push('Underwriter notes: '+update.underwriter_notes);
     if (reasons.length===0) reasons.push('Application did not meet current lending criteria');
-    var appId = app.id?app.id.slice(0,8).toUpperCase():'N/A';
-    var reapply = new Date(Date.now()+90*24*60*60*1000).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    subject = 'Your IMC Auto Finance Application - Decision Notice';
-    html = '<!DOCTYPE html><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;">'+
-      '<div style="max-width:600px;margin:0 auto;">'+
-      '<div style="border-bottom:2px solid #00d4ff;padding-bottom:20px;margin-bottom:24px;"><div style="font-size:20px;letter-spacing:4px;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div></div>'+
-      '<div style="font-size:24px;color:#ff4455;margin-bottom:16px;">Unable to Approve</div>'+
-      '<p style="color:#8888aa;line-height:1.7;">Dear '+name+', Application ID: '+appId+'</p>'+
-      '<p style="color:#8888aa;line-height:1.7;margin-top:12px;">After careful review we are unable to extend credit at this time.</p>'+
-      '<div style="margin:20px 0;padding:16px;background:#0a0a0f;border:1px solid #1e1e2e;">'+
-      '<div style="color:#444460;font-size:10px;text-transform:uppercase;margin-bottom:8px;">Reason(s)</div>'+
-      reasons.map(function(r){return '<div style="color:#8888aa;font-size:13px;padding:4px 0;border-bottom:1px solid #1e1e2e;">'+r+'</div>';}).join('')+'</div>'+
-      '<p style="color:#8888aa;line-height:1.7;">You may reapply after '+reapply+'. Questions: <a href="mailto:appeals@illusivemotorconcepts.com" style="color:#00d4ff;">appeals@illusivemotorconcepts.com</a></p>'+
-      '<p style="color:#2a2a3e;font-size:10px;margin-top:32px;line-height:1.7;">The Federal Equal Credit Opportunity Act prohibits discrimination on the basis of race, color, religion, national origin, sex, marital status, age, or because income derives from public assistance.</p>'+
+
+    var reasonRows = reasons.map(function(r){
+      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:rgba(255,68,85,0.04);border-radius:8px;border:1px solid rgba(255,68,85,0.1);margin-bottom:8px;"><div style="width:6px;height:6px;border-radius:50%;background:#ff4455;margin-top:5px;flex-shrink:0;"></div><div style="font-size:13px;color:#3a3a5a;">'+r+'</div></div>';
+    }).join('');
+
+    subject = 'Your IMC Financing Application — Decision Notice';
+    html = '<!DOCTYPE html><html><head>'+EMAIL_STYLES+'</head><body><div class="wrap">'+
+      ibsEmailHeader('bdg-deny','Adverse Action Notice',date)+
+      '<div class="bdy">'+
+      '<div class="refs"><div class="ri"><div class="rl">Application ID</div><div class="rv">'+(app.id||'N/A').slice(0,8).toUpperCase()+'</div></div>'+
+      '<div class="ri"><div class="rl">Vehicle</div><div class="rv">'+(app.vehicle_name||'N/A')+'</div></div>'+
+      '<div class="ri"><div class="rl">Decision Date</div><div class="rv" style="color:#ff4455;">'+date+'</div></div></div>'+
+      '<p>Dear '+firstName+',</p>'+
+      '<p>Thank you for your application for financing through IMC. After careful review, we regret to inform you that we are <strong>unable to approve your financing request</strong> at this time.</p>'+
+      '<div class="alrt danger"><div class="alrt-ico">&#x2717;</div><div class="alrt-txt"><strong>Application Decision: Not Approved.</strong> The principal reason(s) for this decision are listed below, provided in accordance with applicable fair lending requirements.</div></div>'+
+      '<div class="abox"><div class="atitle">Reason(s) for Adverse Action</div>'+reasonRows+'</div>'+
+      '<p>You have the right to request specific information on which this decision was based within <strong>60 days</strong>. We encourage you to review these factors and consider reapplying once addressed.</p>'+
+      '<a href="mailto:hello@luisocadiz.online" class="cta">Request Information</a>'+
+      '<a href="https://innovativeblockchainsolutions.live/imc/apply.html" class="cta out">Apply Again</a>'+
+      '<div class="sig"><div class="sig-cl">Sincerely,</div><div class="sig-nm">IMC Underwriting Team</div><div class="sig-tt">Underwriter</div><div class="sig-co">Illusive Motor Concepts &middot; Innovative Blockchain Solutions</div></div>'+
+      '</div>'+
+      '<div class="ftr"><div class="ftr-lg">The Equal Credit Opportunity Act prohibits discrimination on the basis of race, color, religion, national origin, sex, marital status, age, or receipt of public assistance. IMC &middot; Las Vegas, NV &middot; 2026.</div>'+
+      '<div class="ftr-lk"><a href="mailto:hello@luisocadiz.online">hello@luisocadiz.online</a><a href="https://innovativeblockchainsolutions.live/imc/apply.html">Apply Again</a><a href="https://innovativeblockchainsolutions.live">innovativeblockchainsolutions.live</a></div></div>'+
       '</div></body></html>';
+
   } else {
     subject = 'Your IMC Application Has Been Approved!';
-    html = '<!DOCTYPE html><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;">'+
-      '<div style="max-width:600px;margin:0 auto;">'+
-      '<div style="border-bottom:2px solid #00d4ff;padding-bottom:20px;margin-bottom:24px;"><div style="font-size:20px;letter-spacing:4px;">ILLUSIVE MOTOR CONCEPTS</div></div>'+
-      '<div style="font-size:24px;color:#00ff88;margin-bottom:16px;">Application Approved!</div>'+
-      '<p style="color:#8888aa;line-height:1.7;">Congratulations '+name+'. Your loan application for <strong style="color:#e8e8f0;">'+(app.vehicle_name||'vehicle')+'</strong> has been approved.</p>'+
-      '<div style="margin:20px 0;padding:16px;background:#0a0a0f;border:1px solid #1e1e2e;">'+
-      '<div style="color:#f0c040;">APR: '+(update.final_apr||'TBD')+'%</div>'+
-      '<div style="margin-top:6px;">Amount: $'+(update.approved_amount||app.loan_amount||0).toLocaleString()+' USDC</div>'+
-      '</div>'+
-      '<p style="color:#8888aa;">Our team will contact you shortly. Questions: <a href="mailto:appeals@illusivemotorconcepts.com" style="color:#00d4ff;">appeals@illusivemotorconcepts.com</a></p>'+
+    var approvedAmt = ibsUsd(update.approved_amount||app.loan_amount||0);
+    html = '<!DOCTYPE html><html><head>'+EMAIL_STYLES+'</head><body><div class="wrap">'+
+      ibsEmailHeader('bdg-ok','Application Approved',date)+
+      '<div class="bdy">'+
+      '<div class="refs"><div class="ri"><div class="rl">Application ID</div><div class="rv">'+(app.id||'N/A').slice(0,8).toUpperCase()+'</div></div>'+
+      '<div class="ri"><div class="rl">Vehicle</div><div class="rv">'+(app.vehicle_name||'N/A')+'</div></div>'+
+      '<div class="ri"><div class="rl">Decision Date</div><div class="rv" style="color:#00c97a;">'+date+'</div></div></div>'+
+      '<p>Dear '+firstName+',</p>'+
+      '<p>Congratulations! Your IMC financing application for <strong>'+(app.vehicle_name||'your vehicle')+'</strong> has been <strong>approved</strong>.</p>'+
+      '<div class="alrt success"><div class="alrt-ico">&#x2713;</div><div class="alrt-txt"><strong>You are approved.</strong> Your loan terms have been set and your account is now in pending funding status. Investor funding will begin shortly.</div></div>'+
+      '<div class="abox"><div class="atitle">Approved Loan Terms</div><div class="agrid">'+
+      '<div class="ai"><div class="al">Loan Amount</div><div class="av" style="color:#0a6cf5;">'+approvedAmt+'</div></div>'+
+      '<div class="ai"><div class="al">APR</div><div class="av">'+(update.final_apr||app.loan_apr||'TBD')+'%</div></div>'+
+      '<div class="ai"><div class="al">Term</div><div class="av">'+(update.loan_term||app.loan_term_months||60)+' months</div></div>'+
+      '</div></div>'+
+      '<p>Our team will contact you with next steps. Log in to your borrower portal to track your loan status in real time.</p>'+
+      '<a href="https://innovativeblockchainsolutions.live/imc/status.html" class="cta">View Your Loan Status</a>'+
+      '<a href="mailto:hello@luisocadiz.online" class="cta out">Contact Us</a>'+
+      '<div class="sig"><div class="sig-cl">Congratulations,</div><div class="sig-nm">IMC Underwriting Team</div><div class="sig-tt">Underwriter</div><div class="sig-co">Illusive Motor Concepts &middot; Innovative Blockchain Solutions</div></div>'+
+      '</div>'+ibsEmailFooter('Your loan is governed by smart contract terms on the Base blockchain (Chain ID: 84532). Please retain this notice for your records.',vaultShort)+
       '</div></body></html>';
   }
+
   fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/smart-action', {
     method:'POST',
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_KEY},
     body:JSON.stringify({to:app.email,subject:subject,html:html})
   }).then(function(r){return r.json();}).then(function(d){console.log('Email sent:',d);}).catch(function(e){console.error('Email error:',e);});
 }
+
+function sendPaidInFullEmail(app) {
+  var name = ((app.first_name||'')+' '+(app.last_name||'')).trim()||'Valued Customer';
+  var firstName = name.split(' ')[0];
+  var date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var vaultShort = ibsShortAddr(app.vault_contract||'');
+  var subject = '🎉 Congratulations — Your IMC Loan is Paid in Full!';
+  var html = '<!DOCTYPE html><html><head>'+EMAIL_STYLES+'</head><body><div class="wrap">'+
+    ibsEmailHeader('bdg-paid','Paid in Full &mdash; Lien Release',date)+
+    '<div class="bdy">'+
+    '<div class="refs"><div class="ri"><div class="rl">Account</div><div class="rv">'+(app.id||'N/A').slice(0,8).toUpperCase()+'</div></div>'+
+    '<div class="ri"><div class="rl">Vehicle</div><div class="rv">'+(app.vehicle_name||'N/A')+'</div></div>'+
+    '<div class="ri"><div class="rl">Payoff Date</div><div class="rv" style="color:#00c97a;">'+date+'</div></div></div>'+
+    '<p>Dear '+firstName+',</p>'+
+    '<p>Congratulations — your IMC loan has been <strong>paid in full</strong> as of <strong>'+date+'</strong>. All obligations under your loan agreement have been satisfied and your account is now closed in good standing.</p>'+
+    '<div class="alrt success"><div class="alrt-ico">&#x2705;</div><div class="alrt-txt"><strong>Your loan is paid in full.</strong> The smart contract vault associated with your account has been settled on the Base blockchain. Your digital asset (NFT) representing '+( app.vehicle_name||'your vehicle')+' has been released from the vault. Every payment is permanently recorded on-chain.</div></div>'+
+    '<div class="abox"><div class="atitle">Final Account Summary</div><div class="agrid">'+
+    '<div class="ai"><div class="al">Original Loan</div><div class="av">'+ibsUsd(app.loan_amount||0)+'</div></div>'+
+    '<div class="ai"><div class="al">APR</div><div class="av">'+(app.loan_apr||0)+'%</div></div>'+
+    '<div class="ai"><div class="al">Term</div><div class="av">'+(app.loan_term_months||0)+' months</div></div>'+
+    '</div></div>'+
+    '<p>Your complete transaction history is permanently recorded on Base. Visit <a href="https://sepolia.basescan.org/address/'+(app.vault_contract||'')+'" style="color:#0a6cf5;font-weight:600;">BaseScan</a> with your vault address for immutable proof of your paid-in-full status.</p>'+
+    '<p>Thank you for choosing IMC. It has been a privilege to serve as your financing partner.</p>'+
+    '<a href="https://innovativeblockchainsolutions.live/imc/" class="cta">Visit IMC Platform</a>'+
+    '<a href="https://innovativeblockchainsolutions.live/imc/dashboard.html" class="cta out">Invest with IMC</a>'+
+    '<div class="sig"><div class="sig-cl">With gratitude,</div><div class="sig-nm">IMC Servicing Team</div><div class="sig-tt">Loan Servicer</div><div class="sig-co">Illusive Motor Concepts &middot; Innovative Blockchain Solutions</div></div>'+
+    '</div>'+ibsEmailFooter('This letter confirms full satisfaction of your IMC loan. Please retain as proof of payoff. Your blockchain transaction record provides independent, immutable verification of all payments made.',vaultShort)+
+    '</div></body></html>';
+
+  fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/smart-action', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_KEY},
+    body:JSON.stringify({to:app.email,subject:subject,html:html})
+  }).then(function(r){return r.json();}).then(function(d){console.log('Paid in full email sent:',d);}).catch(function(e){console.error('Email error:',e);});
+}
+
 
 // -- BLOCKCHAIN OPS --------------------------------------------
 function chainStatus(id, msg, color) {
