@@ -489,7 +489,7 @@ function borrowerMakePayment(appId, vaultAddr) {
   statusEl.style.color = 'var(--gold)';
 
   var USDC_ADDR = '0x036CbD53842c5426634e7929541ec2318f3dcf7e';
-  var GAS_PRICE = '0x' + (50000000000).toString(16);
+  var GAS_PRICE = '0x' + (5000000).toString(16);
 
   // First get monthly payment amount from vault
   window.ethereum.request({method:'eth_call',params:[{to:vaultAddr,data:'0x6ce5891d'},'latest']})
@@ -507,7 +507,7 @@ function borrowerMakePayment(appId, vaultAddr) {
     .then(function(){
       return window.ethereum.request({
         method:'eth_sendTransaction',
-        params:[{from:WALLET, to:USDC_ADDR, data:approveData, gas:'0x186A0', gasPrice:GAS_PRICE}]
+        params:[{from:WALLET, to:USDC_ADDR, data:approveData, gas:'0x186A0'}]
       });
     })
     .then(function(approveTx){
@@ -517,7 +517,7 @@ function borrowerMakePayment(appId, vaultAddr) {
     .then(function(){
       return window.ethereum.request({
         method: 'eth_sendTransaction',
-        params: [{ from: WALLET, to: vaultAddr, data: SEL.makePayment, gas: '0x' + (300000).toString(16), gasPrice: GAS_PRICE }]
+        params: [{ from: WALLET, to: vaultAddr, data: SEL.makePayment, gas: '0x' + (300000).toString(16) }]
       });
     });
   })
@@ -595,7 +595,7 @@ function borrowerPayoff(appId, vaultAddr) {
   statusEl.style.color = 'var(--gold)';
 
   var USDC_ADDR = '0x036CbD53842c5426634e7929541ec2318f3dcf7e';
-  var GAS_PRICE = '0x' + (50000000000).toString(16);
+  var GAS_PRICE = '0x' + (5000000).toString(16);
 
   // Get principal remaining
   window.ethereum.request({method:'eth_call',params:[{to:vaultAddr,data:'0x6ce5891d'},'latest']})
@@ -613,7 +613,7 @@ function borrowerPayoff(appId, vaultAddr) {
     .then(function(){
       return window.ethereum.request({
         method:'eth_sendTransaction',
-        params:[{from:WALLET, to:USDC_ADDR, data:approveData, gas:'0x186A0', gasPrice:GAS_PRICE}]
+        params:[{from:WALLET, to:USDC_ADDR, data:approveData, gas:'0x186A0'}]
       });
     })
     .then(function(){
@@ -623,7 +623,7 @@ function borrowerPayoff(appId, vaultAddr) {
     .then(function(){
       return window.ethereum.request({
         method:'eth_sendTransaction',
-        params:[{from:WALLET, to:vaultAddr, data:SEL.earlyPayoff, gas:'0x' + (500000).toString(16), gasPrice:GAS_PRICE}]
+        params:[{from:WALLET, to:vaultAddr, data:SEL.earlyPayoff, gas:'0x' + (500000).toString(16)}]
       });
     })
     .then(function(tx){

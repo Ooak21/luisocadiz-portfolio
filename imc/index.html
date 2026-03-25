@@ -395,7 +395,7 @@ function doInvest() {
 
   window.ethereum.request({
     method: 'eth_sendTransaction',
-    params: [{ from: window.ethereum.selectedAddress, to: USDC_ADDRESS, data: approveData, gas: '0x186A0', gasPrice: '0x' + (5000000).toString(16) }]
+    params: [{ from: window.ethereum.selectedAddress, to: USDC_ADDRESS, data: approveData, gas: '0x186A0'}]
   })
   .then(function(approveTx) {
     console.log('Approve TX:', approveTx);
@@ -411,7 +411,7 @@ function doInvest() {
     var investData = '0x2afcf480' + investAmountHex; // invest(uint256)
     return window.ethereum.request({
       method: 'eth_sendTransaction',
-      params: [{ from: window.ethereum.selectedAddress, to: activeVault, data: investData, gas: '0x7A120', gasPrice: '0x' + (5000000).toString(16) }]
+      params: [{ from: window.ethereum.selectedAddress, to: activeVault, data: investData, gas: '0x7A120'}]
     });
   })
   .then(function(investTx) {

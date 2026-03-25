@@ -409,7 +409,7 @@ function claimYield(index, vaultAddr) {
 
   window.ethereum.request({
     method: 'eth_sendTransaction',
-    params: [{ from: WALLET, to: vaultAddr, data: SEL.claimYield, gas: '0x493E0', gasPrice: '0x' + (5000000).toString(16) }]
+    params: [{ from: WALLET, to: vaultAddr, data: SEL.claimYield, gas: '0x493E0'}]
   })
   .then(function(txHash) {
     console.log('Claim TX:', txHash);
