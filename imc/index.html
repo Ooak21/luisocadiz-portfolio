@@ -89,21 +89,75 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
 </head>
 <body>
 
+<!-- IBS Pulsing Grid -->
+<canvas id="ibs-grid-canvas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:1;"></canvas>
+<script>
+(function(){
+  var c=document.getElementById('ibs-grid-canvas');
+  if(!c)return;
+  var ctx=c.getContext('2d'),W,H,t=0;
+  var COLS=28,ROWS=18,PAD=2;
+  var cells=[];
+  function resize(){
+    W=c.width=window.innerWidth;
+    H=c.height=window.innerHeight;
+    var cw=Math.floor(W/COLS),ch=Math.floor(H/ROWS);
+    cells=[];
+    for(var r=0;r<ROWS;r++){
+      for(var col=0;col<COLS;col++){
+        cells.push({
+          x:col*cw,y:r*ch,w:cw-PAD,h:ch-PAD,
+          phase:Math.random()*Math.PI*2,
+          speed:0.004+Math.random()*0.008,
+          peak:0.04+Math.random()*0.1,
+          color:Math.random()>0.85?
+            (Math.random()>0.5?'10,108,245':'139,0,255'):
+            '10,108,245'
+        });
+      }
+    }
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t++;
+    cells.forEach(function(cell){
+      cell.phase+=cell.speed;
+      var a=Math.max(0,Math.sin(cell.phase))*cell.peak;
+      if(a<0.005){requestAnimationFrame(draw);return;}
+      ctx.beginPath();
+      ctx.rect(cell.x,cell.y,cell.w,cell.h);
+      ctx.fillStyle='rgba('+cell.color+','+a+')';
+      ctx.fill();
+      if(a>0.06){
+        ctx.strokeStyle='rgba('+cell.color+','+(a*0.6)+')';
+        ctx.lineWidth=0.5;
+        ctx.stroke();
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+
 <!-- GATE -->
 <div id="imcGate" style="position:fixed;inset:0;z-index:9999;background:#050507;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;">
   <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,212,255,0.01) 0px,rgba(0,212,255,0.01) 1px,transparent 1px,transparent 4px);pointer-events:none;"></div>
-  <div style="position:absolute;bottom:0;left:0;right:0;height:40%;background:repeating-linear-gradient(90deg,rgba(0,212,255,0.025) 0,rgba(0,212,255,0.025) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(0,212,255,0.025) 0,rgba(0,212,255,0.025) 1px,transparent 1px,transparent 60px);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:0;left:0;right:0;height:40%;background:repeating-linear-gradient(90deg,rgba(10,108,245,0.03) 0,rgba(0,212,255,0.025) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(10,108,245,0.03) 0,rgba(0,212,255,0.025) 1px,transparent 1px,transparent 60px);pointer-events:none;"></div>
   <div style="text-align:center;position:relative;z-index:1;max-width:560px;">
     <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-bottom:3rem;">
-      <div style="width:10px;height:10px;border-radius:50%;background:#00d4ff;box-shadow:0 0 12px #00d4ff,0 0 24px rgba(0,212,255,0.4);animation:pulse-neon 2s infinite;"></div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.15em;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div>
+      <div style="width:10px;height:10px;border-radius:50%;background:#0a6cf5;box-shadow:0 0 12px #0a6cf5,0 0 24px rgba(10,108,245,0.4);animation:pulse-neon 2s infinite;"></div>
+      <div style="font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;letter-spacing:0.12em;color:#f0f0f8;">ILLUSIVE MOTOR CONCEPTS</div>
     </div>
-    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,10vw,6rem);line-height:0.88;letter-spacing:0.02em;margin-bottom:1.5rem;">
-      PRIVATE<br><span style="color:#00d4ff;text-shadow:0 0 30px rgba(0,212,255,0.5);">ACCESS</span><br>ONLY
+    <h1 style="font-family:'Inter',sans-serif;font-weight:800;font-size:clamp(2.5rem,8vw,5.5rem);line-height:0.88;letter-spacing:0.02em;margin-bottom:1.5rem;">
+      PRIVATE<br><span style="color:#0a6cf5;text-shadow:0 0 30px rgba(10,108,245,0.5);">ACCESS</span><br>ONLY
     </h1>
     <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#444460;margin-bottom:1.5rem;">Private Beta - By Invitation Only</p>
-    <p style="font-family:'Inter',sans-serif;font-size:0.85rem;color:#444460;line-height:1.75;max-width:400px;margin:0 auto 2.5rem;">A peer-to-peer auto finance platform built on blockchain. Classic vehicles tokenized as digital assets. Loans funded by investors. Yield distributed on-chain in USDC. Built in Las Vegas.</p>
-    <button id="gateWalletBtn" style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;background:transparent;border:1px solid #1e1e2e;color:#8888aa;padding:1rem 2.5rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.75rem;transition:all 0.2s;margin-bottom:1.5rem;"
+    <p style="font-family:'Inter',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.5);line-height:1.75;max-width:400px;margin:0 auto 2.5rem;">A peer-to-peer auto finance platform built on blockchain. Classic vehicles tokenized as digital assets. Loans funded by investors. Yield distributed on-chain in USDC. Built in Las Vegas.</p>
+    <button id="gateWalletBtn" style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;background:transparent;border:1px solid rgba(10,108,245,0.3);color:rgba(255,255,255,0.7);padding:1rem 2.5rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.75rem;transition:all 0.2s;margin-bottom:1.5rem;"
       onclick="var AUTH=['0x6c6ad1de674c292c088b29aa1312b991590bbb9f','0x8050d5462309dd334116bb3e949386c3238db9ac'];var b=this,d=document.getElementById('gateDot'),l=document.getElementById('gateLabel');if(!window.ethereum){l.textContent='Install MetaMask';return;}l.textContent='Connecting...';window.ethereum.request({method:'eth_requestAccounts'}).then(function(a){var addr=a[0].toLowerCase();if(AUTH.indexOf(addr)>-1){d.style.background='#00d4ff';d.style.boxShadow='0 0 8px #00d4ff';l.textContent=a[0].slice(0,6)+'...'+a[0].slice(-4)+' Unlocked';b.style.borderColor='#00d4ff';b.style.color='#00d4ff';document.getElementById('accessDenied').style.display='none';var g=document.getElementById('imcGate');g.style.transition='opacity 0.8s';g.style.opacity='0';setTimeout(function(){g.style.display='none';document.getElementById('wDot').classList.add('on');document.getElementById('wLabel').textContent=a[0].slice(0,6)+'...'+a[0].slice(-4);document.getElementById('walletBtn').style.borderColor='var(--neon)';document.getElementById('walletBtn').style.color='var(--neon)';walletConnected=true;loadDynamicListings();},800);}else{document.getElementById('accessDenied').style.display='block';document.getElementById('deniedAddr').textContent=a[0]+' not authorized';d.style.background='#ff4455';b.style.color='#ff4455';b.style.borderColor='rgba(255,68,85,0.4)';l.textContent='Access Denied';}}).catch(function(){l.textContent='Connect Wallet to Enter';});">
       <span id="gateDot" style="width:7px;height:7px;border-radius:50%;background:#444460;transition:all 0.3s;flex-shrink:0;"></span>
       <span id="gateLabel">Connect Wallet to Enter</span>
@@ -112,7 +166,7 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
       <div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:#ff4455;">Access Denied</div>
       <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:#444460;letter-spacing:0.1em;margin-top:0.35rem;" id="deniedAddr"></div>
     </div>
-    <p style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;color:#2a2a3e;line-height:1.8;">Web3 Auto Finance - Polygon Network - USDC</p>
+    <p style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;color:rgba(255,255,255,0.2);line-height:1.8;">Innovative Blockchain Solutions · Base Network · USDC</p>
   </div>
 </div>
 
