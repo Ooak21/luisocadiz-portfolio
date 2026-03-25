@@ -524,13 +524,65 @@ function borrowerMakePayment(appId, vaultAddr) {
   .then(function(tx) {
     statusEl.textContent = 'Payment submitted! TX: ' + tx.slice(0,14) + '...';
     statusEl.style.color = 'var(--green)';
-    setTimeout(function() { loadApplications(WALLET); }, 5000);
+    // Check if this was the final payment
+    setTimeout(function() {
+      loadApplications(WALLET);
+      // Re-fetch app to check if now paid off
+      if (typeof SUPABASE_URL !== 'undefined') {
+        fetch(SUPABASE_URL + '/rest/v1/imc_applications?id=eq.' + appId + '&select=*', {
+          headers: {'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY}
+        }).then(function(r){return r.json();}).then(function(apps){
+          if (apps && apps[0] && apps[0].status === 'paid_off') {
+            sendPaidInFullEmail(apps[0]);
+          }
+        }).catch(function(){});
+      }
+    }, 5000);
   })
   .catch(function(e) {
     statusEl.textContent = 'Error: ' + (e.message || 'rejected');
     statusEl.style.color = 'var(--red)';
     btn.disabled = false;
   });
+}
+
+
+// ── PAID IN FULL EMAIL ────────────────────────────────────────
+function sendPaidInFullEmail(app) {
+  if (!app || !app.email) return;
+  var name = ((app.first_name||'')+' '+(app.last_name||'')).trim()||'Valued Customer';
+  var firstName = name.split(' ')[0];
+  var date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var vault = app.vault_contract||'';
+  var vaultShort = vault ? vault.slice(0,10)+'...'+vault.slice(-6) : 'N/A';
+  var STYLES = '<style>*{box-sizing:border-box;margin:0;padding:0;}body{background:#f0f0f5;font-family:Inter,Arial,sans-serif;}.wrap{max-width:640px;margin:0 auto;background:#fff;}.hdr{background:#06060f;padding:28px 36px 20px;}.htop{display:flex;justify-content:space-between;align-items:flex-start;}.brand{display:flex;align-items:center;gap:10px;}.bico{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a6cf5,#8b00ff);color:white;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;}.bnm{font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);}.bsb{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}.bdg{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;background:rgba(0,255,136,.1);color:#00c97a;border:1px solid rgba(0,255,136,.2);margin-bottom:5px;}.dvd{height:1px;background:linear-gradient(90deg,transparent,rgba(10,108,245,.5),rgba(139,0,255,.4),transparent);margin:18px 0 0;}.bdy{padding:32px 36px;}p{font-size:14px;color:#3a3a5a;line-height:1.8;margin-bottom:14px;font-weight:300;}p strong{color:#1a1a2e;font-weight:600;}.alrt{border-radius:10px;padding:14px 16px;margin:16px 0;display:flex;gap:10px;align-items:flex-start;background:rgba(0,201,122,.05);border:1px solid rgba(0,201,122,.18);}.alrt-ico{font-size:15px;flex-shrink:0;}.alrt-txt{font-size:13px;color:#3a3a5a;line-height:1.6;}.alrt-txt strong{color:#1a1a2e;font-weight:600;}.abox{background:#f8f8fc;border:1px solid #e8e8f0;border-radius:10px;padding:16px;margin:16px 0;}.atitle{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:12px;}.agrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}.al{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.av{font-size:13px;font-weight:600;color:#1a1a2e;}.cta{display:inline-block;background:#0a6cf5;color:white;font-size:13px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:100px;margin:6px 6px 6px 0;}.cta-out{display:inline-block;background:transparent;color:#0a6cf5;font-size:13px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:100px;border:1px solid rgba(10,108,245,.3);margin:6px 6px 6px 0;}.sig{margin-top:24px;padding-top:16px;border-top:1px solid #f0f0f5;}.sig-nm{font-size:14px;font-weight:700;color:#1a1a2e;}.sig-tt{font-size:12px;color:#a0a0b8;}.sig-co{font-size:12px;font-weight:600;color:#0a6cf5;margin-top:5px;}.ftr{background:#f8f8fc;border-top:1px solid #e8e8f0;padding:18px 36px;display:flex;justify-content:space-between;gap:16px;}.ftr-lg{font-size:10px;color:#b0b0c8;line-height:1.6;max-width:380px;}.ftr-lk a{font-size:11px;color:#0a6cf5;text-decoration:none;display:block;line-height:1.9;}.chn{font-size:10px;color:rgba(10,108,245,.6);margin-top:6px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}</style>';
+  var html = '<!DOCTYPE html><html><head>'+STYLES+'</head><body><div class="wrap">'+
+    '<div class="hdr"><div class="htop"><div class="brand"><div class="bico">&#9670;</div><div><div class="bnm">Illusive Motor Concepts</div><div class="bsb">Innovative Blockchain Solutions &middot; Las Vegas, NV</div></div></div><div style="text-align:right;"><div class="bdg">Paid in Full &mdash; Lien Release</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">'+date+'</div></div></div><div class="dvd"></div></div>'+
+    '<div class="bdy">'+
+    '<p>Dear '+firstName+',</p>'+
+    '<p>Congratulations &#127881; &mdash; your IMC loan has been <strong>paid in full</strong> as of <strong>'+date+'</strong>. All obligations under your loan agreement have been satisfied and your account is now closed in good standing.</p>'+
+    '<div class="alrt"><div class="alrt-ico">&#x2705;</div><div class="alrt-txt"><strong>Your loan is paid in full.</strong> The smart contract vault associated with your account has been settled on the Base blockchain. Your digital asset (NFT) representing '+(app.vehicle_name||'your vehicle')+' has been released. Every payment is permanently recorded on-chain and verifiable by anyone.</div></div>'+
+    '<div class="abox"><div class="atitle">Final Account Summary</div><div class="agrid">'+
+    '<div><div class="al">Vehicle</div><div class="av">'+(app.vehicle_name||'N/A')+'</div></div>'+
+    '<div><div class="al">Original Loan</div><div class="av">$'+(app.loan_amount||0).toLocaleString()+' USDC</div></div>'+
+    '<div><div class="al">APR</div><div class="av">'+(app.loan_apr||0)+'%</div></div>'+
+    '<div><div class="al">Term</div><div class="av">'+(app.loan_term_months||0)+' months</div></div>'+
+    '<div><div class="al">Payoff Date</div><div class="av" style="color:#00c97a;">'+date+'</div></div>'+
+    '<div><div class="al">Network</div><div class="av">Base</div></div>'+
+    '</div></div>'+
+    '<p>Your complete on-chain transaction history can be verified at <a href="https://sepolia.basescan.org/address/'+vault+'" style="color:#0a6cf5;font-weight:600;">BaseScan</a> using your vault address. This is immutable proof of your paid-in-full status.</p>'+
+    '<p>Thank you for choosing IMC. It has been a privilege to serve as your financing partner. We hope to work with you again.</p>'+
+    '<a href="https://innovativeblockchainsolutions.live/imc/" class="cta">Visit IMC Platform</a>'+
+    '<a href="https://innovativeblockchainsolutions.live/imc/dashboard.html" class="cta-out">Invest with IMC</a>'+
+    '<div class="sig"><div style="font-size:14px;color:#3a3a5a;margin-bottom:12px;">With gratitude,</div><div class="sig-nm">IMC Servicing Team</div><div class="sig-tt">Loan Servicer</div><div class="sig-co">Illusive Motor Concepts &middot; Innovative Blockchain Solutions</div></div>'+
+    '</div>'+
+    '<div class="ftr"><div class="ftr-lg">This letter confirms full satisfaction of your IMC loan obligation. Please retain as proof of payoff. Your blockchain record provides independent, immutable verification of all payments made.<div class="chn">&#9679; Settled on Base &middot; Vault: '+vaultShort+'</div></div>'+
+    '<div class="ftr-lk"><a href="mailto:hello@luisocadiz.online">hello@luisocadiz.online</a><a href="https://innovativeblockchainsolutions.live/imc/status.html">Borrower Portal</a><a href="https://innovativeblockchainsolutions.live">innovativeblockchainsolutions.live</a></div></div>'+
+    '</div></body></html>';
+  var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/smart-action';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2NjM3MDcsImV4cCI6MjA1ODIzOTcwN30.p_dItUPCpjNJjDPEEGKBcqBsHZfFcVpI3YdLGOfMM5s';
+  fetch(SB_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_KEY},body:JSON.stringify({to:app.email,subject:'Congratulations — Your IMC Loan is Paid in Full!',html:html})})
+  .then(function(r){return r.json();}).then(function(d){console.log('Paid in full email sent:',d);}).catch(function(e){console.error('Email error:',e);});
 }
 
 function borrowerPayoff(appId, vaultAddr) {
@@ -578,7 +630,15 @@ function borrowerPayoff(appId, vaultAddr) {
       statusEl.textContent = 'Loan paid off! TX: ' + tx.slice(0,14) + '...';
       statusEl.style.color = 'var(--green)';
       btn.textContent = 'Paid Off!';
-      setTimeout(function(){ loadApplications(WALLET); }, 5000);
+      // Send paid in full email
+      setTimeout(function(){
+        loadApplications(WALLET);
+        fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/rest/v1/imc_applications?id=eq.'+appId+'&select=*', {
+          headers: {'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY}
+        }).then(function(r){return r.json();}).then(function(apps){
+          if (apps && apps[0]) sendPaidInFullEmail(apps[0]);
+        }).catch(function(){});
+      }, 4000);
     });
   })
   .catch(function(e){
