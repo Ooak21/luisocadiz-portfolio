@@ -457,7 +457,7 @@ function loadDynamicListings() {
       var color = v.vehicle_color || '';
       return '<div class="glass-card" style="cursor:pointer;">' +
         '<div style="width:100%;height:320px;background:#080818;position:relative;overflow:hidden;border-bottom:1px solid var(--border);">' +
-        (v.metadata_uri ? '<img src="' + v.metadata_uri + '" style="width:100%;height:100%;object-fit:cover;object-position:center 75%;display:block;transition:transform 0.5s ease;" onerror="this.style.display=\x27none\x27" /><div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.5) 100%);pointer-events:none;"></div>' : '') +
+        (v.metadata_uri ? '<img src="' + v.metadata_uri + '" style="width:100%;height:100%;object-fit:cover;object-position:center center;display:block;transition:transform 0.5s ease;" onerror="this.style.display=\x27none\x27" /><div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.5) 100%);pointer-events:none;"></div>' : '') +
         
         '<div style="position:absolute;top:1rem;left:1rem;display:flex;gap:0.5rem;"><span class="badge badge-funding">Funding</span>' + evBadge + '</div>' +
         '<div style="position:absolute;top:1rem;right:1rem;font-family:monospace;font-size:0.6rem;color:var(--gold);">$' + (v.appraised_value||0).toLocaleString() + ' appraised</div>' +
