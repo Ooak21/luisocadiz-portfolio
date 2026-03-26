@@ -70,7 +70,7 @@ nav.scrolled-light .nav-links a:hover{color:var(--text-light);}
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:6rem 2rem 8rem;
 }
-#hero-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+#hero-canvas{position:absolute;inset:0;width:100%;height:auto;pointer-events:none;z-index:0;}
 
 .hero-inner{position:relative;z-index:2;text-align:center;max-width:900px;}
 .hero-badge{
@@ -192,7 +192,7 @@ nav.scrolled-light .nav-links a:hover{color:var(--text-light);}
 
 /* About canvas */
 .about-canvas-wrap{
-  height:480px;border-radius:28px;overflow:hidden;
+  border-radius:28px;overflow:hidden;
   background:#000;
   border:1px solid rgba(123,79,255,0.2);
   position:relative;
@@ -203,13 +203,13 @@ nav.scrolled-light .nav-links a:hover{color:var(--text-light);}
     inset 0 1px 0 rgba(255,255,255,0.05);
 }
 .about-canvas-wrap img{
-  width:100%;height:100%;
-  object-fit:cover;object-position:center 40%;
+  width:100%;height:auto;
+  
   display:block;
   mix-blend-mode:normal;
   transition:transform 0.8s ease;
 }
-.about-canvas-wrap:hover img{transform:scale(1.03);}
+
 .about-canvas-wrap .lv-overlay{
   position:absolute;inset:0;
   background:linear-gradient(135deg,rgba(10,6,22,0.3) 0%,transparent 50%,rgba(10,6,22,0.2) 100%);
@@ -367,7 +367,7 @@ nav.scrolled-light .nav-links a:hover{color:var(--text-light);}
   text-align:center;position:relative;overflow:hidden;
 }
 .manifesto::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:900px;height:500px;background:radial-gradient(ellipse,rgba(123,79,255,0.05) 0%,transparent 60%);}
-#manifesto-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+#manifesto-canvas{position:absolute;inset:0;width:100%;height:auto;pointer-events:none;z-index:0;}
 .mq{font-size:clamp(1.6rem,3.5vw,2.8rem);font-weight:300;letter-spacing:-0.03em;line-height:1.35;color:rgba(255,255,255,0.88);max-width:800px;margin:0 auto 2rem;position:relative;}
 .mq em{font-style:normal;background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .ma{font-size:0.65rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);position:relative;}
@@ -455,7 +455,7 @@ footer{background:var(--dark);border-top:1px solid var(--border-dark);padding:2.
   .about-section,.tech-section,.plans-section{padding:5rem 1.25rem;}
   .products-section{padding:5rem 1.25rem;}
   .about-inner,.products-grid{grid-template-columns:1fr;}
-  .about-canvas-wrap{height:240px;margin-top:2rem;}
+  .about-canvas-wrap{margin-top:2rem;}
   .tech-grid,.plans-grid{grid-template-columns:1fr;}
   .manifesto{padding:5rem 1.25rem;}
   .mq{font-size:1.3rem;}
