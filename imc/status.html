@@ -111,7 +111,7 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
 @keyframes grid-pulse{0%,100%{opacity:0.5}50%{opacity:1}}
 
 /* ── CONTACT AGENT ────────────────────────────────────────── */
-.agent-btn{display:inline-flex;align-items:center;gap:0.6rem;background:transparent;border:1px solid var(--neon);color:var(--neon);font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;padding:0.65rem 1.4rem;cursor:pointer;transition:all 0.2s;border-radius:4px;margin-top:1rem;}
+.agent-btn{display:inline-flex;align-items:center;gap:0.6rem;background:transparent;border:1px solid var(--neon);color:var(--neon);font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;padding:0.65rem 1.4rem;cursor:pointer;transition:all 0.2s;border-radius:4px;}
 .agent-btn:hover{background:rgba(0,212,255,0.08);box-shadow:0 0 16px rgba(0,212,255,0.2);}
 .agent-btn:disabled{opacity:0.4;cursor:not-allowed;}
 .agent-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;}
@@ -128,6 +128,9 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
 .agent-close-btn:hover{border-color:var(--muted);}
 .agent-timer{display:inline-block;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);margin-left:0.5rem;}
 .agent-timer.urgent{color:#ff4455;animation:pulse 1s infinite;}
+.agent-bar{margin-top:1.5rem;padding:1rem 1.25rem;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.agent-bar-txt{font-size:0.78rem;color:var(--muted);line-height:1.5;}
+.agent-bar-txt strong{color:var(--txt);display:block;font-size:0.8rem;margin-bottom:0.2rem;}
 
 </style>
 <div class="ibs-grid-bg"></div>
@@ -363,13 +366,6 @@ function renderAppCard(app, idx) {
       html += '<span style="color:var(--dim);font-size:0.8rem;">-></span></a>';
     });
     html += '</div></div>';
-    // Contact Agent button — only shown when wallet authenticated
-    html += '<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06);">';
-    html += '<button class="agent-btn" onclick="requestAgentSession(\''+app.id+'\')">';
-    html += '<span>📞</span><span>Contact Agent</span>';
-    html += '</button>';
-    html += '<div style="font-family:\'DM Mono\',monospace;font-size:0.55rem;letter-spacing:0.1em;color:var(--muted);margin-top:0.5rem;">Secure authenticated voice session — one-time code required</div>';
-    html += '</div>';
   }
 
   // Payment portal for active loans
@@ -390,6 +386,12 @@ function renderAppCard(app, idx) {
     html += '<div id="portal-error-' + app.id + '" style="display:none;font-family:\'DM Mono\',monospace;font-size:0.62rem;color:var(--dim);"></div>';
     html += '</div></div>';
   }
+
+  // Contact Agent bar — all authenticated applications
+  html += '<div class="agent-bar">';
+  html += '<div class="agent-bar-txt"><strong>📞 Speak with an Agent</strong>Application status, loan billing, payoff quotes — secure 24/7 voice support.</div>';
+  html += '<button class="agent-btn" onclick="requestAgentSession(\''+app.id+'\')" style="white-space:nowrap;">Contact Agent</button>';
+  html += '</div>';
 
   html += '</div>'; // end app-section
   return html;
@@ -693,75 +695,54 @@ var agentSessionExpiry = null;
 
 async function requestAgentSession(appId) {
   var btn = event.target.closest('button');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span><span>Generating...</span>'; }
-
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating...'; }
   try {
-    var res = await fetch(SB_URL + '/functions/v1/imc-agent-session', {
+    var res = await fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/imc-agent-session', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + SB_KEY
-      },
-      body: JSON.stringify({
-        action: 'create',
-        wallet_address: WALLET,
-        application_id: appId
-      })
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SB_KEY },
+      body: JSON.stringify({ action: 'create', wallet_address: WALLET, application_id: appId })
     });
-
     var data = await res.json();
-
     if (data.success) {
-      document.getElementById('agentNumber').textContent = data.phone_number;
+      var num = data.phone_number;
+      if (!num.startsWith('+')) num = '+' + num;
+      document.getElementById('agentNumber').textContent = num;
       document.getElementById('agentCode').textContent = data.session_code;
+      document.getElementById('agentCode').style.color = 'var(--neon)';
       agentSessionExpiry = new Date(data.expires_at).getTime();
       startAgentTimer();
       document.getElementById('agentModal').classList.add('open');
     } else {
       alert('Could not create session: ' + (data.error || 'Unknown error'));
     }
-  } catch(e) {
-    alert('Error: ' + e.message);
-  }
-
-  if (btn) { btn.disabled = false; btn.innerHTML = '<span>📞</span><span>Contact Agent</span>'; }
+  } catch(e) { alert('Error: ' + e.message); }
+  if (btn) { btn.disabled = false; btn.textContent = 'Contact Agent'; }
 }
 
 async function refreshAgentSession() {
   var btn = document.getElementById('agentRefreshBtn');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Refreshing...'; }
+  if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
   clearInterval(agentTimerInterval);
-
   try {
-    var res = await fetch(SB_URL + '/functions/v1/imc-agent-session', {
+    var res = await fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/imc-agent-session', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + SB_KEY
-      },
-      body: JSON.stringify({
-        action: 'create',
-        wallet_address: WALLET
-      })
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SB_KEY },
+      body: JSON.stringify({ action: 'create', wallet_address: WALLET })
     });
-
     var data = await res.json();
     if (data.success) {
       document.getElementById('agentCode').textContent = data.session_code;
+      document.getElementById('agentCode').style.color = 'var(--neon)';
       agentSessionExpiry = new Date(data.expires_at).getTime();
       startAgentTimer();
     }
-  } catch(e) {
-    alert('Error refreshing: ' + e.message);
-  }
-
-  if (btn) { btn.disabled = false; btn.innerHTML = '↻ New Code'; }
+  } catch(e) { alert('Error: ' + e.message); }
+  if (btn) { btn.disabled = false; btn.textContent = '↻ New Code'; }
 }
 
 function startAgentTimer() {
   clearInterval(agentTimerInterval);
   var timerEl = document.getElementById('agentTimer');
-
   agentTimerInterval = setInterval(function() {
     var remaining = agentSessionExpiry - Date.now();
     if (remaining <= 0) {
@@ -775,9 +756,7 @@ function startAgentTimer() {
     var mins = Math.floor(remaining / 60000);
     var secs = Math.floor((remaining % 60000) / 1000);
     timerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
-    if (remaining < 3 * 60 * 1000) {
-      timerEl.className = 'agent-timer urgent';
-    }
+    if (remaining < 3 * 60 * 1000) timerEl.className = 'agent-timer urgent';
   }, 1000);
 }
 
@@ -786,7 +765,6 @@ function closeAgentModal() {
   clearInterval(agentTimerInterval);
 }
 
-// Close on overlay click — deferred until DOM ready
 document.addEventListener('DOMContentLoaded', function() {
   var overlay = document.getElementById('agentModal');
   if (overlay) {
@@ -804,22 +782,21 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="agent-modal-title">📞 IMC Voice Agent — Secure Session</div>
     <div class="agent-instruction">
       Call the number below and provide your <strong>one-time session code</strong> when prompted.<br><br>
-      For security, this code is only valid from within your authenticated portal session.
+      This code is only valid from within your authenticated portal session and expires in 15 minutes.
     </div>
     <div style="text-align:center;padding:1.25rem;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);border-radius:10px;margin-bottom:1.25rem;">
       <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;color:var(--muted);margin-bottom:0.5rem;">CALL THIS NUMBER</div>
       <div class="agent-number" id="agentNumber">+1 775 799 2718</div>
       <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;color:var(--muted);margin:1rem 0 0.5rem;">YOUR SESSION CODE</div>
       <div class="agent-code" id="agentCode">------</div>
-      <div class="agent-expires" id="agentExpires">Expires in <span id="agentTimer" class="agent-timer">15:00</span></div>
+      <div class="agent-expires">Expires in <span id="agentTimer" class="agent-timer">15:00</span></div>
     </div>
     <div class="agent-warning">
-      🔒 This code is single-use and expires after 15 minutes or when your call ends. 
-      Do not share this code. Call only from the number you provided on your application for full account access.
+      🔒 Single-use code. Expires in 15 minutes or when your call ends. Do not share this code.
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <button class="agent-close-btn" onclick="closeAgentModal()">Close</button>
-      <button class="agent-btn" onclick="refreshAgentSession()" id="agentRefreshBtn" style="margin-top:0;">↻ New Code</button>
+      <button class="agent-btn" onclick="refreshAgentSession()" id="agentRefreshBtn">↻ New Code</button>
     </div>
   </div>
 </div>
