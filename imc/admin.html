@@ -312,172 +312,7 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
     <button class="main-tab" id="tabServicing" onclick="switchTab('servicing')" style="border-color:transparent;color:#00d4ff;">Loan Servicing</button>
   </div>
 
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- LOAN SERVICING TAB PANEL — inject after tabChain section       -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<div id="tabServicing" class="tab-panel" style="display:none;">
-  <div class="svc-layout">
-
-    <!-- LEFT: Active Loan List -->
-    <div class="svc-sidebar">
-      <div class="svc-sidebar-hdr">
-        <div class="svc-sidebar-title">Active Loans</div>
-        <div id="svcLoanCount" class="svc-count">—</div>
-      </div>
-      <div class="svc-search-wrap">
-        <input type="text" id="svcSearch" class="inp" placeholder="Search borrower or vehicle..." oninput="filterSvcLoans()" style="font-size:12px;padding:8px 12px;">
-      </div>
-      <div id="svcLoanList" class="svc-loan-list">
-        <div class="svc-empty">Loading active loans...</div>
-      </div>
-    </div>
-
-    <!-- RIGHT: Loan Detail + Notes -->
-    <div class="svc-main">
-      <div id="svcNoSelection" class="svc-no-select">
-        <div style="font-size:32px;margin-bottom:12px;">📋</div>
-        <div style="font-size:14px;color:var(--dim);">Select a loan to view servicing history</div>
-      </div>
-
-      <div id="svcDetail" style="display:none;">
-
-        <!-- Loan Header -->
-        <div class="svc-loan-hdr">
-          <div class="svc-loan-hdr-left">
-            <div id="svcVehicleName" class="svc-vehicle-name"></div>
-            <div id="svcBorrowerName" class="svc-borrower-name"></div>
-          </div>
-          <div class="svc-loan-hdr-right">
-            <div id="svcVaultStatus" class="svc-vault-badge"></div>
-            <div id="svcDPD" class="svc-dpd"></div>
-          </div>
-        </div>
-
-        <!-- Loan Stats Row -->
-        <div class="svc-stats-row">
-          <div class="svc-stat">
-            <div class="svc-stat-lbl">Loan Amount</div>
-            <div id="svcLoanAmt" class="svc-stat-val"></div>
-          </div>
-          <div class="svc-stat">
-            <div class="svc-stat-lbl">APR</div>
-            <div id="svcAPR" class="svc-stat-val"></div>
-          </div>
-          <div class="svc-stat">
-            <div class="svc-stat-lbl">Term</div>
-            <div id="svcTerm" class="svc-stat-val"></div>
-          </div>
-          <div class="svc-stat">
-            <div class="svc-stat-lbl">Vault</div>
-            <div id="svcVaultAddr" class="svc-stat-val svc-mono"></div>
-          </div>
-          <div class="svc-stat">
-            <div class="svc-stat-lbl">Servicing Status</div>
-            <div id="svcServStatus" class="svc-stat-val"></div>
-          </div>
-          <div class="svc-stat">
-            <div class="svc-stat-lbl">Last Payment</div>
-            <div id="svcLastPmt" class="svc-stat-val"></div>
-          </div>
-        </div>
-
-        <!-- Two-column: Timeline + Note Entry -->
-        <div class="svc-cols">
-
-          <!-- LEFT COL: Unified Timeline -->
-          <div class="svc-timeline-col">
-            <div class="svc-col-hdr">
-              <span>Servicing Timeline</span>
-              <div class="svc-timeline-filters">
-                <button class="svc-filter active" onclick="filterTimeline('all',this)">All</button>
-                <button class="svc-filter" onclick="filterTimeline('agent',this)">Agent</button>
-                <button class="svc-filter" onclick="filterTimeline('manual',this)">Manual</button>
-                <button class="svc-filter" onclick="filterTimeline('escalated',this)">🚨 Escalated</button>
-              </div>
-            </div>
-            <div id="svcTimeline" class="svc-timeline">
-              <div class="svc-empty">No servicing history yet.</div>
-            </div>
-          </div>
-
-          <!-- RIGHT COL: Note Entry Form -->
-          <div class="svc-note-col">
-            <div class="svc-col-hdr">Log Note</div>
-            <div class="svc-note-form">
-
-              <div class="svc-form-row">
-                <label class="svc-lbl">Reason Code <span style="color:var(--red);">*</span></label>
-                <select id="svcReasonCode" class="inp" style="font-size:12px;">
-                  <option value="">Select reason...</option>
-                  <option value="PMT">PMT — Payment Activity</option>
-                  <option value="BILL">BILL — Billing / Statement</option>
-                  <option value="ACCT">ACCT — Account Maintenance</option>
-                  <option value="APP">APP — Application Related</option>
-                  <option value="SVC">SVC — Servicing Action</option>
-                  <option value="LEGAL" class="svc-legal-opt" style="display:none;">LEGAL — Legal (Restricted)</option>
-                  <option value="OTHER">OTHER — General</option>
-                </select>
-              </div>
-
-              <div class="svc-form-row">
-                <label class="svc-lbl">LS Code <span style="color:var(--dim);font-weight:400;">(optional)</span></label>
-                <select id="svcLSCode" class="inp" style="font-size:12px;">
-                  <option value="">None</option>
-                  <option value="LS-001">LS-001 — Welcome / Onboarding</option>
-                  <option value="LS-002">LS-002 — 10-Day Late Notice</option>
-                  <option value="LS-003">LS-003 — Pre-30 Warning</option>
-                  <option value="LS-004">LS-004 — 30-Day Notice</option>
-                  <option value="LS-005">LS-005 — 43-Day Final Notice</option>
-                  <option value="LS-006">LS-006 — Assigned for Repossession</option>
-                  <option value="LS-007">LS-007 — Vault Defaulted</option>
-                </select>
-              </div>
-
-              <div class="svc-form-row">
-                <label class="svc-lbl">TX Hash <span style="color:var(--dim);font-weight:400;">(optional)</span></label>
-                <input type="text" id="svcTxHash" class="inp" placeholder="0x..." style="font-size:12px;font-family:monospace;">
-              </div>
-
-              <div class="svc-form-row">
-                <label class="svc-lbl">Note <span style="color:var(--red);">*</span></label>
-                <textarea id="svcNoteText" class="inp" rows="5" placeholder="Enter servicing note..." style="font-size:13px;resize:vertical;line-height:1.6;"></textarea>
-              </div>
-
-              <div class="svc-form-row">
-                <label class="svc-escalate-wrap">
-                  <input type="checkbox" id="svcEscalate" onchange="toggleEscalation()">
-                  <span style="color:#ff4455;font-weight:600;">🚨 Flag for Escalation</span>
-                </label>
-              </div>
-
-              <div id="svcEscalateRow" class="svc-form-row" style="display:none;">
-                <label class="svc-lbl">Escalation Reason <span style="color:var(--red);">*</span></label>
-                <input type="text" id="svcEscalateReason" class="inp" placeholder="Describe escalation reason..." style="font-size:12px;">
-              </div>
-
-              <div class="svc-form-row" style="margin-top:4px;">
-                <div id="svcNoteStatus" class="svc-note-status"></div>
-                <button class="btn-approve" id="svcSubmitBtn" onclick="submitServicingNote()" style="width:100%;margin-top:8px;">Log Note</button>
-              </div>
-
-              <div class="svc-note-warning">
-                🔒 Notes are permanent and cannot be edited or deleted. This creates a compliant audit trail.
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /svcDetail -->
-    </div><!-- /svc-main -->
-  </div><!-- /svc-layout -->
-</div>
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- END LOAN SERVICING TAB PANEL                                   -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-
-
-
-  <!-- APPLICATIONS PANEL -->
+<!-- APPLICATIONS PANEL -->
   <div id="panelApps">
     <div class="stats-row" id="statsRow">
       <div class="stat-box"><div class="stat-num" style="color:var(--neon);" id="statTotal">--</div><div class="stat-lbl">Total Applications</div></div>
@@ -778,6 +613,170 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- LOAN SERVICING TAB PANEL — inject after tabChain section       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="panelServicing" class="tab-panel" style="display:none;">
+  <div class="svc-layout">
+
+    <!-- LEFT: Active Loan List -->
+    <div class="svc-sidebar">
+      <div class="svc-sidebar-hdr">
+        <div class="svc-sidebar-title">Active Loans</div>
+        <div id="svcLoanCount" class="svc-count">—</div>
+      </div>
+      <div class="svc-search-wrap">
+        <input type="text" id="svcSearch" class="inp" placeholder="Search borrower or vehicle..." oninput="filterSvcLoans()" style="font-size:12px;padding:8px 12px;">
+      </div>
+      <div id="svcLoanList" class="svc-loan-list">
+        <div class="svc-empty">Loading active loans...</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Loan Detail + Notes -->
+    <div class="svc-main">
+      <div id="svcNoSelection" class="svc-no-select">
+        <div style="font-size:32px;margin-bottom:12px;">📋</div>
+        <div style="font-size:14px;color:var(--dim);">Select a loan to view servicing history</div>
+      </div>
+
+      <div id="svcDetail" style="display:none;">
+
+        <!-- Loan Header -->
+        <div class="svc-loan-hdr">
+          <div class="svc-loan-hdr-left">
+            <div id="svcVehicleName" class="svc-vehicle-name"></div>
+            <div id="svcBorrowerName" class="svc-borrower-name"></div>
+          </div>
+          <div class="svc-loan-hdr-right">
+            <div id="svcVaultStatus" class="svc-vault-badge"></div>
+            <div id="svcDPD" class="svc-dpd"></div>
+          </div>
+        </div>
+
+        <!-- Loan Stats Row -->
+        <div class="svc-stats-row">
+          <div class="svc-stat">
+            <div class="svc-stat-lbl">Loan Amount</div>
+            <div id="svcLoanAmt" class="svc-stat-val"></div>
+          </div>
+          <div class="svc-stat">
+            <div class="svc-stat-lbl">APR</div>
+            <div id="svcAPR" class="svc-stat-val"></div>
+          </div>
+          <div class="svc-stat">
+            <div class="svc-stat-lbl">Term</div>
+            <div id="svcTerm" class="svc-stat-val"></div>
+          </div>
+          <div class="svc-stat">
+            <div class="svc-stat-lbl">Vault</div>
+            <div id="svcVaultAddr" class="svc-stat-val svc-mono"></div>
+          </div>
+          <div class="svc-stat">
+            <div class="svc-stat-lbl">Servicing Status</div>
+            <div id="svcServStatus" class="svc-stat-val"></div>
+          </div>
+          <div class="svc-stat">
+            <div class="svc-stat-lbl">Last Payment</div>
+            <div id="svcLastPmt" class="svc-stat-val"></div>
+          </div>
+        </div>
+
+        <!-- Two-column: Timeline + Note Entry -->
+        <div class="svc-cols">
+
+          <!-- LEFT COL: Unified Timeline -->
+          <div class="svc-timeline-col">
+            <div class="svc-col-hdr">
+              <span>Servicing Timeline</span>
+              <div class="svc-timeline-filters">
+                <button class="svc-filter active" onclick="filterTimeline('all',this)">All</button>
+                <button class="svc-filter" onclick="filterTimeline('agent',this)">Agent</button>
+                <button class="svc-filter" onclick="filterTimeline('manual',this)">Manual</button>
+                <button class="svc-filter" onclick="filterTimeline('escalated',this)">🚨 Escalated</button>
+              </div>
+            </div>
+            <div id="svcTimeline" class="svc-timeline">
+              <div class="svc-empty">No servicing history yet.</div>
+            </div>
+          </div>
+
+          <!-- RIGHT COL: Note Entry Form -->
+          <div class="svc-note-col">
+            <div class="svc-col-hdr">Log Note</div>
+            <div class="svc-note-form">
+
+              <div class="svc-form-row">
+                <label class="svc-lbl">Reason Code <span style="color:var(--red);">*</span></label>
+                <select id="svcReasonCode" class="inp" style="font-size:12px;">
+                  <option value="">Select reason...</option>
+                  <option value="PMT">PMT — Payment Activity</option>
+                  <option value="BILL">BILL — Billing / Statement</option>
+                  <option value="ACCT">ACCT — Account Maintenance</option>
+                  <option value="APP">APP — Application Related</option>
+                  <option value="SVC">SVC — Servicing Action</option>
+                  <option value="LEGAL" class="svc-legal-opt" style="display:none;">LEGAL — Legal (Restricted)</option>
+                  <option value="OTHER">OTHER — General</option>
+                </select>
+              </div>
+
+              <div class="svc-form-row">
+                <label class="svc-lbl">LS Code <span style="color:var(--dim);font-weight:400;">(optional)</span></label>
+                <select id="svcLSCode" class="inp" style="font-size:12px;">
+                  <option value="">None</option>
+                  <option value="LS-001">LS-001 — Welcome / Onboarding</option>
+                  <option value="LS-002">LS-002 — 10-Day Late Notice</option>
+                  <option value="LS-003">LS-003 — Pre-30 Warning</option>
+                  <option value="LS-004">LS-004 — 30-Day Notice</option>
+                  <option value="LS-005">LS-005 — 43-Day Final Notice</option>
+                  <option value="LS-006">LS-006 — Assigned for Repossession</option>
+                  <option value="LS-007">LS-007 — Vault Defaulted</option>
+                </select>
+              </div>
+
+              <div class="svc-form-row">
+                <label class="svc-lbl">TX Hash <span style="color:var(--dim);font-weight:400;">(optional)</span></label>
+                <input type="text" id="svcTxHash" class="inp" placeholder="0x..." style="font-size:12px;font-family:monospace;">
+              </div>
+
+              <div class="svc-form-row">
+                <label class="svc-lbl">Note <span style="color:var(--red);">*</span></label>
+                <textarea id="svcNoteText" class="inp" rows="5" placeholder="Enter servicing note..." style="font-size:13px;resize:vertical;line-height:1.6;"></textarea>
+              </div>
+
+              <div class="svc-form-row">
+                <label class="svc-escalate-wrap">
+                  <input type="checkbox" id="svcEscalate" onchange="toggleEscalation()">
+                  <span style="color:#ff4455;font-weight:600;">🚨 Flag for Escalation</span>
+                </label>
+              </div>
+
+              <div id="svcEscalateRow" class="svc-form-row" style="display:none;">
+                <label class="svc-lbl">Escalation Reason <span style="color:var(--red);">*</span></label>
+                <input type="text" id="svcEscalateReason" class="inp" placeholder="Describe escalation reason..." style="font-size:12px;">
+              </div>
+
+              <div class="svc-form-row" style="margin-top:4px;">
+                <div id="svcNoteStatus" class="svc-note-status"></div>
+                <button class="btn-approve" id="svcSubmitBtn" onclick="submitServicingNote()" style="width:100%;margin-top:8px;">Log Note</button>
+              </div>
+
+              <div class="svc-note-warning">
+                🔒 Notes are permanent and cannot be edited or deleted. This creates a compliant audit trail.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /svcDetail -->
+    </div><!-- /svc-main -->
+  </div><!-- /svc-layout -->
+</div>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- END LOAN SERVICING TAB PANEL                                   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
 <script>
 var SB_URL = 'https://jtifhcvbgxqwlywugvjv.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g';
@@ -911,7 +910,7 @@ function switchTab(tab) {
     alert('Access denied — L4 Manager or above required for Blockchain Ops.');
     return;
   }
-  var panels = { apps: 'panelApps', vehicles: 'panelVehicles', chain: 'panelChain' };
+  var panels = { apps: 'panelApps', vehicles: 'panelVehicles', chain: 'panelChain', servicing: 'panelServicing' };
   Object.keys(panels).forEach(function(key) {
     document.getElementById(panels[key]).style.display = key === tab ? 'block' : 'none';
   });
@@ -928,6 +927,8 @@ function switchTab(tab) {
     document.getElementById('tabChain').style.borderBottomColor = 'transparent';
   }
   if (tab === 'vehicles' && allVehicles.length === 0) loadVehicles();
+  document.getElementById('tabServicing').classList.toggle('active', tab === 'servicing');
+  if (tab === 'servicing') { initServicingTab(); }
 }
 
 // -- APPLICATIONS ----------------------------------------------
@@ -1554,8 +1555,7 @@ function encodeMintVehicle(make,model,year,color,vin,evConverted,appraisedValue,
 // -- EMAIL -----------------------------------------------------
 // IBS Branded Email Templates v2
 
-var EMAIL_STYLES = '<style>*{box-sizing:border-box;margin:0;padding:0;}body{background:#f0f0f5;font-family:Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;}.wrap{max-width:640px;margin:0 auto;background:#fff;}.hdr{background:#06060f;padding:28px 36px 20px;}.htop{display:flex;justify-content:space-between;align-items:flex-start;}.brand{display:flex;align-items:center;gap:10px;}.bico{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a6cf5,#8b00ff);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;}.bnm{font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);}.bsb{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}.bdg{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:5px;}.bdg-ok{background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.25);}.bdg-d30{background:rgba(240,192,64,.15);color:#f0c040;border:1px solid rgba(240,192,64,.3);}.bdg-d60{background:rgba(255,100,50,.15);color:#ff6432;border:1px solid rgba(255,100,50,.3);}.bdg-d90{background:rgba(255,68,85,.15);color:#ff4455;border:1px solid rgba(255,68,85,.3);}.bdg-deny{background:rgba(255,68,85,.12);color:#ff4455;border:1px solid rgba(255,68,85,.25);}.bdg-paid{background:rgba(0,255,136,.1);color:#00c97a;border:1px solid rgba(0,255,136,.2);}.dvd{height:1px;background:linear-gradient(90deg,transparent,rgba(10,108,245,.5),rgba(139,0,255,.4),transparent);margin:18px 0 0;}.bdy{padding:32px 36px;}.refs{display:flex;gap:20px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f0f0f5;}.ri .rl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ri .rv{font-size:12px;font-weight:600;color:#1a1a2e;}p{font-size:14px;color:#3a3a5a;line-height:1.8;margin-bottom:14px;font-weight:300;}p strong{color:#1a1a2e;font-weight:600;}.abox{background:#f8f8fc;border:1px solid #e8e8f0;border-radius:10px;padding:16px;margin:16px 0;}.atitle{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:12px;}.agrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}.ai .al{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ai .av{font-size:13px;font-weight:600;color:#1a1a2e;}.alrt{border-radius:10px;padding:14px 16px;margin:16px 0;display:flex;gap:10px;align-items:flex-start;}.alrt.warn{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.2);}.alrt.danger{background:rgba(255,68,85,.05);border:1px solid rgba(255,68,85,.2);}.alrt.success{background:rgba(0,201,122,.05);border:1px solid rgba(0,201,122,.18);}.alrt-ico{font-size:15px;flex-shrink:0;margin-top:1px;}.alrt-txt{font-size:13px;color:#3a3a5a;line-height:1.6;}.alrt-txt strong{color:#1a1a2e;font-weight:600;}.cta{display:inline-block;background:#0a6cf5;color:white;font-size:13px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:100px;margin:6px 6px 6px 0;}.cta.out{background:transparent;color:#0a6cf5;border:1px solid rgba(10,108,245,.3);}.sig{margin-top:24px;padding-top:16px;border-top:1px solid #f0f0f5;}.sig-cl{font-size:14px;color:#3a3a5a;margin-bottom:12px;}.sig-nm{font-size:14px;font-weight:700;color:#1a1a2e;}.sig-tt{font-size:12px;color:#a0a0b8;}.sig-co{font-size:12px;font-weight:600;color:#0a6cf5;margin-top:5px;}.ftr{background:#f8f8fc;border-top:1px solid #e8e8f0;padding:18px 36px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}.ftr-lg{font-size:10px;color:#b0b0c8;line-height:1.6;max-width:380px;}.ftr-lk{text-align:right;}.ftr-lk a{font-size:11px;color:#0a6cf5;text-decoration:none;display:block;line-height:1.9;}.chn{font-size:10px;color:rgba(10,108,245,.6);margin-top:6px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;} tag in admin.html
-
+var EMAIL_STYLES = '<style>*{box-sizing:border-box;margin:0;padding:0;}body{background:#f0f0f5;font-family:Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;}.wrap{max-width:640px;margin:0 auto;background:#fff;}.hdr{background:#06060f;padding:28px 36px 20px;}.htop{display:flex;justify-content:space-between;align-items:flex-start;}.brand{display:flex;align-items:center;gap:10px;}.bico{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a6cf5,#8b00ff);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;}.bnm{font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);}.bsb{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}.bdg{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:5px;}.bdg-ok{background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.25);}.bdg-d30{background:rgba(240,192,64,.15);color:#f0c040;border:1px solid rgba(240,192,64,.3);}.bdg-d60{background:rgba(255,100,50,.15);color:#ff6432;border:1px solid rgba(255,100,50,.3);}.bdg-d90{background:rgba(255,68,85,.15);color:#ff4455;border:1px solid rgba(255,68,85,.3);}.bdg-deny{background:rgba(255,68,85,.12);color:#ff4455;border:1px solid rgba(255,68,85,.25);}.bdg-paid{background:rgba(0,255,136,.1);color:#00c97a;border:1px solid rgba(0,255,136,.2);}.dvd{height:1px;background:linear-gradient(90deg,transparent,rgba(10,108,245,.5),rgba(139,0,255,.4),transparent);margin:18px 0 0;}.bdy{padding:32px 36px;}.refs{display:flex;gap:20px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f0f0f5;}.ri .rl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ri .rv{font-size:12px;font-weight:600;color:#1a1a2e;}p{font-size:14px;color:#3a3a5a;line-height:1.8;margin-bottom:14px;font-weight:300;}p strong{color:#1a1a2e;font-weight:600;}.abox{background:#f8f8fc;border:1px solid #e8e8f0;border-radius:10px;padding:16px;margin:16px 0;}.atitle{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:12px;}.agrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}.ai .al{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ai .av{font-size:13px;font-weight:600;color:#1a1a2e;}.alrt{border-radius:10px;padding:14px 16px;margin:16px 0;display:flex;gap:10px;align-items:flex-start;}.alrt.warn{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.2);}.alrt.danger{background:rgba(255,68,85,.05);border:1px solid rgba(255,68,85,.2);}.alrt.success{background:rgba(0,201,122,.05);border:1px solid rgba(0,201,122,.18);}.alrt-ico{font-size:15px;flex-shrink:0;margin-top:1px;}.alrt-txt{font-size:13px;color:#3a3a5a;line-height:1.6;}.alrt-txt strong{color:#1a1a2e;font-weight:600;}.cta{display:inline-block;background:#0a6cf5;color:white;font-size:13px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:100px;margin:6px 6px 6px 0;}.cta.out{background:transparent;color:#0a6cf5;border:1px solid rgba(10,108,245,.3);}.sig{margin-top:24px;padding-top:16px;border-top:1px solid #f0f0f5;}.sig-cl{font-size:14px;color:#3a3a5a;margin-bottom:12px;}.sig-nm{font-size:14px;font-weight:700;color:#1a1a2e;}.sig-tt{font-size:12px;color:#a0a0b8;}.sig-co{font-size:12px;font-weight:600;color:#0a6cf5;margin-top:5px;}.ftr{background:#f8f8fc;border-top:1px solid #e8e8f0;padding:18px 36px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}.ftr-lg{font-size:10px;color:#b0b0c8;line-height:1.6;max-width:380px;}.ftr-lk{text-align:right;}.ftr-lk a{font-size:11px;color:#0a6cf5;text-decoration:none;display:block;line-height:1.9;}.chn{font-size:10px;color:rgba(10,108,245,.6);margin-top:6px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;} }</style>';
 
 // ── STATE ─────────────────────────────────────────────────────────
 var svcAllLoans = [];
