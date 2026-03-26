@@ -109,6 +109,26 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
   background-size:60px 60px;
   animation:grid-pulse 4s ease-in-out infinite;}
 @keyframes grid-pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* ── CONTACT AGENT ────────────────────────────────────────── */
+.agent-btn{display:inline-flex;align-items:center;gap:0.6rem;background:transparent;border:1px solid var(--neon);color:var(--neon);font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;padding:0.65rem 1.4rem;cursor:pointer;transition:all 0.2s;border-radius:4px;margin-top:1rem;}
+.agent-btn:hover{background:rgba(0,212,255,0.08);box-shadow:0 0 16px rgba(0,212,255,0.2);}
+.agent-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.agent-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;}
+.agent-modal-overlay.open{display:flex;}
+.agent-modal{background:#0a0a18;border:1px solid rgba(0,212,255,0.25);border-radius:16px;padding:2rem;max-width:440px;width:90%;box-shadow:0 0 60px rgba(0,212,255,0.1);}
+.agent-modal-title{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);margin-bottom:1.5rem;}
+.agent-number{font-family:'DM Mono',monospace;font-size:1.8rem;letter-spacing:0.1em;color:#fff;margin:1rem 0 0.25rem;}
+.agent-code{font-family:'DM Mono',monospace;font-size:2.8rem;letter-spacing:0.3em;color:var(--neon);text-shadow:0 0 20px rgba(0,212,255,0.4);margin:0.5rem 0;}
+.agent-expires{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;color:var(--muted);margin-bottom:1.5rem;}
+.agent-instruction{font-size:0.82rem;color:var(--muted);line-height:1.7;margin-bottom:1.5rem;}
+.agent-instruction strong{color:#fff;}
+.agent-warning{font-size:0.72rem;color:rgba(255,68,85,0.7);line-height:1.6;padding:0.75rem;border:1px solid rgba(255,68,85,0.15);border-radius:8px;margin-bottom:1.5rem;}
+.agent-close-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;padding:0.5rem 1.25rem;cursor:pointer;border-radius:4px;transition:all 0.2s;}
+.agent-close-btn:hover{border-color:var(--muted);}
+.agent-timer{display:inline-block;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);margin-left:0.5rem;}
+.agent-timer.urgent{color:#ff4455;animation:pulse 1s infinite;}
+
 </style>
 <div class="ibs-grid-bg"></div>
 
@@ -343,6 +363,13 @@ function renderAppCard(app, idx) {
       html += '<span style="color:var(--dim);font-size:0.8rem;">-></span></a>';
     });
     html += '</div></div>';
+    // Contact Agent button — only shown when wallet authenticated
+    html += '<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06);">';
+    html += '<button class="agent-btn" onclick="requestAgentSession(\''+app.id+'\')">';
+    html += '<span>📞</span><span>Contact Agent</span>';
+    html += '</button>';
+    html += '<div style="font-family:\'DM Mono\',monospace;font-size:0.55rem;letter-spacing:0.1em;color:var(--muted);margin-top:0.5rem;">Secure authenticated voice session — one-time code required</div>';
+    html += '</div>';
   }
 
   // Payment portal for active loans
@@ -658,6 +685,145 @@ function withdrawApplication(appId) {
   .then(function() { loadApplications(WALLET); })
   .catch(function(e) { alert('Error: ' + e.message); });
 }
+
+
+// ── CONTACT AGENT ──────────────────────────────────────────────────
+var agentTimerInterval = null;
+var agentSessionExpiry = null;
+
+async function requestAgentSession(appId) {
+  var btn = event.target.closest('button');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span><span>Generating...</span>'; }
+
+  try {
+    var res = await fetch(SB_URL + '/functions/v1/imc-agent-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SB_KEY
+      },
+      body: JSON.stringify({
+        action: 'create',
+        wallet_address: WALLET,
+        application_id: appId
+      })
+    });
+
+    var data = await res.json();
+
+    if (data.success) {
+      document.getElementById('agentNumber').textContent = data.phone_number;
+      document.getElementById('agentCode').textContent = data.session_code;
+      agentSessionExpiry = new Date(data.expires_at).getTime();
+      startAgentTimer();
+      document.getElementById('agentModal').classList.add('open');
+    } else {
+      alert('Could not create session: ' + (data.error || 'Unknown error'));
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+
+  if (btn) { btn.disabled = false; btn.innerHTML = '<span>📞</span><span>Contact Agent</span>'; }
+}
+
+async function refreshAgentSession() {
+  var btn = document.getElementById('agentRefreshBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Refreshing...'; }
+  clearInterval(agentTimerInterval);
+
+  try {
+    var res = await fetch(SB_URL + '/functions/v1/imc-agent-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SB_KEY
+      },
+      body: JSON.stringify({
+        action: 'create',
+        wallet_address: WALLET
+      })
+    });
+
+    var data = await res.json();
+    if (data.success) {
+      document.getElementById('agentCode').textContent = data.session_code;
+      agentSessionExpiry = new Date(data.expires_at).getTime();
+      startAgentTimer();
+    }
+  } catch(e) {
+    alert('Error refreshing: ' + e.message);
+  }
+
+  if (btn) { btn.disabled = false; btn.innerHTML = '↻ New Code'; }
+}
+
+function startAgentTimer() {
+  clearInterval(agentTimerInterval);
+  var timerEl = document.getElementById('agentTimer');
+
+  agentTimerInterval = setInterval(function() {
+    var remaining = agentSessionExpiry - Date.now();
+    if (remaining <= 0) {
+      clearInterval(agentTimerInterval);
+      timerEl.textContent = 'EXPIRED';
+      timerEl.className = 'agent-timer urgent';
+      document.getElementById('agentCode').textContent = '------';
+      document.getElementById('agentCode').style.color = '#ff4455';
+      return;
+    }
+    var mins = Math.floor(remaining / 60000);
+    var secs = Math.floor((remaining % 60000) / 1000);
+    timerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+    if (remaining < 3 * 60 * 1000) {
+      timerEl.className = 'agent-timer urgent';
+    }
+  }, 1000);
+}
+
+function closeAgentModal() {
+  document.getElementById('agentModal').classList.remove('open');
+  clearInterval(agentTimerInterval);
+}
+
+// Close on overlay click — deferred until DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+  var overlay = document.getElementById('agentModal');
+  if (overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) closeAgentModal();
+    });
+  }
+});
+
 </script>
+
+<!-- ── CONTACT AGENT MODAL ──────────────────────────────────── -->
+<div class="agent-modal-overlay" id="agentModal">
+  <div class="agent-modal">
+    <div class="agent-modal-title">📞 IMC Voice Agent — Secure Session</div>
+    <div class="agent-instruction">
+      Call the number below and provide your <strong>one-time session code</strong> when prompted.<br><br>
+      For security, this code is only valid from within your authenticated portal session.
+    </div>
+    <div style="text-align:center;padding:1.25rem;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);border-radius:10px;margin-bottom:1.25rem;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;color:var(--muted);margin-bottom:0.5rem;">CALL THIS NUMBER</div>
+      <div class="agent-number" id="agentNumber">+1 775 799 2718</div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;color:var(--muted);margin:1rem 0 0.5rem;">YOUR SESSION CODE</div>
+      <div class="agent-code" id="agentCode">------</div>
+      <div class="agent-expires" id="agentExpires">Expires in <span id="agentTimer" class="agent-timer">15:00</span></div>
+    </div>
+    <div class="agent-warning">
+      🔒 This code is single-use and expires after 15 minutes or when your call ends. 
+      Do not share this code. Call only from the number you provided on your application for full account access.
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <button class="agent-close-btn" onclick="closeAgentModal()">Close</button>
+      <button class="agent-btn" onclick="refreshAgentSession()" id="agentRefreshBtn" style="margin-top:0;">↻ New Code</button>
+    </div>
+  </div>
+</div>
+<!-- ── END CONTACT AGENT MODAL ───────────────────────────────── -->
+
 </body>
 </html>
