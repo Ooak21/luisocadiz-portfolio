@@ -623,7 +623,7 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
     <!-- LEFT: Active Loan List -->
     <div class="svc-sidebar">
       <div class="svc-sidebar-hdr">
-        <div class="svc-sidebar-title">Active Loans</div>
+        <div class="svc-sidebar-title">All Accounts</div>
         <div id="svcLoanCount" class="svc-count">—</div>
       </div>
       <div class="svc-search-wrap">
@@ -705,7 +705,10 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
           <!-- RIGHT COL: Note Entry Form -->
           <div class="svc-note-col">
             <div class="svc-col-hdr">Log Note</div>
-            <div class="svc-note-form">
+            <div id="svcReadOnlyMsg" style="display:none;padding:20px 16px;font-size:12px;color:var(--dim);text-align:center;border-bottom:1px solid var(--border);">
+              🔒 Note entry is for front-line servicing agents.<br>UW notes are entered via the Loan Applications panel.
+            </div>
+            <div id="svcNoteFormSection"><div class="svc-note-form">
 
               <div class="svc-form-row">
                 <label class="svc-lbl">Reason Code <span style="color:var(--red);">*</span></label>
@@ -765,7 +768,7 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
               <div class="svc-note-warning">
                 🔒 Notes are permanent and cannot be edited or deleted. This creates a compliant audit trail.
               </div>
-            </div>
+            </div></div>
           </div>
         </div>
 
@@ -1579,7 +1582,7 @@ async function loadActiveLoans() {
   list.innerHTML = '<div class="svc-empty">Loading...</div>';
 
   try {
-    var res = await fetch(SB_URL + '/rest/v1/imc_applications?select=id,first_name,last_name,vehicle_name,loan_amount,loan_apr,loan_term_months,vault_contract,status,days_past_due,servicing_status,last_payment_at&status=in.(active,pending_funding,approved)&order=created_at.desc', {
+    var res = await fetch(SB_URL + '/rest/v1/imc_applications?select=id,first_name,last_name,vehicle_name,loan_amount,final_apr,term_months,approved_amount,vault_contract,status,days_past_due,servicing_status,last_payment_at,last_payment_amount&order=created_at.desc', {
       headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
     });
     var data = await res.json();
@@ -1647,9 +1650,9 @@ async function selectSvcLoan(appId) {
   var name = ((svcSelectedApp.first_name||'') + ' ' + (svcSelectedApp.last_name||'')).trim() || 'Unknown Borrower';
   document.getElementById('svcVehicleName').textContent = svcSelectedApp.vehicle_name || '—';
   document.getElementById('svcBorrowerName').textContent = name;
-  document.getElementById('svcLoanAmt').textContent = '$' + (svcSelectedApp.loan_amount||0).toLocaleString() + ' USDC';
-  document.getElementById('svcAPR').textContent = (svcSelectedApp.loan_apr||0) + '%';
-  document.getElementById('svcTerm').textContent = (svcSelectedApp.loan_term_months||0) + ' mo';
+  document.getElementById('svcLoanAmt').textContent = '$' + (svcSelectedApp.approved_amount||svcSelectedApp.loan_amount||0).toLocaleString() + ' USDC';
+  document.getElementById('svcAPR').textContent = (svcSelectedApp.final_apr||0) + '%';
+  document.getElementById('svcTerm').textContent = (svcSelectedApp.term_months||0) + ' mo';
   var vault = svcSelectedApp.vault_contract || '';
   document.getElementById('svcVaultAddr').textContent = vault ? vault.slice(0,10)+'...'+vault.slice(-6) : '—';
   document.getElementById('svcServStatus').textContent = svcSelectedApp.servicing_status || 'current';
