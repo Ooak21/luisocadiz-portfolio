@@ -155,6 +155,104 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
   background-size:60px 60px;
   animation:grid-pulse 4s ease-in-out infinite;}
 @keyframes grid-pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOAN SERVICING TAB — CSS
+   Inject before closing </style> tag in admin.html
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Layout */
+.svc-layout{display:flex;gap:0;height:calc(100vh - 140px);overflow:hidden;}
+.svc-sidebar{width:300px;min-width:280px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--card);}
+.svc-main{flex:1;overflow-y:auto;padding:0;}
+
+/* Sidebar */
+.svc-sidebar-hdr{padding:16px 16px 0;display:flex;justify-content:space-between;align-items:center;}
+.svc-sidebar-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
+.svc-count{font-size:11px;font-weight:700;color:#00d4ff;background:rgba(0,212,255,0.1);padding:2px 8px;border-radius:100px;border:1px solid rgba(0,212,255,0.2);}
+.svc-search-wrap{padding:10px 12px;}
+.svc-loan-list{flex:1;overflow-y:auto;}
+
+/* Loan Cards in Sidebar */
+.svc-loan-card{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.svc-loan-card:hover{background:rgba(255,255,255,0.03);}
+.svc-loan-card.active{background:rgba(0,212,255,0.06);border-left:3px solid #00d4ff;}
+.svc-loan-card-name{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.svc-loan-card-vehicle{font-size:11px;color:var(--dim);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.svc-loan-card-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.svc-pill{font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:100px;text-transform:uppercase;}
+.svc-pill-active{background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.2);}
+.svc-pill-dpd{background:rgba(255,68,85,.12);color:#ff4455;border:1px solid rgba(255,68,85,.2);}
+.svc-pill-warn{background:rgba(240,192,64,.12);color:#f0c040;border:1px solid rgba(240,192,64,.2);}
+.svc-pill-default{background:rgba(255,68,85,.2);color:#ff4455;border:1px solid rgba(255,68,85,.4);}
+.svc-pill-escalated{background:rgba(255,68,85,.15);color:#ff4455;border:1px solid rgba(255,68,85,.3);animation:svc-blink 1.5s infinite;}
+@keyframes svc-blink{0%,100%{opacity:1;}50%{opacity:.5;}}
+
+/* No selection state */
+.svc-no-select{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--dim);padding:40px;}
+
+/* Loan Header */
+.svc-loan-hdr{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
+.svc-vehicle-name{font-size:17px;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.svc-borrower-name{font-size:13px;color:var(--dim);}
+.svc-loan-hdr-right{text-align:right;}
+.svc-vault-badge{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:6px;display:inline-block;}
+.svc-vault-active{background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.25);}
+.svc-vault-defaulted{background:rgba(255,68,85,.15);color:#ff4455;border:1px solid rgba(255,68,85,.3);}
+.svc-vault-paidoff{background:rgba(0,212,255,.1);color:#00d4ff;border:1px solid rgba(0,212,255,.2);}
+.svc-dpd{font-size:11px;color:var(--dim);}
+.svc-dpd.overdue{color:#ff4455;font-weight:600;}
+
+/* Stats Row */
+.svc-stats-row{display:flex;gap:0;border-bottom:1px solid var(--border);}
+.svc-stat{flex:1;padding:12px 16px;border-right:1px solid var(--border);}
+.svc-stat:last-child{border-right:none;}
+.svc-stat-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+.svc-stat-val{font-size:12px;font-weight:600;color:var(--txt);}
+.svc-mono{font-family:monospace;font-size:11px;}
+
+/* Two-column layout */
+.svc-cols{display:flex;gap:0;height:calc(100vh - 330px);overflow:hidden;}
+.svc-timeline-col{flex:1.4;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.svc-note-col{flex:1;display:flex;flex-direction:column;overflow-y:auto;}
+.svc-col-hdr{padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+
+/* Timeline */
+.svc-timeline{flex:1;overflow-y:auto;padding:12px 16px;}
+.svc-timeline-filters{display:flex;gap:4px;}
+.svc-filter{font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:all .15s;}
+.svc-filter.active{background:rgba(0,212,255,.1);color:#00d4ff;border-color:rgba(0,212,255,.3);}
+
+/* Timeline Entries */
+.svc-entry{display:flex;gap:10px;margin-bottom:16px;position:relative;}
+.svc-entry-line{position:absolute;left:15px;top:28px;bottom:-16px;width:1px;background:var(--border);}
+.svc-entry:last-child .svc-entry-line{display:none;}
+.svc-entry-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;z-index:1;}
+.svc-icon-agent{background:rgba(139,0,255,.15);border:1px solid rgba(139,0,255,.3);}
+.svc-icon-manual{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);}
+.svc-icon-escalated{background:rgba(255,68,85,.15);border:1px solid rgba(255,68,85,.3);}
+.svc-entry-body{flex:1;min-width:0;}
+.svc-entry-meta{display:flex;gap:8px;align-items:center;margin-bottom:4px;flex-wrap:wrap;}
+.svc-entry-who{font-size:11px;font-weight:600;color:var(--txt);}
+.svc-entry-when{font-size:10px;color:var(--dim);}
+.svc-entry-code{font-size:10px;font-weight:700;letter-spacing:.08em;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--dim);border:1px solid var(--border);}
+.svc-entry-ls{font-size:10px;font-weight:700;color:#8b00ff;background:rgba(139,0,255,.1);padding:1px 6px;border-radius:4px;border:1px solid rgba(139,0,255,.2);}
+.svc-entry-tx{font-size:10px;color:#0a6cf5;font-family:monospace;cursor:pointer;text-decoration:underline;}
+.svc-entry-text{font-size:12px;color:var(--dim);line-height:1.6;}
+.svc-escalate-badge{font-size:10px;font-weight:700;color:#ff4455;background:rgba(255,68,85,.1);padding:1px 6px;border-radius:4px;border:1px solid rgba(255,68,85,.2);}
+
+/* Note Form */
+.svc-note-form{padding:16px;}
+.svc-form-row{margin-bottom:12px;}
+.svc-lbl{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:5px;}
+.svc-escalate-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;}
+.svc-escalate-wrap input{width:14px;height:14px;cursor:pointer;}
+.svc-note-status{font-size:12px;min-height:18px;color:var(--green);}
+.svc-note-warning{margin-top:16px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--dim);line-height:1.6;}
+
+/* Empty state */
+.svc-empty{text-align:center;padding:32px 16px;font-size:12px;color:var(--dim);}
+
 </style>
 <div class="ibs-grid-bg"></div>
 
@@ -1459,365 +1557,7 @@ function encodeMintVehicle(make,model,year,color,vin,evConverted,appraisedValue,
 // -- EMAIL -----------------------------------------------------
 // IBS Branded Email Templates v2
 
-var EMAIL_STYLES = '<style>*{box-sizing:border-box;margin:0;padding:0;}body{background:#f0f0f5;font-family:Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;}.wrap{max-width:640px;margin:0 auto;background:#fff;}.hdr{background:#06060f;padding:28px 36px 20px;}.htop{display:flex;justify-content:space-between;align-items:flex-start;}.brand{display:flex;align-items:center;gap:10px;}.bico{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a6cf5,#8b00ff);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;}.bnm{font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);}.bsb{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}.bdg{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:5px;}.bdg-ok{background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.25);}.bdg-d30{background:rgba(240,192,64,.15);color:#f0c040;border:1px solid rgba(240,192,64,.3);}.bdg-d60{background:rgba(255,100,50,.15);color:#ff6432;border:1px solid rgba(255,100,50,.3);}.bdg-d90{background:rgba(255,68,85,.15);color:#ff4455;border:1px solid rgba(255,68,85,.3);}.bdg-deny{background:rgba(255,68,85,.12);color:#ff4455;border:1px solid rgba(255,68,85,.25);}.bdg-paid{background:rgba(0,255,136,.1);color:#00c97a;border:1px solid rgba(0,255,136,.2);}.dvd{height:1px;background:linear-gradient(90deg,transparent,rgba(10,108,245,.5),rgba(139,0,255,.4),transparent);margin:18px 0 0;}.bdy{padding:32px 36px;}.refs{display:flex;gap:20px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f0f0f5;}.ri .rl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ri .rv{font-size:12px;font-weight:600;color:#1a1a2e;}p{font-size:14px;color:#3a3a5a;line-height:1.8;margin-bottom:14px;font-weight:300;}p strong{color:#1a1a2e;font-weight:600;}.abox{background:#f8f8fc;border:1px solid #e8e8f0;border-radius:10px;padding:16px;margin:16px 0;}.atitle{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:12px;}.agrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}.ai .al{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ai .av{font-size:13px;font-weight:600;color:#1a1a2e;}.alrt{border-radius:10px;padding:14px 16px;margin:16px 0;display:flex;gap:10px;align-items:flex-start;}.alrt.warn{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.2);}.alrt.danger{background:rgba(255,68,85,.05);border:1px solid rgba(255,68,85,.2);}.alrt.success{background:rgba(0,201,122,.05);border:1px solid rgba(0,201,122,.18);}.alrt-ico{font-size:15px;flex-shrink:0;margin-top:1px;}.alrt-txt{font-size:13px;color:#3a3a5a;line-height:1.6;}.alrt-txt strong{color:#1a1a2e;font-weight:600;}.cta{display:inline-block;background:#0a6cf5;color:white;font-size:13px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:100px;margin:6px 6px 6px 0;}.cta.out{background:transparent;color:#0a6cf5;border:1px solid rgba(10,108,245,.3);}.sig{margin-top:24px;padding-top:16px;border-top:1px solid #f0f0f5;}.sig-cl{font-size:14px;color:#3a3a5a;margin-bottom:12px;}.sig-nm{font-size:14px;font-weight:700;color:#1a1a2e;}.sig-tt{font-size:12px;color:#a0a0b8;}.sig-co{font-size:12px;font-weight:600;color:#0a6cf5;margin-top:5px;}.ftr{background:#f8f8fc;border-top:1px solid #e8e8f0;padding:18px 36px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}.ftr-lg{font-size:10px;color:#b0b0c8;line-height:1.6;max-width:380px;}.ftr-lk{text-align:right;}.ftr-lk a{font-size:11px;color:#0a6cf5;text-decoration:none;display:block;line-height:1.9;}.chn{font-size:10px;color:rgba(10,108,245,.6);margin-top:6px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
-/* ═══════════════════════════════════════════════════════════════
-   LOAN SERVICING TAB — CSS
-   Inject before closing </style> tag in admin.html
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Layout */
-.svc-layout{display:flex;gap:0;height:calc(100vh - 140px);overflow:hidden;}
-.svc-sidebar{width:300px;min-width:280px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--card);}
-.svc-main{flex:1;overflow-y:auto;padding:0;}
-
-/* Sidebar */
-.svc-sidebar-hdr{padding:16px 16px 0;display:flex;justify-content:space-between;align-items:center;}
-.svc-sidebar-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
-.svc-count{font-size:11px;font-weight:700;color:#00d4ff;background:rgba(0,212,255,0.1);padding:2px 8px;border-radius:100px;border:1px solid rgba(0,212,255,0.2);}
-.svc-search-wrap{padding:10px 12px;}
-.svc-loan-list{flex:1;overflow-y:auto;}
-
-/* Loan Cards in Sidebar */
-.svc-loan-card{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
-.svc-loan-card:hover{background:rgba(255,255,255,0.03);}
-.svc-loan-card.active{background:rgba(0,212,255,0.06);border-left:3px solid #00d4ff;}
-.svc-loan-card-name{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.svc-loan-card-vehicle{font-size:11px;color:var(--dim);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.svc-loan-card-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-.svc-pill{font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:100px;text-transform:uppercase;}
-.svc-pill-active{background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.2);}
-.svc-pill-dpd{background:rgba(255,68,85,.12);color:#ff4455;border:1px solid rgba(255,68,85,.2);}
-.svc-pill-warn{background:rgba(240,192,64,.12);color:#f0c040;border:1px solid rgba(240,192,64,.2);}
-.svc-pill-default{background:rgba(255,68,85,.2);color:#ff4455;border:1px solid rgba(255,68,85,.4);}
-.svc-pill-escalated{background:rgba(255,68,85,.15);color:#ff4455;border:1px solid rgba(255,68,85,.3);animation:svc-blink 1.5s infinite;}
-@keyframes svc-blink{0%,100%{opacity:1;}50%{opacity:.5;}}
-
-/* No selection state */
-.svc-no-select{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--dim);padding:40px;}
-
-/* Loan Header */
-.svc-loan-hdr{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
-.svc-vehicle-name{font-size:17px;font-weight:700;color:var(--txt);margin-bottom:4px;}
-.svc-borrower-name{font-size:13px;color:var(--dim);}
-.svc-loan-hdr-right{text-align:right;}
-.svc-vault-badge{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:6px;display:inline-block;}
-.svc-vault-active{background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.25);}
-.svc-vault-defaulted{background:rgba(255,68,85,.15);color:#ff4455;border:1px solid rgba(255,68,85,.3);}
-.svc-vault-paidoff{background:rgba(0,212,255,.1);color:#00d4ff;border:1px solid rgba(0,212,255,.2);}
-.svc-dpd{font-size:11px;color:var(--dim);}
-.svc-dpd.overdue{color:#ff4455;font-weight:600;}
-
-/* Stats Row */
-.svc-stats-row{display:flex;gap:0;border-bottom:1px solid var(--border);}
-.svc-stat{flex:1;padding:12px 16px;border-right:1px solid var(--border);}
-.svc-stat:last-child{border-right:none;}
-.svc-stat-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
-.svc-stat-val{font-size:12px;font-weight:600;color:var(--txt);}
-.svc-mono{font-family:monospace;font-size:11px;}
-
-/* Two-column layout */
-.svc-cols{display:flex;gap:0;height:calc(100vh - 330px);overflow:hidden;}
-.svc-timeline-col{flex:1.4;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
-.svc-note-col{flex:1;display:flex;flex-direction:column;overflow-y:auto;}
-.svc-col-hdr{padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
-
-/* Timeline */
-.svc-timeline{flex:1;overflow-y:auto;padding:12px 16px;}
-.svc-timeline-filters{display:flex;gap:4px;}
-.svc-filter{font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:all .15s;}
-.svc-filter.active{background:rgba(0,212,255,.1);color:#00d4ff;border-color:rgba(0,212,255,.3);}
-
-/* Timeline Entries */
-.svc-entry{display:flex;gap:10px;margin-bottom:16px;position:relative;}
-.svc-entry-line{position:absolute;left:15px;top:28px;bottom:-16px;width:1px;background:var(--border);}
-.svc-entry:last-child .svc-entry-line{display:none;}
-.svc-entry-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;z-index:1;}
-.svc-icon-agent{background:rgba(139,0,255,.15);border:1px solid rgba(139,0,255,.3);}
-.svc-icon-manual{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);}
-.svc-icon-escalated{background:rgba(255,68,85,.15);border:1px solid rgba(255,68,85,.3);}
-.svc-entry-body{flex:1;min-width:0;}
-.svc-entry-meta{display:flex;gap:8px;align-items:center;margin-bottom:4px;flex-wrap:wrap;}
-.svc-entry-who{font-size:11px;font-weight:600;color:var(--txt);}
-.svc-entry-when{font-size:10px;color:var(--dim);}
-.svc-entry-code{font-size:10px;font-weight:700;letter-spacing:.08em;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--dim);border:1px solid var(--border);}
-.svc-entry-ls{font-size:10px;font-weight:700;color:#8b00ff;background:rgba(139,0,255,.1);padding:1px 6px;border-radius:4px;border:1px solid rgba(139,0,255,.2);}
-.svc-entry-tx{font-size:10px;color:#0a6cf5;font-family:monospace;cursor:pointer;text-decoration:underline;}
-.svc-entry-text{font-size:12px;color:var(--dim);line-height:1.6;}
-.svc-escalate-badge{font-size:10px;font-weight:700;color:#ff4455;background:rgba(255,68,85,.1);padding:1px 6px;border-radius:4px;border:1px solid rgba(255,68,85,.2);}
-
-/* Note Form */
-.svc-note-form{padding:16px;}
-.svc-form-row{margin-bottom:12px;}
-.svc-lbl{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:5px;}
-.svc-escalate-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;}
-.svc-escalate-wrap input{width:14px;height:14px;cursor:pointer;}
-.svc-note-status{font-size:12px;min-height:18px;color:var(--green);}
-.svc-note-warning{margin-top:16px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--dim);line-height:1.6;}
-
-/* Empty state */
-.svc-empty{text-align:center;padding:32px 16px;font-size:12px;color:var(--dim);}
-
-</style>';
-
-function ibsEmailHeader(badgeCls, badgeTxt, date) {
-  return '<div class="hdr"><div class="htop"><div class="brand"><div class="bico">&#9670;</div><div><div class="bnm">Illusive Motor Concepts</div><div class="bsb">Innovative Blockchain Solutions &middot; Las Vegas, NV</div></div></div><div style="text-align:right;"><div class="bdg '+badgeCls+'">'+badgeTxt+'</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">'+date+'</div></div></div><div class="dvd"></div></div>';
-}
-
-function ibsEmailFooter(legal, vaultShort) {
-  return '<div class="ftr"><div class="ftr-lg">'+legal+'<div class="chn">&#9679; On Base &middot; Vault: '+vaultShort+'</div></div><div class="ftr-lk"><a href="mailto:hello@luisocadiz.online">hello@luisocadiz.online</a><a href="https://innovativeblockchainsolutions.live/imc/status.html">Borrower Portal</a><a href="https://innovativeblockchainsolutions.live">innovativeblockchainsolutions.live</a></div></div>';
-}
-
-function ibsShortAddr(addr) { return addr ? addr.slice(0,10)+'...'+addr.slice(-6) : 'N/A'; }
-function ibsUsd(val) { return '$'+(val||0).toLocaleString()+' USDC'; }
-
-function sendDecisionEmail(app, decision, update) {
-  var name = ((app.first_name||'')+' '+(app.last_name||'')).trim()||'Valued Customer';
-  var firstName = name.split(' ')[0];
-  var date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  var vaultShort = ibsShortAddr(app.vault_contract||'');
-  var subject, html;
-
-  if (decision === 'denied') {
-    var reasons = [];
-    var credit = parseFloat(app.credit_score_range)||0;
-    var income = app.gross_monthly_income||0;
-    var r2 = 12/100/12;
-    var monthly2 = app.loan_amount&&app.term_months?(app.loan_amount*r2*Math.pow(1+r2,app.term_months))/(Math.pow(1+r2,app.term_months)-1):0;
-    var dti2 = income>0?(monthly2/income*100):0;
-    if (credit>0&&credit<700) reasons.push('Credit score below minimum threshold');
-    if (dti2>45) reasons.push('Debt-to-income ratio exceeds 45% maximum');
-    if (income<2000&&income>0) reasons.push('Insufficient verifiable income');
-    if (!app.employment_status) reasons.push('Insufficient employment information');
-    if (update.underwriter_notes) reasons.push('Underwriter notes: '+update.underwriter_notes);
-    if (reasons.length===0) reasons.push('Application did not meet current lending criteria');
-
-    var reasonRows = reasons.map(function(r){
-      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:rgba(255,68,85,0.04);border-radius:8px;border:1px solid rgba(255,68,85,0.1);margin-bottom:8px;"><div style="width:6px;height:6px;border-radius:50%;background:#ff4455;margin-top:5px;flex-shrink:0;"></div><div style="font-size:13px;color:#3a3a5a;">'+r+'</div></div>';
-    }).join('');
-
-    subject = 'Your IMC Financing Application — Decision Notice';
-    html = '<!DOCTYPE html><html><head>'+EMAIL_STYLES+'</head><body><div class="wrap">'+
-      ibsEmailHeader('bdg-deny','Adverse Action Notice',date)+
-      '<div class="bdy">'+
-      '<div class="refs"><div class="ri"><div class="rl">Application ID</div><div class="rv">'+(app.id||'N/A').slice(0,8).toUpperCase()+'</div></div>'+
-      '<div class="ri"><div class="rl">Vehicle</div><div class="rv">'+(app.vehicle_name||'N/A')+'</div></div>'+
-      '<div class="ri"><div class="rl">Decision Date</div><div class="rv" style="color:#ff4455;">'+date+'</div></div></div>'+
-      '<p>Dear '+firstName+',</p>'+
-      '<p>Thank you for your application for financing through IMC. After careful review, we regret to inform you that we are <strong>unable to approve your financing request</strong> at this time.</p>'+
-      '<div class="alrt danger"><div class="alrt-ico">&#x2717;</div><div class="alrt-txt"><strong>Application Decision: Not Approved.</strong> The principal reason(s) for this decision are listed below, provided in accordance with applicable fair lending requirements.</div></div>'+
-      '<div class="abox"><div class="atitle">Reason(s) for Adverse Action</div>'+reasonRows+'</div>'+
-      '<p>You have the right to request specific information on which this decision was based within <strong>60 days</strong>. We encourage you to review these factors and consider reapplying once addressed.</p>'+
-      '<a href="mailto:hello@luisocadiz.online" class="cta">Request Information</a>'+
-      '<a href="https://innovativeblockchainsolutions.live/imc/apply.html" class="cta out">Apply Again</a>'+
-      '<div class="sig"><div class="sig-cl">Sincerely,</div><div class="sig-nm">IMC Underwriting Team</div><div class="sig-tt">Underwriter</div><div class="sig-co">Illusive Motor Concepts &middot; Innovative Blockchain Solutions</div></div>'+
-      '</div>'+
-      '<div class="ftr"><div class="ftr-lg">The Equal Credit Opportunity Act prohibits discrimination on the basis of race, color, religion, national origin, sex, marital status, age, or receipt of public assistance. IMC &middot; Las Vegas, NV &middot; 2026.</div>'+
-      '<div class="ftr-lk"><a href="mailto:hello@luisocadiz.online">hello@luisocadiz.online</a><a href="https://innovativeblockchainsolutions.live/imc/apply.html">Apply Again</a><a href="https://innovativeblockchainsolutions.live">innovativeblockchainsolutions.live</a></div></div>'+
-      '</div></body></html>';
-
-  } else {
-    subject = 'Your IMC Application Has Been Approved!';
-    var approvedAmt = ibsUsd(update.approved_amount||app.loan_amount||0);
-    html = '<!DOCTYPE html><html><head>'+EMAIL_STYLES+'</head><body><div class="wrap">'+
-      ibsEmailHeader('bdg-ok','Application Approved',date)+
-      '<div class="bdy">'+
-      '<div class="refs"><div class="ri"><div class="rl">Application ID</div><div class="rv">'+(app.id||'N/A').slice(0,8).toUpperCase()+'</div></div>'+
-      '<div class="ri"><div class="rl">Vehicle</div><div class="rv">'+(app.vehicle_name||'N/A')+'</div></div>'+
-      '<div class="ri"><div class="rl">Decision Date</div><div class="rv" style="color:#00c97a;">'+date+'</div></div></div>'+
-      '<p>Dear '+firstName+',</p>'+
-      '<p>Congratulations! Your IMC financing application for <strong>'+(app.vehicle_name||'your vehicle')+'</strong> has been <strong>approved</strong>.</p>'+
-      '<div class="alrt success"><div class="alrt-ico">&#x2713;</div><div class="alrt-txt"><strong>You are approved.</strong> Your loan terms have been set and your account is now in pending funding status. Investor funding will begin shortly.</div></div>'+
-      '<div class="abox"><div class="atitle">Approved Loan Terms</div><div class="agrid">'+
-      '<div class="ai"><div class="al">Loan Amount</div><div class="av" style="color:#0a6cf5;">'+approvedAmt+'</div></div>'+
-      '<div class="ai"><div class="al">APR</div><div class="av">'+(update.final_apr||app.loan_apr||'TBD')+'%</div></div>'+
-      '<div class="ai"><div class="al">Term</div><div class="av">'+(update.loan_term||app.loan_term_months||60)+' months</div></div>'+
-      '</div></div>'+
-      '<p>Our team will contact you with next steps. Log in to your borrower portal to track your loan status in real time.</p>'+
-      '<a href="https://innovativeblockchainsolutions.live/imc/status.html" class="cta">View Your Loan Status</a>'+
-      '<a href="mailto:hello@luisocadiz.online" class="cta out">Contact Us</a>'+
-      '<div class="sig"><div class="sig-cl">Congratulations,</div><div class="sig-nm">IMC Underwriting Team</div><div class="sig-tt">Underwriter</div><div class="sig-co">Illusive Motor Concepts &middot; Innovative Blockchain Solutions</div></div>'+
-      '</div>'+ibsEmailFooter('Your loan is governed by smart contract terms on the Base blockchain (Chain ID: 84532). Please retain this notice for your records.',vaultShort)+
-      '</div></body></html>';
-  }
-
-  fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/smart-action', {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_KEY},
-    body:JSON.stringify({to:app.email,subject:subject,html:html})
-  }).then(function(r){return r.json();}).then(function(d){console.log('Email sent:',d);}).catch(function(e){console.error('Email error:',e);});
-}
-
-function sendPaidInFullEmail(app) {
-  var name = ((app.first_name||'')+' '+(app.last_name||'')).trim()||'Valued Customer';
-  var firstName = name.split(' ')[0];
-  var date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  var vaultShort = ibsShortAddr(app.vault_contract||'');
-  var subject = '🎉 Congratulations — Your IMC Loan is Paid in Full!';
-  var html = '<!DOCTYPE html><html><head>'+EMAIL_STYLES+'</head><body><div class="wrap">'+
-    ibsEmailHeader('bdg-paid','Paid in Full &mdash; Lien Release',date)+
-    '<div class="bdy">'+
-    '<div class="refs"><div class="ri"><div class="rl">Account</div><div class="rv">'+(app.id||'N/A').slice(0,8).toUpperCase()+'</div></div>'+
-    '<div class="ri"><div class="rl">Vehicle</div><div class="rv">'+(app.vehicle_name||'N/A')+'</div></div>'+
-    '<div class="ri"><div class="rl">Payoff Date</div><div class="rv" style="color:#00c97a;">'+date+'</div></div></div>'+
-    '<p>Dear '+firstName+',</p>'+
-    '<p>Congratulations — your IMC loan has been <strong>paid in full</strong> as of <strong>'+date+'</strong>. All obligations under your loan agreement have been satisfied and your account is now closed in good standing.</p>'+
-    '<div class="alrt success"><div class="alrt-ico">&#x2705;</div><div class="alrt-txt"><strong>Your loan is paid in full.</strong> The smart contract vault associated with your account has been settled on the Base blockchain. Your digital asset (NFT) representing '+( app.vehicle_name||'your vehicle')+' has been released from the vault. Every payment is permanently recorded on-chain.</div></div>'+
-    '<div class="abox"><div class="atitle">Final Account Summary</div><div class="agrid">'+
-    '<div class="ai"><div class="al">Original Loan</div><div class="av">'+ibsUsd(app.loan_amount||0)+'</div></div>'+
-    '<div class="ai"><div class="al">APR</div><div class="av">'+(app.loan_apr||0)+'%</div></div>'+
-    '<div class="ai"><div class="al">Term</div><div class="av">'+(app.loan_term_months||0)+' months</div></div>'+
-    '</div></div>'+
-    '<p>Your complete transaction history is permanently recorded on Base. Visit <a href="https://sepolia.basescan.org/address/'+(app.vault_contract||'')+'" style="color:#0a6cf5;font-weight:600;">BaseScan</a> with your vault address for immutable proof of your paid-in-full status.</p>'+
-    '<p>Thank you for choosing IMC. It has been a privilege to serve as your financing partner.</p>'+
-    '<a href="https://innovativeblockchainsolutions.live/imc/" class="cta">Visit IMC Platform</a>'+
-    '<a href="https://innovativeblockchainsolutions.live/imc/dashboard.html" class="cta out">Invest with IMC</a>'+
-    '<div class="sig"><div class="sig-cl">With gratitude,</div><div class="sig-nm">IMC Servicing Team</div><div class="sig-tt">Loan Servicer</div><div class="sig-co">Illusive Motor Concepts &middot; Innovative Blockchain Solutions</div></div>'+
-    '</div>'+ibsEmailFooter('This letter confirms full satisfaction of your IMC loan. Please retain as proof of payoff. Your blockchain transaction record provides independent, immutable verification of all payments made.',vaultShort)+
-    '</div></body></html>';
-
-  fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/smart-action', {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_KEY},
-    body:JSON.stringify({to:app.email,subject:subject,html:html})
-  }).then(function(r){return r.json();}).then(function(d){console.log('Paid in full email sent:',d);}).catch(function(e){console.error('Email error:',e);});
-}
-
-
-// -- BLOCKCHAIN OPS --------------------------------------------
-function chainStatus(id, msg, color) {
-  var el = document.getElementById(id);
-  if (el) { el.textContent = msg; el.style.color = color||'var(--dim)'; }
-}
-
-function encodeAddress(addr) { return '000000000000000000000000'+addr.slice(2).toLowerCase(); }
-function encodeUint256(val) { return parseInt(val).toString(16).padStart(64,'0'); }
-
-// sendChainTx — now includes explicit gas settings to prevent MetaMask fee explosion
-function sendChainTx(to, data, statusId, label) {
-  if (!window.ethereum||!window.ethereum.selectedAddress) { chainStatus(statusId,'Connect wallet first','var(--red)'); return; }
-  // Ensure correct network first
-  window.ethereum.request({method:'eth_chainId'})
-  .then(function(chainId) {
-    if (chainId !== BASE_CHAIN_ID) {
-      return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});
-    }
-  })
-  .then(function() {
-    chainStatus(statusId,'Awaiting MetaMask...','var(--gold)');
-    return window.ethereum.request({method:'eth_sendTransaction',params:[{
-      from: window.ethereum.selectedAddress,
-      to: to,
-      data: data,
-      gasLimit: GAS_LIMIT,
-    }]});
-  })
-  .then(function(tx){ chainStatus(statusId, label+' TX: '+tx.slice(0,12)+'...', 'var(--green)'); })
-  .catch(function(e){ chainStatus(statusId, 'Error: '+(e.message||'rejected'), 'var(--red)'); });
-}
-
-function adminMintNFT() {
-  var make=document.getElementById('mint-make').value.trim();
-  var model=document.getElementById('mint-model').value.trim();
-  var year=parseInt(document.getElementById('mint-year').value)||0;
-  var color=document.getElementById('mint-color').value.trim();
-  var vin=document.getElementById('mint-vin').value.trim();
-  var ev=document.getElementById('mint-ev').value==='true';
-  var appraised=parseInt(document.getElementById('mint-appraised').value)||0;
-  var uri=document.getElementById('mint-uri').value.trim();
-  if (!make||!model||!vin){chainStatus('mint-status','Fill in make, model and VIN','var(--red)');return;}
-  sendChainTx(NFT_ADDRESS,encodeMintVehicle(make,model,year,color,vin,ev,appraised,uri),'mint-status','Mint NFT');
-}
-
-function adminAttachVault() {
-  var tokenId=document.getElementById('attach-tokenid').value.trim();
-  var vault=document.getElementById('attach-vault').value.trim();
-  if (!tokenId||!vault){chainStatus('attach-status','Enter token ID and vault address','var(--red)');return;}
-  if(!window.ethereum||!window.ethereum.selectedAddress){chainStatus('attach-status','Connect wallet first','var(--red)');return;}var data='0xbc9318a7'+encodeUint256(parseInt(tokenId))+encodeAddress(vault);chainStatus('attach-status','Awaiting MetaMask...','var(--gold)');window.ethereum.request({method:'eth_chainId'}).then(function(cId){if(cId!==BASE_CHAIN_ID)return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});}).then(function(){return window.ethereum.request({method:'eth_sendTransaction',params:[{from:window.ethereum.selectedAddress,to:NFT_ADDRESS,data:data,gas:GAS_LIMIT}]});}).then(function(tx){chainStatus('attach-status','Attached TX: '+tx.slice(0,18)+'...','var(--green)');}).catch(function(e){chainStatus('attach-status','Error: '+(e.message||'rejected'),'var(--red)');});
-}
-
-function adminSetBorrower() {
-  var vault=document.getElementById('borrower-vault').value.trim();
-  var borrower=document.getElementById('borrower-addr').value.trim();
-  if (!vault||!borrower){chainStatus('borrower-status','Enter vault and borrower address','var(--red)');return;}
-  sendChainTx(vault,'0xc762d5f7'+encodeAddress(borrower),'borrower-status','Set Borrower');
-}
-
-function adminApproveUSDC() {
-  var vault=document.getElementById('approve-vault').value.trim();
-  var amount=document.getElementById('approve-amount').value.trim();
-  if (!vault||!amount){chainStatus('approve-status','Enter vault and amount','var(--red)');return;}
-  sendChainTx(USDC_ADDR,'0x095ea7b3'+encodeAddress(vault)+encodeUint256(amount),'approve-status','Approve USDC');
-}
-
-function adminMakePayment(vaultAddr, vaultKey) {
-  if (!window.ethereum||!window.ethereum.selectedAddress){chainStatus('payment-status','Connect wallet first','var(--red)');return;}
-  window.ethereum.request({method:'eth_chainId'})
-  .then(function(chainId){
-    if (chainId !== BASE_CHAIN_ID) return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:BASE_CHAIN_ID}]});
-  })
-  .then(function(){
-    chainStatus('payment-status','Awaiting MetaMask for '+vaultKey+'...','var(--gold)');
-    return window.ethereum.request({method:'eth_sendTransaction',params:[{
-      from:window.ethereum.selectedAddress,
-      to:vaultAddr,
-      data:'0xd8d79700',
-      gasLimit: GAS_LIMIT,
-    }]});
-  })
-  .then(function(tx){
-    chainStatus('payment-status',vaultKey.toUpperCase()+' payment TX: '+tx.slice(0,12)+'...','var(--green)');
-    setTimeout(loadVaultStatuses,4000);
-  })
-  .catch(function(e){chainStatus('payment-status','Error: '+(e.message||'rejected'),'var(--red)');});
-}
-
-function adminFlagMissed() {
-  var vault=document.getElementById('flag-vault').value.trim();
-  if (!vault){chainStatus('flag-status','Enter vault address','var(--red)');return;}
-  sendChainTx(vault,'0x2f794709','flag-status','Flag Missed');
-}
-
-function adminMintUSDC() {
-  var to=document.getElementById('usdc-to').value.trim();
-  var amt=document.getElementById('usdc-amt').value.trim();
-  if (!to){chainStatus('usdc-status','Enter address','var(--red)');return;}
-  sendChainTx(USDC_ADDR,'0x40c10f19'+encodeAddress(to)+encodeUint256(amt),'usdc-status','Mint USDC');
-}
-
-function loadVaultStatuses() {
-  if (!window.ethereum) return;
-  var vaults = [
-    {key:'belair', addr:'0x4d525e0DE065973b8CB4367c09e9796254d05f5d'},
-    {key:'charger',addr:'0x00C18588F028483098c28aC21B89AdbA1F097011'},
-    {key:'mustang',addr:'0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad'},
-    {key:'demo',   addr:'0xF537E0419300Cc91670b6a3A740d3BA047c7b7a9'}
-  ];
-  var statusMap = ['FUNDING','ACTIVE','PAID OFF','DEFAULTED'];
-  vaults.forEach(function(v) {
-    window.ethereum.request({method:'eth_call',params:[{to:v.addr,data:'0x200d2ed2'},'latest']})
-    .then(function(result){
-      var s = parseInt(result,16);
-      var label = statusMap[s]||'UNKNOWN';
-      var color = s===1?'var(--green)':s===2?'var(--gold)':s===3?'var(--red)':'var(--neon)';
-      // ── RED STATE: defaulted vault gets blink indicator (additive) ──
-      var missedFlag = s===3 ? '<div class="rs-vault-flag"><span class="rs-dot rs-missed"></span>DEFAULTED — FLAG REVIEW</div>' : '';
-      ['status-'+v.key,'pstatus-'+v.key].forEach(function(id){
-        var el=document.getElementById(id);
-        if(el){el.innerHTML=label+(missedFlag&&id.startsWith('status-')?missedFlag:'');el.style.color=color;}
-      });
-    })
-    .catch(function(){
-      ['status-'+v.key,'pstatus-'+v.key].forEach(function(id){
-        var el=document.getElementById(id);if(el)el.textContent='N/A';
-      });
-    });
-  });
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   LOAN SERVICING TAB — JAVASCRIPT
-   Inject before closing </script> tag in admin.html
+var EMAIL_STYLES = '<style>*{box-sizing:border-box;margin:0;padding:0;}body{background:#f0f0f5;font-family:Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;}.wrap{max-width:640px;margin:0 auto;background:#fff;}.hdr{background:#06060f;padding:28px 36px 20px;}.htop{display:flex;justify-content:space-between;align-items:flex-start;}.brand{display:flex;align-items:center;gap:10px;}.bico{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a6cf5,#8b00ff);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;}.bnm{font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);}.bsb{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}.bdg{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:5px;}.bdg-ok{background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.25);}.bdg-d30{background:rgba(240,192,64,.15);color:#f0c040;border:1px solid rgba(240,192,64,.3);}.bdg-d60{background:rgba(255,100,50,.15);color:#ff6432;border:1px solid rgba(255,100,50,.3);}.bdg-d90{background:rgba(255,68,85,.15);color:#ff4455;border:1px solid rgba(255,68,85,.3);}.bdg-deny{background:rgba(255,68,85,.12);color:#ff4455;border:1px solid rgba(255,68,85,.25);}.bdg-paid{background:rgba(0,255,136,.1);color:#00c97a;border:1px solid rgba(0,255,136,.2);}.dvd{height:1px;background:linear-gradient(90deg,transparent,rgba(10,108,245,.5),rgba(139,0,255,.4),transparent);margin:18px 0 0;}.bdy{padding:32px 36px;}.refs{display:flex;gap:20px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f0f0f5;}.ri .rl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ri .rv{font-size:12px;font-weight:600;color:#1a1a2e;}p{font-size:14px;color:#3a3a5a;line-height:1.8;margin-bottom:14px;font-weight:300;}p strong{color:#1a1a2e;font-weight:600;}.abox{background:#f8f8fc;border:1px solid #e8e8f0;border-radius:10px;padding:16px;margin:16px 0;}.atitle{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;margin-bottom:12px;}.agrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}.ai .al{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#a0a0b8;margin-bottom:2px;}.ai .av{font-size:13px;font-weight:600;color:#1a1a2e;}.alrt{border-radius:10px;padding:14px 16px;margin:16px 0;display:flex;gap:10px;align-items:flex-start;}.alrt.warn{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.2);}.alrt.danger{background:rgba(255,68,85,.05);border:1px solid rgba(255,68,85,.2);}.alrt.success{background:rgba(0,201,122,.05);border:1px solid rgba(0,201,122,.18);}.alrt-ico{font-size:15px;flex-shrink:0;margin-top:1px;}.alrt-txt{font-size:13px;color:#3a3a5a;line-height:1.6;}.alrt-txt strong{color:#1a1a2e;font-weight:600;}.cta{display:inline-block;background:#0a6cf5;color:white;font-size:13px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:100px;margin:6px 6px 6px 0;}.cta.out{background:transparent;color:#0a6cf5;border:1px solid rgba(10,108,245,.3);}.sig{margin-top:24px;padding-top:16px;border-top:1px solid #f0f0f5;}.sig-cl{font-size:14px;color:#3a3a5a;margin-bottom:12px;}.sig-nm{font-size:14px;font-weight:700;color:#1a1a2e;}.sig-tt{font-size:12px;color:#a0a0b8;}.sig-co{font-size:12px;font-weight:600;color:#0a6cf5;margin-top:5px;}.ftr{background:#f8f8fc;border-top:1px solid #e8e8f0;padding:18px 36px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}.ftr-lg{font-size:10px;color:#b0b0c8;line-height:1.6;max-width:380px;}.ftr-lk{text-align:right;}.ftr-lk a{font-size:11px;color:#0a6cf5;text-decoration:none;display:block;line-height:1.9;}.chn{font-size:10px;color:rgba(10,108,245,.6);margin-top:6px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;} tag in admin.html
    ═══════════════════════════════════════════════════════════════ */
 
 // ── STATE ─────────────────────────────────────────────────────────
