@@ -1579,7 +1579,7 @@ async function loadActiveLoans() {
   list.innerHTML = '<div class="svc-empty">Loading...</div>';
 
   try {
-    var res = await fetch(SB_URL + '/rest/v1/imc_applications?select=id,first_name,last_name,vehicle_name,loan_amount,loan_apr,loan_term_months,vault_contract,status,days_past_due,servicing_status,last_payment_at&status=in.(active,pending_funding)&order=created_at.desc', {
+    var res = await fetch(SB_URL + '/rest/v1/imc_applications?select=id,first_name,last_name,vehicle_name,loan_amount,loan_apr,loan_term_months,vault_contract,status,days_past_due,servicing_status,last_payment_at&status=in.(active,pending_funding,approved)&order=created_at.desc', {
       headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
     });
     var data = await res.json();
