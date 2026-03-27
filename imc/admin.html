@@ -1894,6 +1894,102 @@ async function submitServicingNote() {
 }
 
 // ── HTML ESCAPE HELPER ────────────────────────────────────────────
+
+// ── SEND DECISION EMAIL ──────────────────────────────────────────
+function sendDecisionEmail(app, decision, update) {
+  if (!app || !app.email) return;
+  var name    = ((app.first_name || '') + ' ' + (app.last_name || '')).trim() || 'Applicant';
+  var amt     = (update.approved_amount || app.loan_amount || 0).toLocaleString();
+  var apr     = update.final_apr || app.final_apr || 'TBD';
+  var vehicle = app.vehicle_name || 'your vehicle';
+  var subject, html;
+
+  if (decision === 'approved') {
+    subject = 'Your IMC Application Has Been Approved!';
+    html = [
+      '<!DOCTYPE html><html><head><meta charset="utf-8"></head>',
+      '<body style="margin:0;padding:0;background:#06060f;font-family:Inter,Arial,sans-serif;">',
+      '<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">',
+      '<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;">',
+      '<tr><td style="background:#06060f;padding:28px 36px 20px;">',
+      '<table width="100%"><tr>',
+      '<td><table cellpadding="0" cellspacing="0"><tr>',
+      '<td style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a6cf5,#8b00ff);text-align:center;vertical-align:middle;">',
+      '<span style="color:white;font-weight:800;font-size:13px;">IMC</span></td>',
+      '<td style="padding-left:10px;"><div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);">Illusive Motor Concepts</div>',
+      '<div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.06em;text-transform:uppercase;">Auto Finance · Base Blockchain</div>',
+      '</td></tr></table></td>',
+      '<td align="right"><span style="display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;background:rgba(0,201,122,.12);color:#00c97a;border:1px solid rgba(0,201,122,.25);">APPLICATION APPROVED</span></td>',
+      '</tr></table>',
+      '<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(10,108,245,.5),rgba(139,0,255,.4),transparent);margin:18px 0 0;"></div>',
+      '</td></tr>',
+      '<tr><td style="background:#ffffff;padding:32px 36px;">',
+      '<p style="font-size:22px;font-weight:700;color:#1a1a2e;margin:0 0 16px;">Congratulations, ' + name + '!</p>',
+      '<p style="font-size:14px;color:#3a3a5a;line-height:1.8;margin:0 0 16px;">Your loan application for <strong>' + vehicle + '</strong> has been approved. Your loan vault is now live on the Base blockchain and open for investor funding.</p>',
+      '<table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f8fc;border:1px solid #e8e8f0;border-radius:10px;margin:16px 0;">',
+      '<tr><td style="padding:16px;"><table width="100%">',
+      '<tr><td style="padding:8px 0;border-bottom:1px solid #e8e8f0;"><span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;">LOAN AMOUNT</span>',
+      '<div style="font-size:18px;font-weight:700;color:#0a6cf5;margin-top:2px;">$' + amt + ' USDC</div></td></tr>',
+      '<tr><td style="padding:8px 0;border-bottom:1px solid #e8e8f0;"><span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;">INTEREST RATE</span>',
+      '<div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-top:2px;">' + apr + '% APR</div></td></tr>',
+      '<tr><td style="padding:8px 0;"><span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0a0b8;">LOAN TERM</span>',
+      '<div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-top:2px;">' + (app.term_months || 'TBD') + ' months</div>',
+      '</td></tr></table></td></tr></table>',
+      '<p style="font-size:14px;color:#3a3a5a;line-height:1.8;margin:16px 0;">Once your vault is fully funded, your loan will activate automatically and you will receive payment instructions.</p>',
+      '<a href="https://innovativeblockchainsolutions.live/imc/status.html" style="display:inline-block;background:#0a6cf5;color:white;font-size:13px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:100px;">View Borrower Portal</a>',
+      '<div style="margin-top:24px;padding-top:16px;border-top:1px solid #f0f0f5;">',
+      '<p style="font-size:12px;color:#a0a0b8;margin:0;">Questions? <a href="mailto:appeals@illusivemotorconcepts.com" style="color:#0a6cf5;">appeals@illusivemotorconcepts.com</a></p>',
+      '</div></td></tr>',
+      '<tr><td style="background:#f8f8fc;border-top:1px solid #e8e8f0;padding:18px 36px;">',
+      '<p style="font-size:10px;color:#b0b0c8;margin:0;">Illusive Motor Concepts · Blockchain Auto Finance on Base Network · Las Vegas, NV</p>',
+      '</td></tr></table></td></tr></table></body></html>'
+    ].join('');
+  } else {
+    subject = 'Update on Your IMC Loan Application';
+    html = [
+      '<!DOCTYPE html><html><head><meta charset="utf-8"></head>',
+      '<body style="margin:0;padding:0;background:#06060f;font-family:Inter,Arial,sans-serif;">',
+      '<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px;">',
+      '<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;">',
+      '<tr><td style="background:#06060f;padding:28px 36px 20px;">',
+      '<table width="100%"><tr>',
+      '<td><table cellpadding="0" cellspacing="0"><tr>',
+      '<td style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a6cf5,#8b00ff);text-align:center;vertical-align:middle;">',
+      '<span style="color:white;font-weight:800;font-size:13px;">IMC</span></td>',
+      '<td style="padding-left:10px;"><div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);">Illusive Motor Concepts</div>',
+      '<div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.06em;text-transform:uppercase;">Auto Finance · Base Blockchain</div>',
+      '</td></tr></table></td>',
+      '<td align="right"><span style="display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;background:rgba(255,68,85,.12);color:#ff4455;border:1px solid rgba(255,68,85,.25);">APPLICATION UPDATE</span></td>',
+      '</tr></table>',
+      '<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(10,108,245,.5),rgba(139,0,255,.4),transparent);margin:18px 0 0;"></div>',
+      '</td></tr>',
+      '<tr><td style="background:#ffffff;padding:32px 36px;">',
+      '<p style="font-size:22px;font-weight:700;color:#1a1a2e;margin:0 0 16px;">Dear ' + name + ',</p>',
+      '<p style="font-size:14px;color:#3a3a5a;line-height:1.8;margin:0 0 16px;">Thank you for your application for <strong>' + vehicle + '</strong>. After careful review, we are unable to approve your application at this time.</p>',
+      '<p style="font-size:14px;color:#3a3a5a;line-height:1.8;margin:0 0 16px;">This decision was made in accordance with our credit criteria. You have the right to request the specific reasons for this decision within 60 days.</p>',
+      '<a href="mailto:appeals@illusivemotorconcepts.com" style="display:inline-block;background:#0a6cf5;color:white;font-size:13px;font-weight:600;text-decoration:none;padding:11px 24px;border-radius:100px;">Contact Appeals</a>',
+      '<div style="margin-top:24px;padding-top:16px;border-top:1px solid #f0f0f5;">',
+      '<p style="font-size:12px;color:#a0a0b8;margin:0;">Illusive Motor Concepts · appeals@illusivemotorconcepts.com</p>',
+      '</div></td></tr>',
+      '<tr><td style="background:#f8f8fc;border-top:1px solid #e8e8f0;padding:18px 36px;">',
+      '<p style="font-size:10px;color:#b0b0c8;margin:0;">Illusive Motor Concepts · Blockchain Auto Finance on Base Network · Las Vegas, NV</p>',
+      '</td></tr></table></td></tr></table></body></html>'
+    ].join('');
+  }
+
+  fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/smart-action', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0aWZoY3ZiZ3hxd2x5d3Vndmp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MDc5NTgsImV4cCI6MjA4ODA4Mzk1OH0.UfRVLuvM8_HPvKXUEDXb0cxR50znv16L5Tf99AnSc7g'
+    },
+    body: JSON.stringify({ to: app.email, subject: subject, html: html })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) { console.log('Decision email sent:', d); })
+  .catch(function(e) { console.log('Email error (non-fatal):', e); });
+}
+
 function escHtml(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
