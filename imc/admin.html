@@ -1331,7 +1331,6 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from:window.ethereum.selectedAddress,
       to:NFT_ADDRESS,
-      gasLimit: GAS_LIMIT,
       data:encodeMintVehicle(make, model, year, color, vin, ev, appraisedCents, metaURI)
     }]});
   })
@@ -1386,8 +1385,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     console.log('[AUTO] Deploying vault for token', tokenId);
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from: window.ethereum.selectedAddress,
-      data: deployData,
-      gas: '0x' + (3500000).toString(16)
+      data: deployData
     }]}).then(function(deployTx){
       console.log('[AUTO] Vault deploy TX:', deployTx);
       // Wait for vault contract address
@@ -1417,8 +1415,7 @@ function mintVehicleOnChain(v, terms, vehicleName, listing) {
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from: window.ethereum.selectedAddress,
       to: NFT_ADDRESS,
-      data: attachData,
-      gas: GAS_LIMIT
+      data: attachData
     }]}).then(function(attachTx){
       console.log('[AUTO] Vault attached TX:', attachTx);
       return {tokenId: tokenId, vaultAddress: vaultAddress, mintTxHash: mintTxHash, attachTx: attachTx};
@@ -1515,8 +1512,7 @@ function adminDeployVault() {
   .then(function(){
     return window.ethereum.request({method:'eth_sendTransaction',params:[{
       from: window.ethereum.selectedAddress,
-      data: deployData,
-      gas: '0x' + (3500000).toString(16)
+      data: deployData
     }]});
   })
   .then(function(txHash){
