@@ -364,9 +364,11 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
   <!-- BLOCKCHAIN OPS PANEL -->
   <div id="panelChain" style="display:none;visibility:visible;opacity:1;overflow:visible;position:relative;z-index:1;">
 
-    <!-- Contract Registry -->
+    <!-- Contract Registry — Dynamic (replaces hardcoded Polygon Amoy vaults) -->
     <div style="margin-bottom:1.5rem;">
       <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">Contract Registry — Base Sepolia Testnet</div>
+
+      <!-- Static anchors — never change -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px;">
         <div style="background:var(--surface);border:1px solid var(--border);padding:1rem 1.25rem;">
           <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);margin-bottom:0.35rem;">IMCVehicleNFT</div>
@@ -379,147 +381,15 @@ label{font-family:'Inter',sans-serif!important;font-size:0.7rem!important;font-w
           <a href="https://sepolia.basescan.org/address/0x036CbD53842c5426634e7929541ec2318f3dcf7e" target="_blank" style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);text-decoration:none;">View on BaseScan</a>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;">
-        <div style="background:var(--surface);border:1px solid var(--border);padding:0.85rem 1rem;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-bottom:0.3rem;">Vault Bel Air</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--gold);word-break:break-all;">0x4d525e0DE065973b8CB4367c09e9796254d05f5d</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--green);margin-top:0.25rem;" id="status-belair">Loading...</div>
-        </div>
-        <div style="background:var(--surface);border:1px solid var(--border);padding:0.85rem 1rem;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-bottom:0.3rem;">Vault Charger</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--gold);word-break:break-all;">0x00C18588F028483098c28aC21B89AdbA1F097011</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--green);margin-top:0.25rem;" id="status-charger">Loading...</div>
-        </div>
-        <div style="background:var(--surface);border:1px solid var(--border);padding:0.85rem 1rem;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-bottom:0.3rem;">Vault Mustang</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--gold);word-break:break-all;">0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--green);margin-top:0.25rem;" id="status-mustang">Loading...</div>
-        </div>
-        <div style="background:var(--surface);border:1px solid rgba(136,85,255,0.3);padding:0.85rem 1rem;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-bottom:0.3rem;">Demo Vault</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--purple);word-break:break-all;">0xF537E0419300Cc91670b6a3A740d3BA047c7b7a9</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--purple);margin-top:0.25rem;" id="status-demo">Loading...</div>
-        </div>
+
+      <!-- Dynamic vault registry — live from imc_listings, no hardcoding -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:0.75rem 0 0.5rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--dim);">Active Loan Vaults</div>
+        <button onclick="loadDynamicVaultRegistry()" style="background:transparent;border:1px solid var(--border);color:var(--dim);padding:0.25rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;cursor:pointer;">&#8635; Refresh</button>
       </div>
-    </div>
-
-    <!-- Ops Grid -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-
-      <!-- Mint NFT -->
-      <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;">
-        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--neon);margin-bottom:1.25rem;">Mint Vehicle NFT</div>
-        <div style="display:flex;flex-direction:column;gap:0.5rem;">
-          <input id="mint-make" class="chain-input" placeholder="Make (e.g. Dodge)">
-          <input id="mint-model" class="chain-input" placeholder="Model (e.g. Charger R/T)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-            <input id="mint-year" class="chain-input" placeholder="Year (e.g. 1969)">
-            <input id="mint-color" class="chain-input" placeholder="Color">
-          </div>
-          <input id="mint-vin" class="chain-input" placeholder="VIN (e.g. IMC-CHARGER-002)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-            <input id="mint-appraised" class="chain-input" placeholder="Appraised (USD cents)">
-            <select id="mint-ev" class="chain-input">
-              <option value="true">EV Converted</option>
-              <option value="false">Original Engine</option>
-            </select>
-          </div>
-          <input id="mint-uri" class="chain-input" value="https://ooak21.github.io/luisocadiz-portfolio/imc/" placeholder="Metadata URI">
-          <button class="chain-btn" onclick="adminMintNFT()" style="background:var(--neon);color:#050507;margin-top:0.25rem;">Mint Vehicle NFT</button>
-          <div id="mint-status" style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);min-height:1rem;"></div>
-        </div>
+      <div id="dynamic-vault-registry" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;">
+        <div style="grid-column:1/-1;background:var(--surface);border:1px solid var(--border);padding:1rem;font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);text-align:center;">Loading vaults from chain...</div>
       </div>
-
-      <!-- Right col ops -->
-      <div style="display:flex;flex-direction:column;gap:1rem;">
-
-
-      <!-- Deploy Vault -->
-      <div style="background:var(--surface);border:1px solid rgba(136,85,255,0.4);padding:1.5rem;margin-bottom:1rem;">
-        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--purple);margin-bottom:1.25rem;">Deploy New Loan Vault</div>
-        <div style="display:flex;flex-direction:column;gap:0.5rem;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-            <input id="vault-tokenid" class="chain-input" placeholder="Vehicle Token ID (e.g. 5)">
-            <input id="vault-loanamt" class="chain-input" placeholder="Loan Amount $ (e.g. 45000)">
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-            <input id="vault-apr" class="chain-input" placeholder="APR % (e.g. 10.9)">
-            <select id="vault-term" class="chain-input">
-              <option value="">Loan Term</option>
-              <option value="24">24 months</option>
-              <option value="36">36 months</option>
-              <option value="48">48 months</option>
-              <option value="60">60 months</option>
-            </select>
-          </div>
-          <input id="vault-name" class="chain-input" placeholder="Vault Name (e.g. Vault Ford T)">
-          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;"><label style="font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--dim);">Demo Mode (10min payments)</label><input type="checkbox" id="vault-demo-mode" onchange="VAULT_DEMO_MODE=this.checked; localStorage.setItem('vaultDemoMode', this.checked);" style="cursor:pointer;"></div><button class="chain-btn" onclick="adminDeployVault()" style="background:var(--purple);color:#fff;margin-top:0.25rem;">Deploy Vault</button>
-          <div id="deploy-status" style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);min-height:1rem;word-break:break-all;"></div>
-        </div>
-      </div>
-
-        <!-- Attach Vault -->
-        <div style="background:var(--surface);border:1px solid var(--border);padding:1.25rem;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.85rem;">Attach Vault to NFT</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
-            <input id="attach-tokenid" class="chain-input" placeholder="Token ID (e.g. 1)">
-            <input id="attach-vault" class="chain-input" placeholder="Vault Address 0x...">
-          </div>
-          <button class="chain-btn" onclick="adminAttachVault()" style="background:var(--gold);color:#050507;">Attach Vault</button>
-          <div id="attach-status" style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.4rem;min-height:1rem;"></div>
-        </div>
-
-        <!-- Set Borrower -->
-        <div style="background:var(--surface);border:1px solid var(--border);padding:1.25rem;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--purple);margin-bottom:0.85rem;">Set Borrower on Vault</div>
-          <div style="display:flex;flex-direction:column;gap:0.5rem;">
-            <input id="borrower-vault" class="chain-input" placeholder="Vault Address 0x...">
-            <input id="borrower-addr" class="chain-input" placeholder="Borrower Wallet 0x...">
-            <button class="chain-btn" onclick="adminSetBorrower()" style="background:var(--purple);color:#fff;">Set Borrower</button>
-          </div>
-          <div id="borrower-status" style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.4rem;min-height:1rem;"></div>
-        </div>
-
-        <!-- Approve USDC -->
-        <div style="background:var(--surface);border:1px solid var(--border);padding:1.25rem;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--green);margin-bottom:0.85rem;">Approve USDC for Vault</div>
-          <div style="display:flex;flex-direction:column;gap:0.5rem;">
-            <input id="approve-vault" class="chain-input" placeholder="Vault Address 0x...">
-            <input id="approve-amount" class="chain-input" placeholder="Amount raw (e.g. 2000000 = $2)">
-            <button class="chain-btn" onclick="adminApproveUSDC()" style="background:var(--green);color:#050507;">Approve USDC</button>
-          </div>
-          <div id="approve-status" style="font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--dim);margin-top:0.4rem;min-height:1rem;"></div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Payment Portal -->
-    <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;">
-      <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:1.25rem;">Borrower Payment Portal</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem;">
-        <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;text-align:center;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);margin-bottom:0.4rem;">BEL AIR</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);margin-bottom:0.5rem;" id="pstatus-belair">--</div>
-          <button onclick="adminMakePayment('0x4d525e0DE065973b8CB4367c09e9796254d05f5d','belair')" style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.35rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.52rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;">Pay</button>
-        </div>
-        <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;text-align:center;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);margin-bottom:0.4rem;">CHARGER</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);margin-bottom:0.5rem;" id="pstatus-charger">--</div>
-          <button onclick="adminMakePayment('0x00C18588F028483098c28aC21B89AdbA1F097011','charger')" style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.35rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.52rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;">Pay</button>
-        </div>
-        <div style="background:var(--surface2);border:1px solid var(--border);padding:1rem;text-align:center;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);margin-bottom:0.4rem;">MUSTANG</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--neon);margin-bottom:0.5rem;" id="pstatus-mustang">--</div>
-          <button onclick="adminMakePayment('0x8e03a6A1fa7D4F21bF43a6d27B6fBd5C1DC0A0Ad','mustang')" style="background:transparent;border:1px solid var(--neon);color:var(--neon);padding:0.35rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.52rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;">Pay</button>
-        </div>
-        <div style="background:var(--surface2);border:1px solid rgba(136,85,255,0.3);padding:1rem;text-align:center;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim);margin-bottom:0.4rem;">DEMO</div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--purple);margin-bottom:0.5rem;" id="pstatus-demo">--</div>
-          <button onclick="adminMakePayment('0xF537E0419300Cc91670b6a3A740d3BA047c7b7a9','demo')" style="background:transparent;border:1px solid var(--purple);color:var(--purple);padding:0.35rem 0.75rem;font-family:'DM Mono',monospace;font-size:0.52rem;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;">Pay</button>
-        </div>
-      </div>
-      <div id="payment-status" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);min-height:1rem;"></div>
     </div>
 
     <!-- Admin Tools -->
@@ -924,6 +794,7 @@ function switchTab(tab) {
     document.getElementById('tabChain').style.color = 'var(--purple)';
     document.getElementById('tabChain').style.borderBottomColor = 'var(--purple)';
     loadVaultStatuses();
+    loadDynamicVaultRegistry();
   } else {
     document.getElementById('tabChain').style.background = 'transparent';
     document.getElementById('tabChain').style.color = 'var(--purple)';
@@ -1903,6 +1774,73 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+
+
+// ── DYNAMIC VAULT REGISTRY ────────────────────────────────────────────────────
+// Replaces hardcoded Polygon Amoy vault cards with live data from imc_listings
+var VAULT_STATUS_COLORS = {
+  '0x0000000000000000000000000000000000000000000000000000000000000000': { label: 'FUNDING',   color: 'var(--neon)' },
+  '0x0000000000000000000000000000000000000000000000000000000000000001': { label: 'ACTIVE',    color: 'var(--green)' },
+  '0x0000000000000000000000000000000000000000000000000000000000000002': { label: 'PAID_OFF',  color: 'var(--dim)' },
+  '0x0000000000000000000000000000000000000000000000000000000000000003': { label: 'DEFAULTED', color: 'var(--red)' },
+};
+
+async function getOnChainVaultStatus(addr) {
+  try {
+    var res = await fetch('https://sepolia.base.org', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc:'2.0', id:1, method:'eth_call', params:[{to:addr, data:'0x200d2ed2'},'latest'] })
+    });
+    var json = await res.json();
+    if (!json.result || json.result === '0x') return { label:'N/A', color:'var(--dim)' };
+    return VAULT_STATUS_COLORS[json.result] || { label:'UNKNOWN', color:'var(--dim)' };
+  } catch(e) {
+    return { label:'N/A', color:'var(--dim)' };
+  }
+}
+
+async function loadDynamicVaultRegistry() {
+  var container = document.getElementById('dynamic-vault-registry');
+  if (!container) return;
+  container.innerHTML = '<div style="grid-column:1/-1;background:var(--surface);border:1px solid var(--border);padding:1rem;font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--dim);text-align:center;">Loading vaults...</div>';
+  try {
+    var res = await fetch(
+      SB_URL + '/rest/v1/imc_listings?select=id,vehicle_name,vault_contract,loan_amount,loan_apr,status' +
+      '&vault_contract=not.is.null&status=in.(funding,active,paid_off,defaulted)&order=created_at.desc',
+      { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } }
+    );
+    var listings = await res.json();
+    if (!listings || listings.length === 0) {
+      container.innerHTML = '<div style="grid-column:1/-1;background:var(--surface);border:1px solid var(--border);padding:1.25rem;font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--dim);text-align:center;">No active vaults. Deploy one above to see it here.</div>';
+      return;
+    }
+    var statuses = await Promise.all(listings.map(function(l){ return getOnChainVaultStatus(l.vault_contract); }));
+    // Dynamically set grid columns based on count (max 4)
+    var cols = Math.min(listings.length, 4);
+    container.style.gridTemplateColumns = 'repeat(' + cols + ',1fr)';
+    container.innerHTML = listings.map(function(l, i) {
+      var s = statuses[i];
+      var short = l.vault_contract.slice(0,8) + '...' + l.vault_contract.slice(-6);
+      var amt = l.loan_amount ? '$' + Number(l.loan_amount).toLocaleString() : '—';
+      return '<div style="background:var(--surface);border:1px solid var(--border);padding:0.85rem 1rem;">'
+        + '<div style="font-family:\'DM Mono\',monospace;font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-bottom:0.3rem;">' + escHtml(l.vehicle_name || 'Vault') + '</div>'
+        + '<div style="font-family:\'DM Mono\',monospace;font-size:0.52rem;color:var(--gold);word-break:break-all;margin-bottom:0.25rem;">' + short + '</div>'
+        + '<div style="font-family:\'DM Mono\',monospace;font-size:0.5rem;color:var(--dim);margin-bottom:0.25rem;">' + amt + (l.loan_apr ? ' · ' + l.loan_apr + '% APR' : '') + '</div>'
+        + '<div style="font-family:\'DM Mono\',monospace;font-size:0.5rem;color:' + s.color + ';margin-bottom:0.3rem;">&#11042; ' + s.label + '</div>'
+        + '<a href="https://sepolia.basescan.org/address/' + l.vault_contract + '" target="_blank" style="font-family:\'DM Mono\',monospace;font-size:0.5rem;color:var(--dim);text-decoration:none;">View on BaseScan</a>'
+        + '</div>';
+    }).join('');
+  } catch(err) {
+    container.innerHTML = '<div style="grid-column:1/-1;background:var(--surface);border:1px solid var(--border);padding:1rem;font-family:\'DM Mono\',monospace;font-size:0.58rem;color:var(--red);text-align:center;">Error: ' + escHtml(err.message||'unknown') + '</div>';
+    console.error('loadDynamicVaultRegistry:', err);
+  }
+}
+
+// Stub — old function name kept so no reference errors anywhere
+function loadVaultStatuses() {
+  loadDynamicVaultRegistry();
+}
 
 </script>
 </body>
