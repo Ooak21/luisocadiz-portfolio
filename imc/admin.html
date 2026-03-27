@@ -1095,37 +1095,6 @@ function submitDecision(decision) {
   }).catch(function(e){alert('Error: '+e);});
 }
 
-function sendDecisionEmail(app, decision, update) {
-  var name = ((app.first_name||'')+' '+(app.last_name||'')).trim()||'Applicant';
-  var subject, html;
-  if (decision==='denied') {
-    var reasons = [];
-    var credit = parseFloat(app.credit_score_range)||0;
-    var income = app.gross_monthly_income||0;
-    var r2 = 12/100/12;
-    var monthly2 = app.loan_amount&&app.term_months?(app.loan_amount*r2*Math.pow(1+r2,app.term_months))/(Math.pow(1+r2,app.term_months)-1):0;
-    var dti2 = income>0?(monthly2/income*100):0;
-    if (credit>0&&credit<700) reasons.push('Credit score below minimum threshold');
-    if (dti2>45) reasons.push('Debt-to-income ratio exceeds 45% maximum');
-    if (income<2000&&income>0) reasons.push('Insufficient verifiable income');
-    if (!app.employment_status) reasons.push('Insufficient employment information');
-    if (update.underwriter_notes) reasons.push('Notes: '+update.underwriter_notes);
-    if (reasons.length===0) reasons.push('Application did not meet current lending criteria');
-    var appId = app.id?app.id.slice(0,8).toUpperCase():'N/A';
-    var reapply = new Date(Date.now()+90*24*60*60*1000).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    subject = 'Your IMC Auto Finance Application - Decision Notice';
-    html = '<!DOCTYPE html><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;"><div style="max-width:600px;margin:0 auto;"><div style="border-bottom:2px solid #00d4ff;padding-bottom:20px;margin-bottom:24px;"><div style="font-size:20px;letter-spacing:4px;color:#e8e8f0;">ILLUSIVE MOTOR CONCEPTS</div></div><div style="font-size:24px;color:#ff4455;margin-bottom:16px;">Unable to Approve</div><p style="color:#8888aa;line-height:1.7;">Dear '+name+', Application ID: '+appId+'</p><p style="color:#8888aa;line-height:1.7;margin-top:12px;">After careful review we are unable to extend credit at this time.</p><div style="margin:20px 0;padding:16px;background:#0a0a0f;border:1px solid #1e1e2e;"><div style="color:#444460;font-size:10px;text-transform:uppercase;margin-bottom:8px;">Reason(s)</div>'+reasons.map(function(r){return '<div style="color:#8888aa;font-size:13px;padding:4px 0;border-bottom:1px solid #1e1e2e;">'+r+'</div>';}).join('')+'</div><p style="color:#8888aa;line-height:1.7;">You may reapply after '+reapply+'. Questions: <a href="mailto:appeals@illusivemotorconcepts.com" style="color:#00d4ff;">appeals@illusivemotorconcepts.com</a></p><p style="color:#2a2a3e;font-size:10px;margin-top:32px;line-height:1.7;">The Federal Equal Credit Opportunity Act prohibits discrimination on the basis of race, color, religion, national origin, sex, marital status, age, or because income derives from public assistance.</p></div></body></html>';
-  } else {
-    subject = 'Your IMC Application Has Been Approved!';
-    html = '<!DOCTYPE html><html><body style="background:#050507;font-family:monospace;color:#e8e8f0;padding:40px;"><div style="max-width:600px;margin:0 auto;"><div style="border-bottom:2px solid #00d4ff;padding-bottom:20px;margin-bottom:24px;"><div style="font-size:20px;letter-spacing:4px;">ILLUSIVE MOTOR CONCEPTS</div></div><div style="font-size:24px;color:#00ff88;margin-bottom:16px;">Application Approved!</div><p style="color:#8888aa;line-height:1.7;">Congratulations '+name+'. Your loan application for <strong style="color:#e8e8f0;">'+(app.vehicle_name||'vehicle')+'</strong> has been approved.</p><div style="margin:20px 0;padding:16px;background:#0a0a0f;border:1px solid #1e1e2e;"><div style="color:#f0c040;">APR: '+(update.final_apr||'TBD')+'%</div><div style="margin-top:6px;">Amount: $'+(update.approved_amount||app.loan_amount||0).toLocaleString()+' USDC</div></div><p style="color:#8888aa;">Our team will contact you shortly. Questions: <a href="mailto:appeals@illusivemotorconcepts.com" style="color:#00d4ff;">appeals@illusivemotorconcepts.com</a></p></div></body></html>';
-  }
-  fetch('https://jtifhcvbgxqwlywugvjv.supabase.co/functions/v1/smart-action', {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_KEY},
-    body:JSON.stringify({to:app.email,subject:subject,html:html})
-  }).then(function(r){return r.json();}).then(function(d){console.log('Email sent:',d);}).catch(function(e){console.error('Email error:',e);});
-}
-
 function getApprovalRec(app) {
   var credit = parseFloat(app.credit_score_range)||0;
   var income = app.gross_monthly_income||0;
@@ -1528,13 +1497,13 @@ function adminDeployVault() {
   var vaultName = document.getElementById('vault-name').value.trim();
   if (!tokenId||!loanAmt||!apr||!term||!vaultName) { chainStatus('deploy-status','Fill in all fields','var(--red)'); return; }
 
-  var loanRaw = Math.round(loanAmt * 1000000);
+  var loanRaw = Math.round(loanAmt * 1000000); // USDC 6 decimals
   var aprBPS = Math.round(apr * 100);
   var usdc = USDC_ADDR;
   var platformWallet = window.ethereum.selectedAddress;
 
-  var intervalSecs = VAULT_DEMO_MODE ? 600 : 2592000;
-  var constructorArgs = encodeConstructorArgs(usdc, platformWallet, tokenId, loanRaw, aprBPS, term, 200, intervalSecs);
+  var intervalSecs = VAULT_DEMO_MODE ? 600 : 2592000; // 10min demo or 30 days production
+    var constructorArgs = encodeConstructorArgs(usdc, platformWallet, tokenId, loanRaw, aprBPS, term, 200, intervalSecs);
   var deployData = '0x' + VAULT_BYTECODE + constructorArgs;
 
   chainStatus('deploy-status','Deploying vault — confirm in MetaMask...','var(--gold)');
@@ -1552,6 +1521,7 @@ function adminDeployVault() {
   })
   .then(function(txHash){
     chainStatus('deploy-status','TX submitted: '+txHash.slice(0,18)+'... waiting for address...','var(--gold)');
+    // Poll for receipt to get contract address
     var poll = setInterval(function(){
       window.ethereum.request({method:'eth_getTransactionReceipt',params:[txHash]})
       .then(function(receipt){
@@ -1559,6 +1529,7 @@ function adminDeployVault() {
           clearInterval(poll);
           var addr = receipt.contractAddress;
           chainStatus('deploy-status','✅ Vault deployed: '+addr+' — add to imc_vaults table','var(--green)');
+          // Auto-insert vault name into status area for easy copy
           document.getElementById('deploy-status').innerHTML =
             '<div style="color:var(--green);margin-bottom:0.4rem;">✅ VAULT DEPLOYED</div>' +
             '<div style="color:var(--neon);word-break:break-all;">'+addr+'</div>' +
@@ -1569,6 +1540,7 @@ function adminDeployVault() {
   })
   .catch(function(e){ chainStatus('deploy-status','Error: '+(e.message||'rejected'),'var(--red)'); });
 }
+
 function encodeMintVehicle(make,model,year,color,vin,evConverted,appraisedValue,metadataURI) {
   function padLeft(val,len){var s=val.toString(16);while(s.length<len)s='0'+s;return s;}
   function encodeString(str){
