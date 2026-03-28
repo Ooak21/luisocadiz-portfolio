@@ -1090,7 +1090,7 @@ function submitDecision(decision) {
   fetch(SB_URL+'/rest/v1/imc_applications?id=eq.'+currentAppId, {
     method:'PATCH', headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'}, body:JSON.stringify(update)
   }).then(function(){
-    if (app&&app.email&&(decision==='denied'||decision==='approved')) sendDecisionEmail(app,decision,update);
+    
     closeModal(); loadApplications();
   }).catch(function(e){alert('Error: '+e);});
 }
